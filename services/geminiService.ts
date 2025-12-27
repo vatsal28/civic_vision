@@ -14,7 +14,7 @@ export const generateIdealImage = async (
 
   // Construct the prompt based on active filters
   const changesList = activeFilters.map(f => `- ${f.promptFragment}`).join('\n');
-  
+
   const prompt = `
     You are an expert image editor specialized in urban renewal and civic planning visualization.
     
@@ -31,38 +31,33 @@ export const generateIdealImage = async (
   `;
 
   try {
+    // Use gemini-3-pro-image-preview for high-quality 4K image editing
+    // Free tier: 2 images/day | Paid: ~$0.13-$0.24 per image depending on resolution
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-image-preview',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: 'image/jpeg', // Assuming JPEG for simplicity, API handles png/jpeg mapping usually
-              data: base64Image,
-            },
+
+      contents: [
+        {
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image,
           },
-          {
-            text: prompt,
-          },
-        ],
-      },
-      config: {
-        imageConfig: {
-          imageSize: "2K"
-        }
-      }
+        },
+        {
+          text: prompt,
+        },
+      ],
     });
 
     // Extract image from response
-    // The response structure for image generation/editing usually contains inlineData in the parts
     const parts = response.candidates?.[0]?.content?.parts;
-    
+
     if (!parts) {
       throw new Error("No content generated");
     }
 
     let generatedBase64 = '';
-    
+
     // Find the image part
     for (const part of parts) {
       if (part.inlineData && part.inlineData.data) {
