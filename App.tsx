@@ -147,25 +147,37 @@ const App: React.FC = () => {
       console.error(err);
 
       const errorMessage = err.message || JSON.stringify(err);
-      if (
-        errorMessage.includes('403') ||
-        errorMessage.includes('PERMISSION_DENIED') ||
-        errorMessage.includes('API Key is missing') ||
-        errorMessage.includes('unauthenticated') ||
-        errorMessage.includes('resource-exhausted')
-      ) {
+
+      // Handle specific error codes from geminiService
+      if (errorMessage.includes('INVALID_API_KEY')) {
+        setError("Invalid API Key. Please check your key and try again.");
         if (authMode === AuthMode.BYOK) {
-          setError("Invalid API Key. Please check your key.");
-          setAuthMode(null); // Reset to allow re-entry
+          setAuthMode(null);
           sessionStorage.removeItem('civic_vision_key');
-        } else if (errorMessage.includes('resource-exhausted')) {
+        }
+      } else if (errorMessage.includes('PERMISSION_DENIED') || errorMessage.includes('MODEL_NOT_AVAILABLE')) {
+        setError("Model access denied. Please enable billing in Google AI Studio: aistudio.google.com");
+        if (authMode === AuthMode.BYOK) {
+          setAuthMode(null);
+          sessionStorage.removeItem('civic_vision_key');
+        }
+      } else if (errorMessage.includes('QUOTA_EXCEEDED') || errorMessage.includes('resource-exhausted')) {
+        if (authMode === AuthMode.BYOK) {
+          setError("Daily quota exceeded (~2 images/day free). Try again tomorrow or enable billing.");
+        } else {
           setError("Insufficient credits. Please purchase more credits.");
           setShowPricing(true);
-        } else {
-          setError("Service temporarily unavailable. Please try using your own API Key.");
+        }
+      } else if (errorMessage.includes('CONTENT_BLOCKED')) {
+        setError("Image blocked by safety filters. Please try a different image.");
+      } else if (errorMessage.includes('403') || errorMessage.includes('unauthenticated')) {
+        setError("API Key authentication failed. Please check your key.");
+        if (authMode === AuthMode.BYOK) {
+          setAuthMode(null);
+          sessionStorage.removeItem('civic_vision_key');
         }
       } else {
-        setError("Something went wrong while generating the image. Please try again.");
+        setError("Something went wrong. Please try again or use a different image.");
       }
       setAppState(AppState.READY);
     }

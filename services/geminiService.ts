@@ -71,8 +71,33 @@ export const generateIdealImage = async (
     }
 
     return generatedBase64;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini API Error:", error);
+
+    // Parse error message for better user feedback
+    const errorMessage = error?.message || error?.toString() || '';
+    const status = error?.status || error?.httpStatus || '';
+
+    if (errorMessage.includes('API_KEY_INVALID') || errorMessage.includes('API key not valid')) {
+      throw new Error('INVALID_API_KEY: Your API key is invalid. Please check and try again.');
+    }
+
+    if (errorMessage.includes('PERMISSION_DENIED') || status === 403) {
+      throw new Error('PERMISSION_DENIED: Your API key does not have access to this model. Try enabling billing in Google AI Studio.');
+    }
+
+    if (errorMessage.includes('RESOURCE_EXHAUSTED') || errorMessage.includes('quota') || status === 429) {
+      throw new Error('QUOTA_EXCEEDED: Daily quota exceeded. Free tier allows ~2 images/day. Try again tomorrow or enable billing.');
+    }
+
+    if (errorMessage.includes('model') && errorMessage.includes('not found')) {
+      throw new Error('MODEL_NOT_AVAILABLE: The image generation model is not available for your account. Enable billing in Google AI Studio.');
+    }
+
+    if (errorMessage.includes('SAFETY') || errorMessage.includes('blocked')) {
+      throw new Error('CONTENT_BLOCKED: The image was blocked by safety filters. Try a different image.');
+    }
+
     throw error;
   }
 };
