@@ -11,7 +11,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
     const { signInWithGoogle } = useAuth();
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-900 p-3 md:p-6 relative overflow-hidden font-sans">
+        <div className="flex h-[100dvh] items-start md:items-center justify-center bg-slate-900 p-3 md:p-6 pt-16 md:pt-6 relative overflow-y-auto font-sans">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 z-0"></div>
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-0 pointer-events-none mix-blend-overlay"></div>
 
