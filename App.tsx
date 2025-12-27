@@ -440,6 +440,39 @@ const App: React.FC = () => {
           }}
         />
       )}
+
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 z-30 bg-slate-900/80 backdrop-blur-sm border-t border-slate-800 py-2 px-3 md:px-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[10px] md:text-xs text-slate-500">
+          <span className="flex items-center gap-1">
+            Made with <span className="text-red-400">♥</span> by{' '}
+            <a
+              href="https://vatsal28.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 hover:underline transition-colors"
+            >
+              Vatsal Mishra
+            </a>
+          </span>
+          <span className="hidden sm:inline text-slate-700">|</span>
+          <span>© 2025 CivicVision</span>
+          <span className="hidden sm:inline text-slate-700">|</span>
+          <a href="#" className="hover:text-slate-400 transition-colors">Privacy</a>
+          <span className="hidden sm:inline text-slate-700">|</span>
+          <span className="flex items-center gap-1">
+            Powered by{' '}
+            <a
+              href="https://ai.google.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            >
+              Google Gemini
+            </a>
+          </span>
+        </div>
+      </footer>
     </div>
   );
 };
