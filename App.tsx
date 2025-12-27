@@ -9,6 +9,7 @@ import { createCompositeImage } from './utils/imageUtils';
 import { AppState, AuthMode } from './types';
 import { FILTERS } from './constants';
 import { useAuth } from './contexts/AuthContext';
+import * as analytics from './services/analyticsService';
 
 const App: React.FC = () => {
   const { user, credits, loading, signInWithGoogle, signOut } = useAuth();
@@ -37,6 +38,7 @@ const App: React.FC = () => {
   // Auth Handlers
   const handleSelectAuthMode = (mode: AuthMode) => {
     setAuthMode(mode);
+    analytics.trackAuthModeSelected(mode === AuthMode.GUEST ? 'guest' : 'byok');
   };
 
   const handleManualKeySubmit = (e: React.FormEvent) => {
@@ -46,6 +48,7 @@ const App: React.FC = () => {
       setUserApiKey(input.trim());
       setAuthMode(AuthMode.BYOK);
       sessionStorage.setItem('civic_vision_key', input.trim());
+      analytics.trackAuthModeSelected('byok');
     }
   };
 
@@ -67,6 +70,7 @@ const App: React.FC = () => {
     setOriginalImage(base64);
     setAppState(AppState.READY);
     setError(null);
+    analytics.trackImageUploaded();
   };
 
   const handleToggleFilter = (id: string) => {
@@ -101,12 +105,17 @@ const App: React.FC = () => {
     if (authMode === AuthMode.GUEST) {
       if (credits <= 0) {
         setShowPricing(true);
+        analytics.trackCreditsExhausted();
         return;
       }
     }
 
     setAppState(AppState.GENERATING);
     setError(null);
+
+    const authModeStr = authMode === AuthMode.GUEST ? 'guest' : 'byok';
+    analytics.trackGenerateStarted(selectedFilters.length, authModeStr);
+    analytics.trackFiltersSelected(selectedFilters, selectedFilters.length);
 
     try {
       const base64Data = originalImage.split(',')[1];
@@ -143,10 +152,24 @@ const App: React.FC = () => {
 
       setGeneratedImage(`data:image/jpeg;base64,${resultBase64}`);
       setAppState(AppState.COMPARING);
+      analytics.trackGenerateSuccess(selectedFilters.length, authModeStr);
     } catch (err: any) {
       console.error(err);
 
       const errorMessage = err.message || JSON.stringify(err);
+
+      // Track error type for analytics
+      let errorType = 'unknown';
+      if (errorMessage.includes('INVALID_API_KEY')) {
+        errorType = 'invalid_key';
+      } else if (errorMessage.includes('PERMISSION_DENIED') || errorMessage.includes('MODEL_NOT_AVAILABLE')) {
+        errorType = 'permission_denied';
+      } else if (errorMessage.includes('QUOTA_EXCEEDED') || errorMessage.includes('resource-exhausted')) {
+        errorType = 'quota_exceeded';
+      } else if (errorMessage.includes('CONTENT_BLOCKED')) {
+        errorType = 'content_blocked';
+      }
+      analytics.trackGenerateError(errorType, authModeStr);
 
       // Handle specific error codes from geminiService
       if (errorMessage.includes('INVALID_API_KEY')) {
@@ -200,6 +223,7 @@ const App: React.FC = () => {
       a.download = 'civic-vision-transformation.jpg';
       a.click();
       URL.revokeObjectURL(url);
+      analytics.trackImageDownloaded();
     }
   };
 
@@ -266,7 +290,10 @@ const App: React.FC = () => {
           {authMode === AuthMode.GUEST && (
             <>
               <button
-                onClick={() => setShowPricing(true)}
+                onClick={() => {
+                  setShowPricing(true);
+                  analytics.trackPricingModalOpened(credits);
+                }}
                 className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-lg hover:shadow-cyan-500/30 transition-all transform hover:scale-105 whitespace-nowrap"
               >
                 <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
