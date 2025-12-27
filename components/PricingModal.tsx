@@ -41,24 +41,24 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
         </div>
 
         {/* Prominent Disclaimer Banner */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-6 border-b-4 border-amber-600">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 border-b-4 border-amber-600">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-white text-xl font-bold mb-2">
+              <p className="text-white text-lg font-bold mb-1">
                 ⚠️ Payment Integration In Progress
               </p>
-              <p className="text-white/95 text-base leading-relaxed mb-4">
-                We're currently setting up secure payment processing. Payments are temporarily disabled.
+              <p className="text-white/95 text-sm leading-relaxed mb-3">
+                We're setting up secure payment processing. Payments are temporarily disabled.
               </p>
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border-2 border-white/40">
-                <p className="text-white text-base font-bold mb-2">✨ Use BYOK Mode Instead</p>
-                <p className="text-white/95 text-sm leading-relaxed">
-                  Close this modal and select <strong className="font-bold">"Use Your Own Key"</strong> on the home screen. Use your own Gemini API key for <strong className="font-bold">unlimited transformations at no cost</strong>.
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 border-2 border-white/40">
+                <p className="text-white text-sm font-bold mb-1">✨ Use BYOK Mode Instead</p>
+                <p className="text-white/95 text-xs leading-relaxed">
+                  Close this modal and select <strong>"Use Your Own Key"</strong> on the home screen for unlimited transformations at no cost.
                 </p>
               </div>
             </div>
