@@ -250,16 +250,17 @@ const App: React.FC = () => {
       <main className="flex-1 relative flex flex-col h-full overflow-hidden z-10">
 
         {/* Top Bar: Credits or Logout */}
-        <div className="absolute top-4 right-4 z-40 flex items-center gap-3">
+        <div className="absolute top-2 md:top-4 right-2 md:right-4 z-40 flex items-center gap-1.5 md:gap-3 flex-wrap justify-end max-w-[calc(100vw-1rem)]">
           {authMode === AuthMode.GUEST && (
             <>
               <button
                 onClick={() => setShowPricing(true)}
-                className="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg hover:shadow-cyan-500/30 transition-all transform hover:scale-105"
+                className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-lg hover:shadow-cyan-500/30 transition-all transform hover:scale-105 whitespace-nowrap"
               >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                {credits} Credits
-                <span className="bg-white/20 px-1.5 rounded text-[10px] ml-1">TOP UP</span>
+                <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <span className="hidden sm:inline">{credits} Credits</span>
+                <span className="sm:hidden">{credits}</span>
+                <span className="bg-white/20 px-1 md:px-1.5 rounded text-[8px] md:text-[10px]">TOP UP</span>
               </button>
               {user && (
                 <button
@@ -270,13 +271,14 @@ const App: React.FC = () => {
                     setGeneratedImage(null);
                     setAppState(AppState.IDLE);
                   }}
-                  className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg transition-all"
+                  className="flex items-center gap-1 md:gap-2 bg-slate-700 hover:bg-slate-600 text-white text-[10px] md:text-xs font-medium px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-lg transition-all whitespace-nowrap"
                   title="Sign out"
                 >
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
-                  Sign Out
+                  <span className="hidden sm:inline">Sign Out</span>
+                  <span className="sm:hidden">Out</span>
                 </button>
               )}
             </>
