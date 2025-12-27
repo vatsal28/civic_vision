@@ -62,12 +62,12 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       </div>
 
       {/* Filters List Wrapper */}
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-1 min-h-[200px] md:min-h-0">
         <div
           ref={scrollContainerRef}
-          className="absolute inset-0 overflow-y-auto custom-scrollbar p-4 space-y-1 pb-16"
+          className="absolute inset-0 overflow-y-auto custom-scrollbar p-3 md:p-4 space-y-1 pb-12 md:pb-16"
         >
-          <div className="flex justify-between items-center mb-3 px-2">
+          <div className="flex justify-between items-center mb-2 md:mb-3 px-1 md:px-2">
             <h2 className="text-xs uppercase tracking-wider text-slate-500 font-bold">Select Improvements</h2>
             {showScrollHint && (
               <span className="text-[10px] text-cyan-400 font-medium animate-pulse">
