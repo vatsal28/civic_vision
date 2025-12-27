@@ -6,7 +6,7 @@ export const createCompositeImage = (
   return new Promise((resolve) => {
     const img1 = new Image();
     const img2 = new Image();
-    
+
     let loaded = 0;
     const onLoaded = () => {
       loaded++;
@@ -19,13 +19,13 @@ export const createCompositeImage = (
     img2.onload = onLoaded;
     img1.crossOrigin = "anonymous";
     img2.crossOrigin = "anonymous";
-    
+
     img1.src = originalBase64;
     img2.src = generatedBase64;
 
     const draw = () => {
       const canvas = document.createElement('canvas');
-      
+
       // Calculate standardized dimensions
       // Use the original image aspect ratio, but cap height to 2048px for performance/sharing
       const MAX_HEIGHT = 2048;
@@ -37,7 +37,7 @@ export const createCompositeImage = (
         height = MAX_HEIGHT;
         width = Math.round(width * ratio);
       }
-      
+
       // Side-by-side canvas
       canvas.width = width * 2;
       canvas.height = height;
@@ -58,7 +58,7 @@ export const createCompositeImage = (
 
       // Gradient overlays for text readability
       const gradientHeight = height * 0.15;
-      
+
       // Top gradient
       const topGrad = ctx.createLinearGradient(0, 0, 0, gradientHeight);
       topGrad.addColorStop(0, "rgba(0,0,0,0.6)");
@@ -76,9 +76,9 @@ export const createCompositeImage = (
       // Labels configuration
       const fontSize = Math.max(24, height / 25);
       const padding = Math.max(20, width / 40);
-      
+
       ctx.font = `bold ${fontSize}px sans-serif`;
-      
+
       // BEFORE Label (Top Left)
       ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
       ctx.shadowColor = "rgba(0,0,0,0.5)";
@@ -94,7 +94,7 @@ export const createCompositeImage = (
       ctx.fillStyle = "rgba(255,255,255,0.7)";
       ctx.textAlign = "center";
       ctx.shadowBlur = 0;
-      ctx.fillText("Generated with CivicVision AI", canvas.width / 2, height - (padding / 2));
+      ctx.fillText("Transformed with CivicVision AI", canvas.width / 2, height - (padding / 2));
 
       // Divider line
       ctx.strokeStyle = "rgba(255,255,255,0.3)";
