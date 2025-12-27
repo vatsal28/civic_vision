@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { ImageUploader } from './components/ImageUploader';
 import { FilterControls } from './components/FilterControls';
 import { ComparisonSlider } from './components/ComparisonSlider';
@@ -473,6 +474,7 @@ const App: React.FC = () => {
           </span>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 };
