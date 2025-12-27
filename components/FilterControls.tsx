@@ -46,7 +46,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col h-auto max-h-[60vh] md:max-h-full md:h-full w-full md:w-80 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700 shadow-2xl z-20">
+    <div className="flex flex-col h-auto md:h-full w-full md:w-80 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700 shadow-2xl z-20 overflow-hidden">
       {/* Header */}
       <div className="p-3 md:p-5 border-b border-slate-800 flex-shrink-0">
         <div className="flex items-center gap-2 md:gap-3 mb-1">
@@ -116,16 +116,16 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
       </div>
 
-      {/* Mobile Image Preview */}
+      {/* Mobile Image Preview - Compact */}
       {originalImage && (
-        <div className="md:hidden p-2 border-t border-slate-800 bg-slate-800/50 flex-shrink-0">
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-slate-700">
+        <div className="md:hidden p-1.5 border-t border-slate-800 bg-slate-800/50 flex-shrink-0">
+          <div className="relative w-full h-16 rounded-lg overflow-hidden border border-slate-700">
             <img
               src={originalImage}
               alt="Preview"
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-slate-300">
+            <div className="absolute bottom-0.5 left-0.5 bg-black/60 backdrop-blur-sm px-1 py-0.5 rounded text-[7px] text-slate-300">
               Your Image
             </div>
           </div>
