@@ -27,6 +27,13 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
 
+  // Auto-set authMode to GUEST when user signs in
+  React.useEffect(() => {
+    if (user && !authMode) {
+      setAuthMode(AuthMode.GUEST);
+    }
+  }, [user, authMode]);
+
   // Auth Handlers
   const handleSelectAuthMode = (mode: AuthMode) => {
     setAuthMode(mode);

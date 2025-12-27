@@ -5,7 +5,7 @@ import {
     signOut as firebaseSignOut,
     onAuthStateChanged
 } from 'firebase/auth';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebase';
 
 interface AuthContextType {
@@ -25,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            console.log('Auth state changed:', firebaseUser?.email || 'No user');
             setUser(firebaseUser);
 
             if (firebaseUser) {
@@ -32,8 +33,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const userDocRef = doc(db, 'users', firebaseUser.uid);
                 const unsubscribeCredits = onSnapshot(userDocRef, (docSnap) => {
                     if (docSnap.exists()) {
-                        setCredits(docSnap.data().credits || 0);
+                        const userCredits = docSnap.data().credits || 0;
+                        console.log('Credits updated:', userCredits);
+                        setCredits(userCredits);
                     } else {
+                        console.log('User document does not exist yet');
                         setCredits(0);
                     }
                     setLoading(false);
@@ -51,9 +55,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-        } catch (error) {
+            console.log('Attempting popup sign-in...');
+            const result = await signInWithPopup(auth, googleProvider);
+            console.log('Sign-in successful:', result.user.email);
+        } catch (error: any) {
             console.error('Error signing in with Google:', error);
+            if (error.code === 'auth/popup-blocked') {
+                alert('Popup was blocked! Please allow popups for this site or disable your ad blocker.');
+            }
             throw error;
         }
     };
