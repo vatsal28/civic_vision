@@ -116,28 +116,12 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
       </div>
 
-      {/* Mobile Image Preview - Compact */}
-      {originalImage && (
-        <div className="md:hidden p-1.5 border-t border-slate-800 bg-slate-800/50 flex-shrink-0">
-          <div className="relative w-full h-16 rounded-lg overflow-hidden border border-slate-700">
-            <img
-              src={originalImage}
-              alt="Preview"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-0.5 left-0.5 bg-black/60 backdrop-blur-sm px-1 py-0.5 rounded text-[7px] text-slate-300">
-              Your Image
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Footer Actions */}
-      <div className="p-3 md:p-4 border-t border-slate-800 bg-slate-900/95 space-y-2 md:space-y-3 flex-shrink-0 relative z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+      <div className="p-2 md:p-4 border-t border-slate-800 bg-slate-900/95 space-y-1.5 md:space-y-3 flex-shrink-0 relative z-30">
         <button
           onClick={onGenerate}
           disabled={isGenerating || selectedFilters.length === 0}
-          className={`w-full py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold text-slate-900 shadow-lg transition-all transform flex items-center justify-center gap-2 group relative overflow-hidden text-sm md:text-base ${isGenerating || selectedFilters.length === 0
+          className={`w-full py-2 md:py-3 px-3 md:px-4 rounded-xl font-bold text-slate-900 shadow-lg transition-all transform flex items-center justify-center gap-2 group relative overflow-hidden text-sm md:text-base ${isGenerating || selectedFilters.length === 0
             ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
             : 'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 hover:shadow-cyan-500/25'
             }`}
@@ -160,11 +144,27 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         <button
           onClick={onReset}
           disabled={isGenerating}
-          className="w-full py-1.5 md:py-2 px-3 md:px-4 rounded-lg font-medium text-slate-500 hover:text-white hover:underline decoration-slate-500 underline-offset-4 transition-all text-xs"
+          className="w-full py-1 md:py-2 px-3 md:px-4 rounded-lg font-medium text-slate-500 hover:text-white hover:underline decoration-slate-500 underline-offset-4 transition-all text-xs"
         >
           Reset All
         </button>
       </div>
+
+      {/* Mobile Image Preview - At Bottom */}
+      {originalImage && (
+        <div className="md:hidden p-2 border-t border-slate-800 bg-slate-800/30 flex-shrink-0">
+          <div className="relative w-full h-28 rounded-lg overflow-hidden border border-slate-700 shadow-lg">
+            <img
+              src={originalImage}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-1 left-1 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-slate-200 font-medium">
+              Your Image
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
