@@ -254,7 +254,7 @@ const App: React.FC = () => {
     );
   }
 
-  if (!user && !authMode) {
+  if (!authMode) {
     return <AuthScreen onSelectAuthMode={handleSelectAuthMode} onManualKeySubmit={handleManualKeySubmit} />;
   }
 
