@@ -62,7 +62,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       </div>
 
       {/* Filters List Wrapper */}
-      <div className="relative flex-1 min-h-[200px] md:min-h-0">
+      <div className="relative flex-1 min-h-[250px] md:min-h-0">
         <div
           ref={scrollContainerRef}
           className="absolute inset-0 overflow-y-auto custom-scrollbar p-3 md:p-4 space-y-1 pb-12 md:pb-16"
@@ -152,8 +152,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
       {/* Mobile Image Preview - At Bottom */}
       {originalImage && (
-        <div className="md:hidden p-2 border-t border-slate-800 bg-slate-800/30 flex-shrink-0">
-          <div className="relative w-full h-28 rounded-lg overflow-hidden border border-slate-700 shadow-lg">
+        <div className="md:hidden p-2 pb-3 border-t border-slate-800 bg-slate-800/30 flex-shrink-0 flex-grow">
+          <div className="relative w-full h-44 rounded-lg overflow-hidden border border-slate-700 shadow-lg">
             <img
               src={originalImage}
               alt="Preview"
