@@ -283,13 +283,14 @@ exports.createRazorpayOrder = functions
             const order = await razorpay.orders.create({
                 amount: amount * 100, // Convert to paise (₹49 = 4900 paise)
                 currency: 'INR',
-                receipt: `order_${userId}_${Date.now()}`,
+                receipt: `rcpt_${Date.now()}`, // Keep under 40 chars
                 notes: {
                     userId,
                     packageId,
                     credits,
                 }
             });
+
 
             console.log(`Created Razorpay order: ${order.id} for user ${userId}`);
 
