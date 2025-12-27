@@ -76,7 +76,7 @@ const App: React.FC = () => {
         await window.aistudio.openSelectKey();
         // In AI Studio context, we treat this as BYOK but the key is in env
         setAuthMode(AuthMode.BYOK);
-        setUserApiKey(process.env.API_KEY || '');
+        setUserApiKey(import.meta.env.VITE_GEMINI_API_KEY || '');
       } catch (e) {
         console.error("Failed to select key", e);
       }
@@ -136,7 +136,7 @@ const App: React.FC = () => {
       // Determine which key to use
       // If GUEST: Use the app's env key (Owner's key)
       // If BYOK: Use the user's input key
-      const keyToUse = authMode === AuthMode.BYOK ? userApiKey : process.env.API_KEY;
+      const keyToUse = authMode === AuthMode.BYOK ? userApiKey : import.meta.env.VITE_GEMINI_API_KEY;
 
       if (!keyToUse) {
         throw new Error("API Key is missing configuration.");
