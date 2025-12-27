@@ -304,11 +304,11 @@ const App: React.FC = () => {
         )}
 
         {/* Content Container */}
-        <div className="flex-1 w-full h-full p-3 md:p-12 flex flex-col items-center justify-center relative min-h-0 overflow-y-auto">
+        <div className="flex-1 w-full h-full p-3 md:p-12 pt-12 md:pt-12 flex flex-col items-center justify-start md:justify-center relative min-h-0 overflow-y-auto">
 
           {appState === AppState.IDLE && (
-            <div className="w-full max-w-6xl mx-auto flex flex-col items-center animate-fade-in px-2">
-              <div className="text-center mb-6 md:mb-10 space-y-2 md:space-y-4">
+            <div className="w-full max-w-6xl mx-auto flex flex-col items-center animate-fade-in px-2 mt-4 md:mt-0">
+              <div className="text-center mb-4 md:mb-10 space-y-2 md:space-y-4">
                 <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tight drop-shadow-sm">
                   Transform Cityscapes
                 </h1>
