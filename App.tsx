@@ -11,6 +11,7 @@ import { AppState, AuthMode } from './types';
 import { FILTERS } from './constants';
 import { useAuth } from './contexts/AuthContext';
 import * as analytics from './services/analyticsService';
+import { usePullToRefresh } from './hooks/usePullToRefresh';
 
 const App: React.FC = () => {
   const { user, credits, loading, signInWithGoogle, signOut } = useAuth();
@@ -28,6 +29,9 @@ const App: React.FC = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
+
+  // Pull to refresh for mobile
+  const { isPulling, pullDistance, progress } = usePullToRefresh();
 
   // Auto-set authMode to GUEST when user signs in
   React.useEffect(() => {
@@ -266,6 +270,30 @@ const App: React.FC = () => {
           onClose={() => setShowPricing(false)}
           onPurchase={handlePurchase}
         />
+      )}
+
+      {/* Pull to Refresh Indicator */}
+      {isPulling && (
+        <div
+          className="fixed top-0 left-0 right-0 flex justify-center items-center z-50 pointer-events-none md:hidden"
+          style={{ height: `${pullDistance}px`, maxHeight: '100px' }}
+        >
+          <div
+            className={`w-8 h-8 rounded-full border-2 border-cyan-400 flex items-center justify-center bg-slate-800 shadow-lg transition-transform ${progress >= 1 ? 'bg-cyan-500 border-cyan-500' : ''
+              }`}
+            style={{ transform: `rotate(${progress * 360}deg)` }}
+          >
+            {progress >= 1 ? (
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Sidebar Controls - Full screen on mobile when visible */}
