@@ -392,8 +392,8 @@ const App: React.FC = () => {
           )}
 
           {appState === AppState.COMPARING && originalImage && generatedImage && (
-            <div className="w-full max-w-6xl h-full flex flex-col animate-fade-in p-2 md:p-4">
-              <div className="flex-1 relative rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(6,182,212,0.1)] border border-slate-700/50 bg-slate-900/50 min-h-0">
+            <div className="w-full max-w-6xl flex flex-col animate-fade-in p-2 md:p-4 pb-16 md:pb-4">
+              <div className="relative rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(6,182,212,0.1)] border border-slate-700/50 bg-slate-900/50 h-[50vh] md:h-[60vh]">
                 <ComparisonSlider
                   originalImage={originalImage}
                   generatedImage={generatedImage}
