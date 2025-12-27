@@ -1,20 +1,65 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+<img width="1200" height="475" alt="CivicVision Banner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
 </div>
 
-# Run and deploy your AI Studio app
+# CivicVision - Urban Beautifier
 
-This contains everything you need to run your app locally.
+An AI-powered web application that visualizes clean, maintained, and beautified versions of urban environments by removing trash, cleaning structures, and adding greenery.
 
-View your app in AI Studio: https://ai.studio/apps/drive/16d-OsUtxvSmQPS7HrwPWVNVn31bjF5Zi
+## ✨ Features
 
-## Run Locally
+- 🏙️ **Urban Transformation**: Upload photos of cityscapes and see them transformed
+- 🗑️ **Smart Cleanup**: Remove trash, litter, and debris
+- 🎨 **Building Restoration**: Apply fresh paint and repair damaged structures
+- 🌳 **Green Spaces**: Add manicured lawns and greenery to barren areas
+- 🚴 **European Infrastructure**: Optional bike lanes and modern street design
+- 🔄 **Interactive Comparison**: Side-by-side slider to compare before/after
 
-**Prerequisites:**  Node.js
+## 🚀 Getting Started
 
+**Prerequisites:** Node.js
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Set up your API key:**
+   - Create a `.env.local` file in the project root
+   - Add your Gemini API key: `GEMINI_API_KEY=your_api_key_here`
+   - Get a free API key at [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+3. **Run the app:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in browser:**
+   Navigate to `http://localhost:3000`
+
+## 🎯 Usage
+
+1. Choose authentication mode (Free Trial or Bring Your Own API Key)
+2. Upload an urban photo
+3. Select transformation filters (trash removal, paint refresh, greenery, etc.)
+4. Click "Transform Image" and wait for AI processing
+5. Compare results with the interactive slider
+6. Share or download your transformed image
+
+## 🛠️ Built With
+
+- **React 19** - UI Framework
+- **TypeScript** - Type Safety
+- **Vite** - Build Tool
+- **Tailwind CSS** - Styling
+- **Google Gemini AI** - Image Generation & Editing
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
