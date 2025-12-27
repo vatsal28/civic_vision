@@ -281,6 +281,7 @@ const App: React.FC = () => {
           onGenerate={handleGenerate}
           isGenerating={appState === AppState.GENERATING}
           onReset={handleReset}
+          originalImage={originalImage}
         />
       </div>
 

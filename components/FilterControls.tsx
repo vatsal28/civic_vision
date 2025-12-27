@@ -7,6 +7,7 @@ interface FilterControlsProps {
   onGenerate: () => void;
   isGenerating: boolean;
   onReset: () => void;
+  originalImage?: string | null;
 }
 
 export const FilterControls: React.FC<FilterControlsProps> = ({
@@ -14,7 +15,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   onToggleFilter,
   onGenerate,
   isGenerating,
-  onReset
+  onReset,
+  originalImage
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollHint, setShowScrollHint] = useState(true);
@@ -44,7 +46,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col h-full w-full md:w-80 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700 shadow-2xl z-20">
+    <div className="flex flex-col h-auto max-h-[60vh] md:max-h-full md:h-full w-full md:w-80 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700 shadow-2xl z-20">
       {/* Header */}
       <div className="p-3 md:p-5 border-b border-slate-800 flex-shrink-0">
         <div className="flex items-center gap-2 md:gap-3 mb-1">
@@ -114,14 +116,30 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
       </div>
 
+      {/* Mobile Image Preview */}
+      {originalImage && (
+        <div className="md:hidden p-2 border-t border-slate-800 bg-slate-800/50 flex-shrink-0">
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-slate-700">
+            <img
+              src={originalImage}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-slate-300">
+              Your Image
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer Actions */}
       <div className="p-3 md:p-4 border-t border-slate-800 bg-slate-900/95 space-y-2 md:space-y-3 flex-shrink-0 relative z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
         <button
           onClick={onGenerate}
           disabled={isGenerating || selectedFilters.length === 0}
           className={`w-full py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold text-slate-900 shadow-lg transition-all transform flex items-center justify-center gap-2 group relative overflow-hidden text-sm md:text-base ${isGenerating || selectedFilters.length === 0
-              ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-              : 'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 hover:shadow-cyan-500/25'
+            ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+            : 'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 hover:shadow-cyan-500/25'
             }`}
         >
           {isGenerating ? (
