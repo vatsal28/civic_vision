@@ -235,10 +235,179 @@ exports.addCredits = functions.https.onCall(async (data, context) => {
             message: `Successfully added ${amount} credits`,
         };
     } catch (error) {
-        console.error('Error adding credits:', error);
         throw new functions.https.HttpsError(
             'internal',
             'Failed to add credits: ' + error.message
         );
     }
 });
+
+/**
+ * Cloud Function: createRazorpayOrder
+ * Creates a Razorpay order for credit purchase
+ */
+exports.createRazorpayOrder = functions
+    .runWith({
+        secrets: ['RAZORPAY_KEY_SECRET']
+    })
+    .https.onCall(async (data, context) => {
+        // Verify authentication
+        if (!context.auth) {
+            throw new functions.https.HttpsError(
+                'unauthenticated',
+                'You must be signed in to purchase credits'
+            );
+        }
+
+        const userId = context.auth.uid;
+        const { packageId, amount, credits } = data;
+
+        // Validate input
+        if (!packageId || !amount || !credits) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Missing required fields: packageId, amount, credits'
+            );
+        }
+
+        try {
+            const { initializeRazorpay } = require('./razorpay-utils');
+
+            // Initialize Razorpay (Note: In production, use live keys)
+            const razorpay = initializeRazorpay(
+                'rzp_test_Rwc2KsHXZMjLuQ',  // Key ID (can be public)
+                process.env.RAZORPAY_KEY_SECRET  // Secret key (from Firebase secret)
+            );
+
+            // Create order
+            const order = await razorpay.orders.create({
+                amount: amount * 100, // Convert to paise (₹49 = 4900 paise)
+                currency: 'INR',
+                receipt: `order_${userId}_${Date.now()}`,
+                notes: {
+                    userId,
+                    packageId,
+                    credits,
+                }
+            });
+
+            console.log(`Created Razorpay order: ${order.id} for user ${userId}`);
+
+            return {
+                success: true,
+                orderId: order.id,
+                amount: order.amount,
+                currency: order.currency,
+                keyId: 'rzp_test_Rwc2KsHXZMjLuQ'  // Needed for client-side checkout
+            };
+
+        } catch (error) {
+            console.error('Error creating Razorpay order:', error);
+            throw new functions.https.HttpsError(
+                'internal',
+                'Failed to create payment order: ' + error.message
+            );
+        }
+    });
+
+/**
+ * Cloud Function: razorpayWebhook
+ * Receives webhook notifications from Razorpay
+ * Verifies signature and adds credits on successful payment
+ */
+exports.razorpayWebhook = functions
+    .runWith({
+        secrets: ['RAZORPAY_WEBHOOK_SECRET']
+    })
+    .https.onRequest(async (req, res) => {
+        try {
+            const { verifyWebhookSignature } = require('./razorpay-utils');
+
+            const signature = req.headers['x-razorpay-signature'];
+            const payload = req.body;
+
+            // Verify webhook signature
+            const isValid = verifyWebhookSignature(
+                payload,
+                signature,
+                process.env.RAZORPAY_WEBHOOK_SECRET
+            );
+
+            if (!isValid) {
+                console.error('Invalid webhook signature');
+                return res.status(400).send('Invalid signature');
+            }
+
+            const event = payload.event;
+            console.log(`Received Razorpay webhook: ${event}`);
+
+            // Handle payment.captured event
+            if (event === 'payment.captured') {
+                const paymentEntity = payload.payload.payment.entity;
+                const orderId = paymentEntity.order_id;
+                const paymentId = paymentEntity.id;
+                const amount = paymentEntity.amount; // in paise
+
+                // Get order notes to find userId and credits
+                const { initializeRazorpay } = require('./razorpay-utils');
+                const razorpay = initializeRazorpay(
+                    'rzp_test_Rwc2KsHXZMjLuQ',
+                    process.env.RAZORPAY_KEY_SECRET
+                );
+
+                const order = await razorpay.orders.fetch(orderId);
+                const { userId, credits } = order.notes;
+
+                if (!userId || !credits) {
+                    console.error('Missing userId or credits in order notes');
+                    return res.status(400).send('Invalid order data');
+                }
+
+                // Add credits to user using transaction
+                const userRef = admin.firestore().collection('users').doc(userId);
+
+                // Check if payment already processed (prevent double credit)
+                const paymentsRef = admin.firestore().collection('payments');
+                const existingPayment = await paymentsRef.doc(paymentId).get();
+
+                if (existingPayment.exists) {
+                    console.log(`Payment ${paymentId} already processed`);
+                    return res.status(200).send('OK');
+                }
+
+                // Add credits and record payment
+                await admin.firestore().runTransaction(async (transaction) => {
+                    const userDoc = await transaction.get(userRef);
+
+                    if (!userDoc.exists) {
+                        throw new Error('User not found');
+                    }
+
+                    // Update user credits
+                    transaction.update(userRef, {
+                        credits: admin.firestore.FieldValue.increment(parseInt(credits)),
+                        lastPurchaseAt: admin.firestore.FieldValue.serverTimestamp(),
+                    });
+
+                    // Record payment
+                    transaction.set(paymentsRef.doc(paymentId), {
+                        userId,
+                        orderId,
+                        paymentId,
+                        amount: amount / 100, // Convert to rupees
+                        credits: parseInt(credits),
+                        status: 'captured',
+                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    });
+                });
+
+                console.log(`Added ${credits} credits to user ${userId} for payment ${paymentId}`);
+            }
+
+            res.status(200).send('OK');
+
+        } catch (error) {
+            console.error('Error processing webhook:', error);
+            res.status(500).send('Internal error');
+        }
+    });
