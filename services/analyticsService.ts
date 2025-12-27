@@ -1,4 +1,4 @@
-import { logEvent, Analytics } from 'firebase/analytics';
+import { logEvent, Analytics, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 import { analytics } from '../firebase';
 
 // Helper to safely log events (handles SSR and unsupported browsers)
@@ -7,6 +7,9 @@ const safeLogEvent = async (eventName: string, params?: Record<string, any>) => 
         const analyticsInstance = await analytics;
         if (analyticsInstance) {
             logEvent(analyticsInstance as Analytics, eventName, params);
+            console.log(`📊 Analytics: ${eventName}`, params || '');
+        } else {
+            console.warn('📊 Analytics not available');
         }
     } catch (error) {
         console.warn('Analytics event failed:', eventName, error);
