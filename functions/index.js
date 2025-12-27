@@ -16,7 +16,7 @@ const getGeminiClient = () => {
 /**
  * Cloud Function: createUserDocument
  * Triggered when a new user signs up via Firebase Auth
- * Creates a user document in Firestore with 1 free credit
+ * Creates a user document in Firestore with 3 free credits
  */
 exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
     const { uid, email, displayName, photoURL } = user;
@@ -26,12 +26,12 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
             email: email || null,
             displayName: displayName || null,
             photoURL: photoURL || null,
-            credits: 1, // 1 free credit for new users
+            credits: 3, // 3 free credits for new users
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        console.log(`Created user document for ${uid}`);
+        console.log(`Created user document for ${uid} with 3 free credits`);
     } catch (error) {
         console.error('Error creating user document:', error);
     }
