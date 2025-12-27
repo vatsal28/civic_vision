@@ -354,9 +354,12 @@ const App: React.FC = () => {
           )}
 
           <button
-            onClick={() => {
+            onClick={async () => {
+              await signOut();
               setAuthMode(null);
               setUserApiKey('');
+              setOriginalImage(null);
+              setGeneratedImage(null);
               setAppState(AppState.IDLE);
               sessionStorage.removeItem('civic_vision_key');
             }}
