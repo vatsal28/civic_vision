@@ -68,7 +68,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
           BEFORE
         </div>
         <div className="absolute top-3 md:top-6 right-3 md:right-6 bg-cyan-500/80 text-white px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-wide backdrop-blur-md border border-cyan-400/20 pointer-events-none select-none shadow-[0_0_10px_rgba(6,182,212,0.3)]">
-          CIVIC VISION
+          FIX MY CITY
         </div>
 
         {/* Invisible Range Input for Interaction */}

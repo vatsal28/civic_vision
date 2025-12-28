@@ -1,4 +1,4 @@
-# CivicVision - Product Requirements Document (PRD)
+# Fix My City - Product Requirements Document (PRD)
 
 **Version:** 1.0  
 **Last Updated:** December 27, 2025  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-CivicVision is an AI-powered web application that transforms photos of urban areas into visualizations of cleaner, greener, and more aesthetically pleasing environments. Users upload photos of streets, buildings, or public spaces, and the app generates an idealized version using Google's Gemini AI.
+Fix My City is an AI-powered web application that transforms photos of urban areas into visualizations of cleaner, greener, and more aesthetically pleasing environments. Users upload photos of streets, buildings, or public spaces, and the app generates an idealized version using Google's Gemini AI.
 
 ### Mission
 > *"Visualize a cleaner, greener India"*

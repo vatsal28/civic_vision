@@ -53,11 +53,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                     // Draw second image
                     ctx.drawImage(img2, img1.width + 30, 60, img2.width, img2.height);
 
-                    // Add CivicVision branding at bottom
+                    // Add Fix My City branding at bottom
                     ctx.fillStyle = '#06b6d4';
                     ctx.font = 'bold 24px Inter, sans-serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText('CIVIC VISION', canvas.width / 2, canvas.height - 30);
+                    ctx.fillText('FIX MY CITY', canvas.width / 2, canvas.height - 30);
 
                     resolve(canvas.toDataURL('image/png'));
                 }
@@ -86,7 +86,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
             setDownloadedImage('civic-vision-transformation.png');
 
             // Share text
-            const shareText = 'I transformed this place with CivicVision. Check it out and transform your image here https://civic-vision-tawny.vercel.app/';
+            const shareText = 'I transformed this place with Fix My City. Check it out and transform your image here https://civic-vision-tawny.vercel.app/';
             const encodedText = encodeURIComponent(shareText);
 
             // Short delay to ensure download starts

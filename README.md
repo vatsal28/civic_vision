@@ -1,10 +1,10 @@
 <div align="center">
 
-<img width="1200" alt="CivicVision App Screenshot" src="./assets/app-screenshot.png" />
+<img width="1200" alt="Fix My City App Screenshot" src="./assets/app-screenshot.png" />
 
 </div>
 
-# CivicVision - Urban Beautifier
+# Fix My City - Urban Beautifier
 
 An AI-powered web application that visualizes clean, maintained, and beautified versions of urban environments by removing trash, cleaning structures, and adding greenery.
 

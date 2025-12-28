@@ -489,7 +489,7 @@ const App: React.FC = () => {
             </a>
           </span>
           <span className="hidden sm:inline text-slate-700">|</span>
-          <span>© 2025 CivicVision</span>
+          <span>© 2025 Fix My City</span>
           <span className="hidden sm:inline text-slate-700">|</span>
           <a href="#" className="hover:text-slate-400 transition-colors">Privacy</a>
           <span className="hidden sm:inline text-slate-700">|</span>

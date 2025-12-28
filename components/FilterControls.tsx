@@ -56,7 +56,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             </svg>
           </div>
           <h1 className="text-base md:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-            CivicVision
+            Fix My City
           </h1>
         </div>
       </div>

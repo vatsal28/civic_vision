@@ -87,14 +87,14 @@ export const createCompositeImage = (
 
       // AFTER Label (Top Right of second image)
       ctx.fillStyle = "#22d3ee"; // Cyan-400
-      ctx.fillText("CIVIC VISION", width + padding, padding + fontSize);
+      ctx.fillText("FIX MY CITY", width + padding, padding + fontSize);
 
       // Footer/Branding
       ctx.font = `${Math.max(16, height / 40)}px sans-serif`;
       ctx.fillStyle = "rgba(255,255,255,0.7)";
       ctx.textAlign = "center";
       ctx.shadowBlur = 0;
-      ctx.fillText("Transformed with CivicVision AI", canvas.width / 2, height - (padding / 2));
+      ctx.fillText("Transformed with Fix My City AI", canvas.width / 2, height - (padding / 2));
 
       // Divider line
       ctx.strokeStyle = "rgba(255,255,255,0.3)";
