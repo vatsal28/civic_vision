@@ -33,25 +33,45 @@ const App: React.FC = () => {
   const [isSharing, setIsSharing] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // Demo mode for Razorpay KYC review
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [demoCredits, setDemoCredits] = useState(3);
+
   // Pull to refresh for mobile
   const { isPulling, pullDistance, progress } = usePullToRefresh();
 
-  // Auto-set authMode to GUEST when user signs in
+  // Check for demo mode URL parameter (?demo=razorpay)
   React.useEffect(() => {
-    if (user && !authMode) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const demoParam = urlParams.get('demo');
+    if (demoParam === 'razorpay') {
+      setIsDemoMode(true);
       setAuthMode(AuthMode.GUEST);
-    }
-  }, [user, authMode]);
-
-  // Check if user needs onboarding (first time)
-  React.useEffect(() => {
-    if (user && authMode && !loading) {
-      const completed = localStorage.getItem('civic_vision_onboarding_complete');
+      // Show onboarding for demo users too
+      const completed = localStorage.getItem('civic_vision_demo_onboarding');
       if (!completed) {
         setShowOnboarding(true);
       }
     }
-  }, [user, authMode, loading]);
+  }, []);
+
+  // Auto-set authMode to GUEST when user signs in
+  React.useEffect(() => {
+    if (user && !authMode && !isDemoMode) {
+      setAuthMode(AuthMode.GUEST);
+    }
+  }, [user, authMode, isDemoMode]);
+
+  // Check if user needs onboarding (first time)
+  React.useEffect(() => {
+    if ((user || isDemoMode) && authMode && !loading) {
+      const storageKey = isDemoMode ? 'civic_vision_demo_onboarding' : 'civic_vision_onboarding_complete';
+      const completed = localStorage.getItem(storageKey);
+      if (!completed) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, authMode, loading, isDemoMode]);
 
   // Handle onboarding completion
   const handleOnboardingComplete = () => {
@@ -132,9 +152,10 @@ const App: React.FC = () => {
   const handleGenerate = async () => {
     if (!originalImage || selectedFilters.length === 0) return;
 
-    // Check Credits if in Guest Mode
+    // Check Credits if in Guest Mode (or Demo Mode)
     if (authMode === AuthMode.GUEST) {
-      if (credits <= 0) {
+      const currentCredits = isDemoMode ? demoCredits : credits;
+      if (currentCredits <= 0) {
         setShowPricing(true);
         analytics.trackCreditsExhausted();
         return;
@@ -154,7 +175,16 @@ const App: React.FC = () => {
 
       let resultBase64: string;
 
-      if (authMode === AuthMode.GUEST && user) {
+      if (isDemoMode) {
+        // DEMO MODE: Use BYOK API with env key for KYC reviewers
+        const keyToUse = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!keyToUse) {
+          throw new Error("Demo mode API Key is not configured.");
+        }
+        resultBase64 = await generateIdealImage(base64Data, activeFilters, keyToUse);
+        // Decrement demo credits
+        setDemoCredits(prev => Math.max(0, prev - 1));
+      } else if (authMode === AuthMode.GUEST && user) {
         // GUEST MODE: Call Cloud Function (secure, server-side)
         const { getFunctions, httpsCallable } = await import('firebase/functions');
         const functions = getFunctions();
@@ -280,7 +310,7 @@ const App: React.FC = () => {
     );
   }
 
-  if (!authMode) {
+  if (!authMode && !isDemoMode) {
     return <AuthScreen onSelectAuthMode={handleSelectAuthMode} onManualKeySubmit={handleManualKeySubmit} />;
   }
 
@@ -353,21 +383,27 @@ const App: React.FC = () => {
 
         {/* Top Bar: Credits or Logout */}
         <div className="absolute top-2 md:top-4 right-2 md:right-4 z-40 flex items-center gap-1.5 md:gap-3 flex-wrap justify-end max-w-[calc(100vw-1rem)]">
-          {authMode === AuthMode.GUEST && (
+          {(authMode === AuthMode.GUEST || isDemoMode) && (
             <>
+              {/* Demo Mode Badge */}
+              {isDemoMode && (
+                <span className="bg-amber-500/20 text-amber-400 text-[10px] md:text-xs font-bold px-2 py-1 rounded-full border border-amber-500/30">
+                  DEMO MODE
+                </span>
+              )}
               <button
                 onClick={() => {
                   setShowPricing(true);
-                  analytics.trackPricingModalOpened(credits);
+                  analytics.trackPricingModalOpened(isDemoMode ? demoCredits : credits);
                 }}
                 className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-lg hover:shadow-cyan-500/30 transition-all transform hover:scale-105 whitespace-nowrap"
               >
                 <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                <span className="hidden sm:inline">{credits} Credits</span>
-                <span className="sm:hidden">{credits}</span>
+                <span className="hidden sm:inline">{isDemoMode ? demoCredits : credits} Credits</span>
+                <span className="sm:hidden">{isDemoMode ? demoCredits : credits}</span>
                 <span className="bg-white/20 px-1 md:px-1.5 rounded text-[8px] md:text-[10px]">TOP UP</span>
               </button>
-              {user && (
+              {user && !isDemoMode && (
                 <button
                   onClick={async () => {
                     await signOut();
