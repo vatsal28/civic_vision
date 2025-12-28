@@ -1,0 +1,437 @@
+/* ===========================================
+   Onboarding Component Styles
+   Mobile-first, Glassmorphic Design
+   =========================================== */
+
+/* Main overlay */
+.onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Animated gradient background */
+.onboarding-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.98) 0%,
+            rgba(30, 41, 59, 0.98) 50%,
+            rgba(23, 37, 84, 0.98) 100%);
+    backdrop-filter: blur(20px);
+}
+
+/* Main container - Glassmorphic card */
+.onboarding-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(145deg,
+            rgba(30, 41, 59, 0.8) 0%,
+            rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .onboarding-container {
+        max-width: 480px;
+        padding: 2rem;
+        border-radius: 2rem;
+    }
+}
+
+/* Skip button */
+.onboarding-skip {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(148, 163, 184, 0.8);
+    background: rgba(51, 65, 85, 0.5);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.onboarding-skip:hover {
+    color: white;
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(100, 116, 139, 0.6);
+}
+
+/* Progress bar */
+.onboarding-progress {
+    height: 3px;
+    background: rgba(51, 65, 85, 0.5);
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.onboarding-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #22d3ee, #3b82f6);
+    border-radius: 9999px;
+}
+
+/* Content area */
+.onboarding-content {
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .onboarding-content {
+        min-height: 380px;
+    }
+}
+
+/* Step container */
+.onboarding-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 0.5rem;
+}
+
+/* Icon styling */
+.onboarding-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    margin-bottom: 1.25rem;
+    box-shadow:
+        0 0 30px rgba(34, 211, 238, 0.15),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.onboarding-icon-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 2rem;
+}
+
+@media (min-width: 768px) {
+    .onboarding-icon {
+        width: 90px;
+        height: 90px;
+    }
+
+    .onboarding-icon-large {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* Title */
+.onboarding-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (min-width: 768px) {
+    .onboarding-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* Description */
+.onboarding-description {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(148, 163, 184, 0.9);
+    max-width: 320px;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .onboarding-description {
+        font-size: 1rem;
+    }
+}
+
+/* Illustration/Demo area */
+.onboarding-illustration {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 0.5rem;
+}
+
+.onboarding-demo {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Demo: Upload */
+.demo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: #64748b;
+}
+
+.demo-upload-icon {
+    width: 50px;
+    height: 50px;
+    border: 2px dashed rgba(100, 116, 139, 0.5);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #22d3ee;
+}
+
+/* Demo: Filters */
+.demo-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.demo-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.demo-checkbox {
+    width: 16px;
+    height: 16px;
+    background: #22d3ee;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f172a;
+}
+
+/* Demo: Transform button */
+.demo-transform {
+    display: flex;
+    justify-content: center;
+}
+
+.demo-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 0.75rem;
+}
+
+/* Demo: Slider */
+.demo-slider {
+    width: 100%;
+}
+
+.demo-slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+}
+
+.demo-before,
+.demo-after {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+}
+
+.demo-before {
+    background: rgba(51, 65, 85, 0.6);
+    color: #94a3b8;
+}
+
+.demo-after {
+    background: rgba(34, 211, 238, 0.2);
+    color: #22d3ee;
+}
+
+.demo-slider-handle {
+    width: 3px;
+    height: 40px;
+    background: #22d3ee;
+    border-radius: 9999px;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+}
+
+/* Demo: Download */
+.demo-download {
+    display: flex;
+    justify-content: center;
+}
+
+.demo-download-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: #0891b2;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+}
+
+/* Step indicators */
+.onboarding-indicators {
+    margin: 1.25rem 0;
+}
+
+/* Navigation buttons */
+.onboarding-navigation {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.onboarding-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.onboarding-btn-primary {
+    background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+    color: #0f172a;
+    box-shadow:
+        0 4px 15px rgba(34, 211, 238, 0.3),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.onboarding-btn-primary:hover {
+    box-shadow:
+        0 6px 20px rgba(34, 211, 238, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+.onboarding-btn-secondary {
+    background: rgba(51, 65, 85, 0.6);
+    color: #94a3b8;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+}
+
+.onboarding-btn-secondary:hover {
+    background: rgba(51, 65, 85, 0.8);
+    color: white;
+}
+
+.onboarding-btn-full {
+    flex: none;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+}
+
+/* Celebration animation */
+.onboarding-celebration {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin-top: 1rem;
+}
+
+.celebration-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(34, 211, 238, 0.5);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}

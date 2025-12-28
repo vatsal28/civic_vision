@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { AnimatePresence } from 'framer-motion';
 import { ImageUploader } from './components/ImageUploader';
 import { FilterControls } from './components/FilterControls';
 import { ComparisonSlider } from './components/ComparisonSlider';
 import { PricingModal } from './components/PricingModal';
 import { AuthScreen } from './components/AuthScreen';
+import { Onboarding } from './components/Onboarding';
 import { generateIdealImage } from './services/geminiService';
 import { createCompositeImage } from './utils/imageUtils';
 import { AppState, AuthMode } from './types';
@@ -29,6 +31,7 @@ const App: React.FC = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Pull to refresh for mobile
   const { isPulling, pullDistance, progress } = usePullToRefresh();
@@ -39,6 +42,29 @@ const App: React.FC = () => {
       setAuthMode(AuthMode.GUEST);
     }
   }, [user, authMode]);
+
+  // Check if user needs onboarding (first time)
+  React.useEffect(() => {
+    if (user && authMode && !loading) {
+      const completed = localStorage.getItem('civic_vision_onboarding_complete');
+      if (!completed) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, authMode, loading]);
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('civic_vision_onboarding_complete', 'true');
+    setShowOnboarding(false);
+    analytics.trackOnboardingCompleted();
+  };
+
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('civic_vision_onboarding_complete', 'true');
+    setShowOnboarding(false);
+    analytics.trackOnboardingSkipped();
+  };
 
   // Auth Handlers
   const handleSelectAuthMode = (mode: AuthMode) => {
@@ -265,6 +291,16 @@ const App: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#172554] z-0 pointer-events-none"></div>
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-0 pointer-events-none mix-blend-overlay"></div>
 
+      {/* Onboarding Tour */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <Onboarding
+            onComplete={handleOnboardingComplete}
+            onSkip={handleOnboardingSkip}
+          />
+        )}
+      </AnimatePresence>
+
       {showPricing && (
         <PricingModal
           onClose={() => setShowPricing(false)}
@@ -366,6 +402,18 @@ const App: React.FC = () => {
             className="text-xs text-slate-500 hover:text-white transition-colors bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-700/50"
           >
             {authMode === AuthMode.BYOK ? 'Remove Key' : 'Switch Mode'}
+          </button>
+
+          {/* Replay Tour Button */}
+          <button
+            onClick={() => setShowOnboarding(true)}
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-cyan-400 transition-colors bg-slate-900/50 px-2 md:px-3 py-1.5 rounded-full border border-slate-700/50 hover:border-cyan-500/50"
+            title="Replay onboarding tour"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="hidden md:inline">Tour</span>
           </button>
         </div>
 

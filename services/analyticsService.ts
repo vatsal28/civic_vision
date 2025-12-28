@@ -104,3 +104,15 @@ export const trackPageView = (pageName: string) => {
 export const trackShareClicked = () => {
     safeLogEvent('share_clicked');
 };
+
+// ============================================
+// ONBOARDING EVENTS
+// ============================================
+
+export const trackOnboardingCompleted = () => {
+    safeLogEvent('onboarding_completed');
+};
+
+export const trackOnboardingSkipped = () => {
+    safeLogEvent('onboarding_skipped');
+};
