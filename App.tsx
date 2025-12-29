@@ -9,16 +9,18 @@ import { AuthScreen } from './components/AuthScreen';
 import { Onboarding } from './components/Onboarding';
 import { generateIdealImage } from './services/geminiService';
 import { createCompositeImage } from './utils/imageUtils';
-import { AppState, AuthMode } from './types';
-import { FILTERS } from './constants';
+import { AppState, AuthMode, AppMode } from './types';
+import { CITY_FILTERS, HOME_FILTERS } from './constants';
 import { useAuth } from './contexts/AuthContext';
 import * as analytics from './services/analyticsService';
 import { usePullToRefresh } from './hooks/usePullToRefresh';
+import { ModeSwitcher } from './components/ModeSwitcher';
 
 const App: React.FC = () => {
   const { user, credits, loading, signInWithGoogle, signOut } = useAuth();
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
   const [authMode, setAuthMode] = useState<AuthMode | null>(null);
+  const [appMode, setAppMode] = useState<AppMode>(AppMode.CITY);
 
   // BYOK State
   const [userApiKey, setUserApiKey] = useState<string>('');
@@ -26,8 +28,10 @@ const App: React.FC = () => {
 
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  // Get default filters based on current mode
+  const currentFilters = appMode === AppMode.CITY ? CITY_FILTERS : HOME_FILTERS;
   const [selectedFilters, setSelectedFilters] = useState<string[]>(
-    FILTERS.filter(f => f.isDefault).map(f => f.id)
+    CITY_FILTERS.filter(f => f.isDefault).map(f => f.id)
   );
   const [error, setError] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
@@ -132,6 +136,20 @@ const App: React.FC = () => {
     );
   };
 
+  const handleModeChange = (newMode: AppMode) => {
+    if (newMode !== appMode) {
+      setAppMode(newMode);
+      // Reset filters to new mode's defaults
+      const newFilters = newMode === AppMode.CITY ? CITY_FILTERS : HOME_FILTERS;
+      setSelectedFilters(newFilters.filter(f => f.isDefault).map(f => f.id));
+      // Reset image state when switching modes
+      setOriginalImage(null);
+      setGeneratedImage(null);
+      setAppState(AppState.IDLE);
+      setError(null);
+    }
+  };
+
   const handlePurchase = (amount: number, cost: number) => {
     // MOCK PAYMENT INTEGRATION
     // In a real app, this would trigger Razorpay/Stripe
@@ -171,7 +189,7 @@ const App: React.FC = () => {
 
     try {
       const base64Data = originalImage.split(',')[1];
-      const activeFilters = FILTERS.filter(f => selectedFilters.includes(f.id));
+      const activeFilters = currentFilters.filter(f => selectedFilters.includes(f.id));
 
       let resultBase64: string;
 
@@ -181,7 +199,7 @@ const App: React.FC = () => {
         if (!keyToUse) {
           throw new Error("Demo mode API Key is not configured.");
         }
-        resultBase64 = await generateIdealImage(base64Data, activeFilters, keyToUse);
+        resultBase64 = await generateIdealImage(base64Data, activeFilters, keyToUse, appMode);
         // Decrement demo credits
         setDemoCredits(prev => Math.max(0, prev - 1));
       } else if (authMode === AuthMode.GUEST && user) {
@@ -193,6 +211,7 @@ const App: React.FC = () => {
         const response = await generateImageFn({
           base64Image: base64Data,
           filters: activeFilters,
+          mode: appMode,
         });
 
         const data = response.data as { success: boolean; generatedImage: string; credits: number };
@@ -208,7 +227,7 @@ const App: React.FC = () => {
         if (!keyToUse) {
           throw new Error("API Key is missing configuration.");
         }
-        resultBase64 = await generateIdealImage(base64Data, activeFilters, keyToUse);
+        resultBase64 = await generateIdealImage(base64Data, activeFilters, keyToUse, appMode);
       }
 
       setGeneratedImage(`data:image/jpeg;base64,${resultBase64}`);
@@ -234,17 +253,11 @@ const App: React.FC = () => {
 
       // Handle specific error codes from geminiService
       if (errorMessage.includes('INVALID_API_KEY')) {
-        setError("Invalid API Key. Please check your key and try again.");
-        if (authMode === AuthMode.BYOK) {
-          setAuthMode(null);
-          sessionStorage.removeItem('civic_vision_key');
-        }
+        setError("API Key issue. Please verify your key is valid and has billing enabled in Google AI Studio.");
+        // Don't logout immediately - let user retry or manually logout via settings
       } else if (errorMessage.includes('PERMISSION_DENIED') || errorMessage.includes('MODEL_NOT_AVAILABLE')) {
         setError("Model access denied. Please enable billing in Google AI Studio: aistudio.google.com");
-        if (authMode === AuthMode.BYOK) {
-          setAuthMode(null);
-          sessionStorage.removeItem('civic_vision_key');
-        }
+        // Don't logout - user may just need to enable billing
       } else if (errorMessage.includes('QUOTA_EXCEEDED') || errorMessage.includes('resource-exhausted')) {
         if (authMode === AuthMode.BYOK) {
           setError("Daily quota exceeded (~2 images/day free). Try again tomorrow or enable billing.");
@@ -255,11 +268,8 @@ const App: React.FC = () => {
       } else if (errorMessage.includes('CONTENT_BLOCKED')) {
         setError("Image blocked by safety filters. Please try a different image.");
       } else if (errorMessage.includes('403') || errorMessage.includes('unauthenticated')) {
-        setError("API Key authentication failed. Please check your key.");
-        if (authMode === AuthMode.BYOK) {
-          setAuthMode(null);
-          sessionStorage.removeItem('civic_vision_key');
-        }
+        setError("API Key authentication failed. Please verify your key or try enabling billing in Google AI Studio.");
+        // Don't logout - let user retry or manually change key
       } else {
         setError("Something went wrong. Please try again or use a different image.");
       }
@@ -376,6 +386,7 @@ const App: React.FC = () => {
           isGenerating={appState === AppState.GENERATING}
           onReset={handleReset}
           originalImage={originalImage}
+          mode={appMode}
         />
       </div>
 
@@ -464,12 +475,19 @@ const App: React.FC = () => {
 
           {appState === AppState.IDLE && (
             <div className="w-full max-w-6xl mx-auto flex flex-col items-center animate-fade-in px-2 mt-4 md:mt-0">
+              {/* Mode Switcher */}
+              <div className="mb-6 md:mb-8">
+                <ModeSwitcher currentMode={appMode} onModeChange={handleModeChange} />
+              </div>
+
               <div className="text-center mb-4 md:mb-10 space-y-2 md:space-y-4">
                 <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tight drop-shadow-sm">
-                  Transform Cityscapes
+                  {appMode === AppMode.HOME ? 'Reimagine Your Space' : 'Transform Cityscapes'}
                 </h1>
                 <p className="text-sm md:text-lg text-slate-400 font-light px-4">
-                  Upload a photo to see a cleaner, greener future.
+                  {appMode === AppMode.HOME
+                    ? 'Upload a room photo to see stunning design possibilities.'
+                    : 'Upload a photo to see a cleaner, greener future.'}
                 </p>
               </div>
               <ImageUploader onImageSelected={handleImageSelected} />

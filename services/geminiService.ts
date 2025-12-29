@@ -1,10 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
-import { FilterOption } from "../types";
+import { FilterOption, AppMode } from "../types";
 
 export const generateIdealImage = async (
   base64Image: string,
   activeFilters: FilterOption[],
-  apiKey: string
+  apiKey: string,
+  mode: AppMode = AppMode.CITY
 ): Promise<string> => {
   if (!apiKey) {
     throw new Error("API Key is missing");
@@ -15,7 +16,23 @@ export const generateIdealImage = async (
   // Construct the prompt based on active filters
   const changesList = activeFilters.map(f => `- ${f.promptFragment}`).join('\n');
 
-  const prompt = `
+  // Mode-specific prompts
+  const prompt = mode === AppMode.HOME
+    ? `
+    You are an expert interior designer and home staging specialist.
+    
+    Edit the attached room/interior image to show how it would look with the following design modifications.
+    Maintain the room's layout, architectural structure, and natural lighting direction.
+    Do not change the time of day or the perspective.
+    
+    Apply these design changes:
+    ${changesList}
+    
+    Ensure the result looks photorealistic, inviting, and professionally styled.
+    The transformation should feel aspirational but achievable for homeowners.
+    Keep the same camera angle and room dimensions.
+  `
+    : `
     You are an expert image editor specialized in urban renewal and civic planning visualization.
     
     Edit the attached image to show how it would look if it were perfectly maintained, clean, and upgraded. 
@@ -31,11 +48,10 @@ export const generateIdealImage = async (
   `;
 
   try {
-    // Use gemini-3-pro-image-preview for high-quality 4K image editing
-    // Free tier: 2 images/day | Paid: ~$0.13-$0.24 per image depending on resolution
+    // Use gemini-3-pro-image-preview for high-quality image editing
+    // Requires Tier 1 access with billing enabled
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-image-preview',
-
       contents: [
         {
           inlineData: {
@@ -47,6 +63,10 @@ export const generateIdealImage = async (
           text: prompt,
         },
       ],
+      // Enable image output - required for image generation/editing
+      config: {
+        responseModalities: ['Text', 'Image'],
+      },
     });
 
     // Extract image from response

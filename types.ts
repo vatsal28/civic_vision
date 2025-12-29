@@ -5,6 +5,7 @@ export interface FilterOption {
   description: string;
   promptFragment: string;
   isDefault?: boolean;
+  category?: FilterCategory;  // For grouping filters in Home mode
 }
 
 export interface GeneratedImageResult {
@@ -24,6 +25,13 @@ export enum AuthMode {
   GUEST = 'GUEST', // Uses App's provided key with credit limits
   BYOK = 'BYOK'    // User provides their own key (Unlimited)
 }
+
+export enum AppMode {
+  CITY = 'CITY',   // Urban renewal / cityscape transformation
+  HOME = 'HOME'    // Interior design / room decor transformation
+}
+
+export type FilterCategory = 'style' | 'colors' | 'furniture' | 'architectural';
 
 declare global {
   interface AIStudio {
