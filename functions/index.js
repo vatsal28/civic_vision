@@ -1,8 +1,20 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const crypto = require('crypto');
 const { GoogleGenAI } = require('@google/genai');
 
 admin.initializeApp();
+
+/**
+ * Credit Packages - SINGLE SOURCE OF TRUTH
+ * All pricing decisions based on this, never client data
+ * SECURITY: Never trust client-sent amount or credits
+ */
+const PACKAGES = {
+    'starter': { id: 'starter', credits: 10, price: 49, name: 'Starter Pack' },
+    'popular': { id: 'popular', credits: 50, price: 199, name: 'Popular Pack' },
+    'pro': { id: 'pro', credits: 100, price: 349, name: 'Pro Pack' }
+};
 
 // Initialize Gemini AI with API key from environment
 const getGeminiClient = () => {
@@ -245,13 +257,14 @@ exports.addCredits = functions.https.onCall(async (data, context) => {
 /**
  * Cloud Function: createRazorpayOrder
  * Creates a Razorpay order for credit purchase
+ * SECURITY: Validates package server-side, never trusts client amounts
  */
 exports.createRazorpayOrder = functions
     .runWith({
-        secrets: ['RAZORPAY_KEY_SECRET']
+        secrets: ['RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET']
     })
     .https.onCall(async (data, context) => {
-        // Verify authentication
+        // 1. Verify authentication
         if (!context.auth) {
             throw new functions.https.HttpsError(
                 'unauthenticated',
@@ -260,53 +273,73 @@ exports.createRazorpayOrder = functions
         }
 
         const userId = context.auth.uid;
-        const { packageId, amount, credits } = data;
+        const { packageId } = data;
 
-        // Validate input
-        if (!packageId || !amount || !credits) {
+        // 2. Validate package ID exists (SERVER-SIDE LOOKUP - SECURITY CRITICAL)
+        if (!packageId) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'Missing required fields: packageId, amount, credits'
+                'Missing package selection'
+            );
+        }
+
+        const pkg = PACKAGES[packageId];
+        if (!pkg) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Invalid package selected'
+            );
+        }
+
+        // 3. Verify Razorpay keys are configured
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+            console.error('Razorpay keys not configured');
+            throw new functions.https.HttpsError(
+                'internal',
+                'Payment system not configured. Please try again later.'
             );
         }
 
         try {
             const { initializeRazorpay } = require('./razorpay-utils');
 
-            // Initialize Razorpay (Note: In production, use live keys)
+            // 4. Initialize Razorpay with environment variables (not hardcoded)
             const razorpay = initializeRazorpay(
-                'rzp_test_XXXXXXXXXXXX',  // Key ID (can be public)
-                process.env.RAZORPAY_KEY_SECRET  // Secret key (from Firebase secret)
+                process.env.RAZORPAY_KEY_ID,
+                process.env.RAZORPAY_KEY_SECRET
             );
 
-            // Create order
+            // 5. Create order with SERVER-SIDE values (never trust client)
+            const amountInPaise = pkg.price * 100;
             const order = await razorpay.orders.create({
-                amount: amount * 100, // Convert to paise (₹49 = 4900 paise)
+                amount: amountInPaise,
                 currency: 'INR',
-                receipt: `rcpt_${Date.now()}`, // Keep under 40 chars
+                receipt: `rcpt_${userId.slice(0, 8)}_${Date.now()}`,
                 notes: {
                     userId,
-                    packageId,
-                    credits,
+                    packageId: pkg.id,
+                    credits: pkg.credits.toString(),
+                    expectedAmount: amountInPaise.toString()
                 }
             });
 
-
-            console.log(`Created Razorpay order: ${order.id} for user ${userId}`);
+            console.log(`Created Razorpay order: ${order.id} for user ${userId}, package: ${packageId}`);
 
             return {
                 success: true,
                 orderId: order.id,
                 amount: order.amount,
                 currency: order.currency,
-                keyId: 'rzp_test_XXXXXXXXXXXX'  // Needed for client-side checkout
+                keyId: process.env.RAZORPAY_KEY_ID,
+                packageName: pkg.name,
+                credits: pkg.credits
             };
 
         } catch (error) {
             console.error('Error creating Razorpay order:', error);
             throw new functions.https.HttpsError(
                 'internal',
-                'Failed to create payment order: ' + error.message
+                'Failed to create payment order. Please try again.'
             );
         }
     });
@@ -315,100 +348,254 @@ exports.createRazorpayOrder = functions
  * Cloud Function: razorpayWebhook
  * Receives webhook notifications from Razorpay
  * Verifies signature and adds credits on successful payment
+ * SECURITY: Uses rawBody for signature, validates amount, prevents double-credit
  */
 exports.razorpayWebhook = functions
     .runWith({
-        secrets: ['RAZORPAY_WEBHOOK_SECRET']
+        secrets: ['RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET', 'RAZORPAY_WEBHOOK_SECRET']
     })
     .https.onRequest(async (req, res) => {
+        // 1. Verify webhook secret is configured
+        if (!process.env.RAZORPAY_WEBHOOK_SECRET) {
+            console.error('RAZORPAY_WEBHOOK_SECRET not configured');
+            return res.status(500).send('Server configuration error');
+        }
+
         try {
-            const { verifyWebhookSignature } = require('./razorpay-utils');
-
+            // 2. Get signature and raw body
             const signature = req.headers['x-razorpay-signature'];
-            const payload = req.body;
+            const rawBody = req.rawBody;
 
-            // Verify webhook signature
-            const isValid = verifyWebhookSignature(
-                payload,
-                signature,
-                process.env.RAZORPAY_WEBHOOK_SECRET
-            );
+            if (!signature || !rawBody) {
+                console.error('Missing signature or body');
+                return res.status(400).send('Invalid request');
+            }
 
-            if (!isValid) {
+            // 3. Verify signature using RAW body (SECURITY CRITICAL)
+            const expectedSignature = crypto
+                .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
+                .update(rawBody)
+                .digest('hex');
+
+            if (expectedSignature !== signature) {
                 console.error('Invalid webhook signature');
                 return res.status(400).send('Invalid signature');
             }
 
+            // 4. Parse body after verification
+            const payload = JSON.parse(rawBody.toString());
             const event = payload.event;
+
             console.log(`Received Razorpay webhook: ${event}`);
 
-            // Handle payment.captured event
+            // 5. Handle payment.captured event
             if (event === 'payment.captured') {
-                const paymentEntity = payload.payload.payment.entity;
-                const orderId = paymentEntity.order_id;
-                const paymentId = paymentEntity.id;
-                const amount = paymentEntity.amount; // in paise
+                await handlePaymentCaptured(payload, res);
+                return;
+            }
 
-                // Get order notes to find userId and credits
-                const { initializeRazorpay } = require('./razorpay-utils');
-                const razorpay = initializeRazorpay(
-                    'rzp_test_XXXXXXXXXXXX',
-                    process.env.RAZORPAY_KEY_SECRET
-                );
-
-                const order = await razorpay.orders.fetch(orderId);
-                const { userId, credits } = order.notes;
-
-                if (!userId || !credits) {
-                    console.error('Missing userId or credits in order notes');
-                    return res.status(400).send('Invalid order data');
-                }
-
-                // Add credits to user using transaction
-                const userRef = admin.firestore().collection('users').doc(userId);
-
-                // Check if payment already processed (prevent double credit)
-                const paymentsRef = admin.firestore().collection('payments');
-                const existingPayment = await paymentsRef.doc(paymentId).get();
-
-                if (existingPayment.exists) {
-                    console.log(`Payment ${paymentId} already processed`);
-                    return res.status(200).send('OK');
-                }
-
-                // Add credits and record payment
-                await admin.firestore().runTransaction(async (transaction) => {
-                    const userDoc = await transaction.get(userRef);
-
-                    if (!userDoc.exists) {
-                        throw new Error('User not found');
-                    }
-
-                    // Update user credits
-                    transaction.update(userRef, {
-                        credits: admin.firestore.FieldValue.increment(parseInt(credits)),
-                        lastPurchaseAt: admin.firestore.FieldValue.serverTimestamp(),
-                    });
-
-                    // Record payment
-                    transaction.set(paymentsRef.doc(paymentId), {
-                        userId,
-                        orderId,
-                        paymentId,
-                        amount: amount / 100, // Convert to rupees
-                        credits: parseInt(credits),
-                        status: 'captured',
-                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    });
-                });
-
-                console.log(`Added ${credits} credits to user ${userId} for payment ${paymentId}`);
+            // 6. Handle payment.failed event
+            if (event === 'payment.failed') {
+                await handlePaymentFailed(payload);
             }
 
             res.status(200).send('OK');
 
         } catch (error) {
             console.error('Error processing webhook:', error);
+
+            // Log for manual review
+            try {
+                await admin.firestore().collection('failed_webhooks').add({
+                    error: error.message,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (logError) {
+                console.error('Failed to log webhook error:', logError);
+            }
+
             res.status(500).send('Internal error');
         }
+    });
+
+/**
+ * Handle successful payment capture
+ * SECURITY: Validates amount matches expected, prevents double-credit
+ */
+async function handlePaymentCaptured(payload, res) {
+    const { initializeRazorpay } = require('./razorpay-utils');
+
+    const paymentEntity = payload.payload.payment.entity;
+    const orderId = paymentEntity.order_id;
+    const paymentId = paymentEntity.id;
+    const paidAmount = paymentEntity.amount;
+
+    // 1. Verify Razorpay keys
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        throw new Error('Razorpay keys not configured');
+    }
+
+    // 2. Fetch order to get notes
+    const razorpay = initializeRazorpay(
+        process.env.RAZORPAY_KEY_ID,
+        process.env.RAZORPAY_KEY_SECRET
+    );
+
+    const order = await razorpay.orders.fetch(orderId);
+    const { userId, packageId, credits, expectedAmount } = order.notes;
+
+    // 3. Validate required fields
+    if (!userId || !packageId || !credits) {
+        console.error(`Missing order notes: userId=${userId}, packageId=${packageId}, credits=${credits}`);
+        return res.status(400).send('Invalid order data');
+    }
+
+    // 4. SECURITY: Validate amount matches expected
+    if (expectedAmount && paidAmount.toString() !== expectedAmount) {
+        console.error(`Amount mismatch: paid=${paidAmount}, expected=${expectedAmount}`);
+        return res.status(400).send('Amount mismatch');
+    }
+
+    // 5. Check for duplicate processing (prevent double-credit)
+    const paymentsRef = admin.firestore().collection('payments');
+    const existingPayment = await paymentsRef.doc(paymentId).get();
+
+    if (existingPayment.exists) {
+        console.log(`Payment ${paymentId} already processed, skipping`);
+        return res.status(200).send('OK');
+    }
+
+    // 6. Add credits using transaction
+    const userRef = admin.firestore().collection('users').doc(userId);
+
+    await admin.firestore().runTransaction(async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+
+        if (!userDoc.exists) {
+            throw new Error(`User ${userId} not found`);
+        }
+
+        // Update user credits
+        transaction.update(userRef, {
+            credits: admin.firestore.FieldValue.increment(parseInt(credits)),
+            lastPurchaseAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Record payment
+        transaction.set(paymentsRef.doc(paymentId), {
+            userId,
+            orderId,
+            paymentId,
+            packageId,
+            amount: paidAmount / 100,
+            credits: parseInt(credits),
+            status: 'captured',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    });
+
+    console.log(`Added ${credits} credits to user ${userId} for payment ${paymentId}`);
+    res.status(200).send('OK');
+}
+
+/**
+ * Handle failed payment for analytics
+ */
+async function handlePaymentFailed(payload) {
+    const paymentEntity = payload.payload.payment.entity;
+    const orderId = paymentEntity.order_id;
+    const paymentId = paymentEntity.id;
+    const errorCode = paymentEntity.error_code;
+    const errorDescription = paymentEntity.error_description;
+
+    console.log(`Payment failed: ${paymentId}, error: ${errorCode} - ${errorDescription}`);
+
+    // Record failed payment for analytics
+    await admin.firestore().collection('failed_payments').add({
+        orderId,
+        paymentId,
+        errorCode,
+        errorDescription,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+}
+
+/**
+ * Cloud Function: verifyPayment
+ * Client-side backup verification after Razorpay checkout success
+ * Called to confirm payment was processed (webhook may be delayed)
+ */
+exports.verifyPayment = functions
+    .runWith({
+        secrets: ['RAZORPAY_KEY_SECRET']
+    })
+    .https.onCall(async (data, context) => {
+        // 1. Verify authentication
+        if (!context.auth) {
+            throw new functions.https.HttpsError(
+                'unauthenticated',
+                'You must be signed in'
+            );
+        }
+
+        const { orderId, paymentId, signature } = data;
+        const userId = context.auth.uid;
+
+        // 2. Validate input
+        if (!orderId || !paymentId || !signature) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Missing payment verification data'
+            );
+        }
+
+        // 3. Verify Razorpay signature
+        const { verifyPaymentSignature } = require('./razorpay-utils');
+        const isValid = verifyPaymentSignature(
+            orderId,
+            paymentId,
+            signature,
+            process.env.RAZORPAY_KEY_SECRET
+        );
+
+        if (!isValid) {
+            console.error(`Invalid payment signature for ${paymentId}`);
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Invalid payment signature'
+            );
+        }
+
+        // 4. Check if payment was processed by webhook
+        const paymentDoc = await admin.firestore()
+            .collection('payments')
+            .doc(paymentId)
+            .get();
+
+        if (paymentDoc.exists) {
+            const payment = paymentDoc.data();
+            
+            // Security: Verify payment belongs to this user
+            if (payment.userId !== userId) {
+                throw new functions.https.HttpsError(
+                    'permission-denied',
+                    'Payment belongs to another user'
+                );
+            }
+
+            return {
+                success: true,
+                processed: true,
+                credits: payment.credits,
+                message: 'Payment verified and credits added'
+            };
+        }
+
+        // 5. Payment not yet processed (webhook may be delayed)
+        // Client should poll or wait for Firestore listener update
+        return {
+            success: true,
+            processed: false,
+            message: 'Payment received, credits will be added shortly'
+        };
     });

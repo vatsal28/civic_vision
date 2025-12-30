@@ -1,6 +1,7 @@
 
 export interface FilterOption {
   id: string;
+  icon: string;  // Emoji icon for the filter
   label: string;
   description: string;
   promptFragment: string;
