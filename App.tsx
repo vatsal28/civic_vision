@@ -17,6 +17,7 @@ import { useAuth } from './contexts/AuthContext';
 import * as analytics from './services/analyticsService';
 import { usePullToRefresh } from './hooks/usePullToRefresh';
 import { ModeSwitcher } from './components/ModeSwitcher';
+import { GeneratingModal } from './components/GeneratingModal';
 
 const App: React.FC = () => {
   const { user, credits, loading, signInWithGoogle, signOut } = useAuth();
@@ -371,6 +372,12 @@ const App: React.FC = () => {
           mode={appMode}
         />
       )}
+
+      {/* Generating Modal */}
+      <GeneratingModal
+        isOpen={appState === AppState.GENERATING}
+        mode={appMode}
+      />
 
       {/* Pull to Refresh Indicator */}
       {isPulling && (
