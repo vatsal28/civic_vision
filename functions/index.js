@@ -399,6 +399,12 @@ exports.razorpayWebhook = functions
                 await handlePaymentFailed(payload);
             }
 
+            // 7. Handle refund events (refund.created, refund.processed, refund.failed)
+            if (event.startsWith('refund.')) {
+                await handleRefund(payload, event, res);
+                return;
+            }
+
             res.status(200).send('OK');
 
         } catch (error) {
@@ -518,6 +524,113 @@ async function handlePaymentFailed(payload) {
         errorDescription,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
+}
+
+/**
+ * Handle refund events
+ * Deducts credits when a payment is refunded
+ * Events: refund.created, refund.processed, refund.failed
+ */
+async function handleRefund(payload, event, res) {
+    console.log(`Processing refund event: ${event}`);
+    
+    // For refund events, the payload is in payload.refund.entity
+    const refundEntity = payload.payload?.refund?.entity;
+    
+    if (!refundEntity) {
+        console.error('No refund entity found in payload:', JSON.stringify(payload.payload));
+        return res.status(400).send('Invalid refund payload');
+    }
+
+    // For refund.created: payment_id is in the refund entity
+    const paymentId = refundEntity.payment_id;
+    const refundId = refundEntity.id;
+    const refundAmount = refundEntity.amount;
+    const refundStatus = refundEntity.status; // created, processed, failed
+
+    console.log(`Refund details: id=${refundId}, payment_id=${paymentId}, amount=${refundAmount}, status=${refundStatus}`);
+
+    // Validate required fields
+    if (!paymentId || !refundId) {
+        console.error(`Missing required fields: paymentId=${paymentId}, refundId=${refundId}`);
+        return res.status(400).send('Missing payment_id or refund id');
+    }
+
+    // 1. Check if refund already processed (prevent double-deduction)
+    const refundsRef = admin.firestore().collection('refunds');
+    const existingRefund = await refundsRef.doc(refundId).get();
+
+    if (existingRefund.exists) {
+        console.log(`Refund ${refundId} already processed, skipping`);
+        return res.status(200).send('OK');
+    }
+
+    // 2. Find the original payment record
+    const paymentsRef = admin.firestore().collection('payments');
+    const paymentDoc = await paymentsRef.doc(paymentId).get();
+
+    if (!paymentDoc.exists) {
+        console.error(`Original payment ${paymentId} not found`);
+        // Still record the refund for manual review
+        await refundsRef.doc(refundId).set({
+            paymentId,
+            refundId,
+            amount: refundAmount / 100,
+            status: 'payment_not_found',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        return res.status(200).send('OK');
+    }
+
+    const paymentData = paymentDoc.data();
+    const { userId, credits, packageId } = paymentData;
+
+    // 3. Deduct credits using transaction
+    const userRef = admin.firestore().collection('users').doc(userId);
+
+    await admin.firestore().runTransaction(async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+
+        if (!userDoc.exists) {
+            throw new Error(`User ${userId} not found`);
+        }
+
+        const currentCredits = userDoc.data().credits || 0;
+        const creditsToDeduct = parseInt(credits);
+        
+        // Calculate new credits (don't go below 0)
+        const newCredits = Math.max(0, currentCredits - creditsToDeduct);
+
+        // Update user credits
+        transaction.update(userRef, {
+            credits: newCredits,
+            lastRefundAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Record refund
+        transaction.set(refundsRef.doc(refundId), {
+            userId,
+            paymentId,
+            refundId,
+            packageId,
+            amount: refundAmount / 100,
+            creditsDeducted: creditsToDeduct,
+            previousCredits: currentCredits,
+            newCredits: newCredits,
+            status: 'processed',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Update original payment status
+        transaction.update(paymentsRef.doc(paymentId), {
+            status: 'refunded',
+            refundId: refundId,
+            refundedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    });
+
+    console.log(`Refund processed: deducted ${credits} credits from user ${userId}`);
+    res.status(200).send('OK');
 }
 
 /**
