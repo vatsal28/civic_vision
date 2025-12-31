@@ -274,6 +274,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
               ))}
             </div>
 
+            {/* International Payments Disclaimer */}
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500 italic">
+                International payments coming soon
+              </p>
+            </div>
+
             {/* Custom Pricing Section */}
             <div className="mt-6 p-4 bg-[#1e2638] rounded-xl border border-[#252f3f]">
               <div className="flex items-start gap-3">
