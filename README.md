@@ -136,7 +136,7 @@ Redesign interior spaces — change furniture, adjust lighting, add plants, and 
 | Backend | Firebase Functions |
 | Database | Firebase Firestore |
 | Auth | Firebase Auth (Google Sign-In) |
-| AI | Google Gemini API (`gemini-2.0-flash-preview-image-01`) |
+| AI | Google Gemini API (`gemini-3-pro-image-preview`) |
 | Payments | Razorpay (India) |
 | Hosting | Vercel |
 | Analytics | Vercel Analytics, Firebase Analytics |
