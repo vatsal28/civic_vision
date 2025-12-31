@@ -105,6 +105,10 @@ export const trackShareClicked = () => {
     safeLogEvent('share_clicked');
 };
 
+export const trackShareModalOpened = () => {
+    safeLogEvent('share_modal_opened');
+};
+
 // ============================================
 // ONBOARDING EVENTS
 // ============================================
