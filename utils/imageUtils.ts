@@ -38,9 +38,9 @@ export const createCompositeImage = (
         width = Math.round(width * ratio);
       }
 
-      // Side-by-side canvas
-      canvas.width = width * 2;
-      canvas.height = height;
+      // Vertical layout: before on top, after on bottom
+      canvas.width = width;
+      canvas.height = height * 2;
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         resolve(null);
@@ -52,29 +52,38 @@ export const createCompositeImage = (
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw images - Explicitly scale both to the calculated dimensions
-      // This ensures the generated image (often 2K) stretches/shrinks to match the original's layout
+      // BEFORE image on top
       ctx.drawImage(img1, 0, 0, width, height);
-      ctx.drawImage(img2, width, 0, width, height);
+      // AFTER image on bottom
+      ctx.drawImage(img2, 0, height, width, height);
 
       // Gradient overlays for text readability
       const gradientHeight = height * 0.15;
 
-      // Top gradient
+      // Top gradient (for BEFORE label)
       const topGrad = ctx.createLinearGradient(0, 0, 0, gradientHeight);
       topGrad.addColorStop(0, "rgba(0,0,0,0.6)");
       topGrad.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, canvas.width, gradientHeight);
 
-      // Bottom gradient
-      const botGrad = ctx.createLinearGradient(0, height - gradientHeight, 0, height);
+      // Middle gradient (around divider)
+      const midGrad = ctx.createLinearGradient(0, height - gradientHeight, 0, height + gradientHeight);
+      midGrad.addColorStop(0, "rgba(0,0,0,0)");
+      midGrad.addColorStop(0.5, "rgba(0,0,0,0.4)");
+      midGrad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = midGrad;
+      ctx.fillRect(0, height - gradientHeight, canvas.width, gradientHeight * 2);
+
+      // Bottom gradient (for footer)
+      const botGrad = ctx.createLinearGradient(0, canvas.height - gradientHeight, 0, canvas.height);
       botGrad.addColorStop(0, "rgba(0,0,0,0)");
       botGrad.addColorStop(1, "rgba(0,0,0,0.8)");
       ctx.fillStyle = botGrad;
-      ctx.fillRect(0, height - gradientHeight, canvas.width, gradientHeight);
+      ctx.fillRect(0, canvas.height - gradientHeight, canvas.width, gradientHeight);
 
       // Labels configuration
-      const fontSize = Math.max(24, height / 25);
+      const fontSize = Math.max(24, width / 20);
       const padding = Math.max(20, width / 40);
 
       ctx.font = `bold ${fontSize}px sans-serif`;
@@ -85,22 +94,22 @@ export const createCompositeImage = (
       ctx.shadowBlur = 4;
       ctx.fillText("BEFORE", padding, padding + fontSize);
 
-      // AFTER Label (Top Right of second image)
+      // AFTER Label (Top Left of bottom image)
       ctx.fillStyle = "#22d3ee"; // Cyan-400
-      ctx.fillText("REDO AI", width + padding, padding + fontSize);
+      ctx.fillText("AFTER", padding, height + padding + fontSize);
 
       // Footer/Branding
-      ctx.font = `${Math.max(16, height / 40)}px sans-serif`;
+      ctx.font = `${Math.max(16, width / 50)}px sans-serif`;
       ctx.fillStyle = "rgba(255,255,255,0.7)";
       ctx.textAlign = "center";
       ctx.shadowBlur = 0;
-      ctx.fillText("Transformed with Redo AI", canvas.width / 2, height - (padding / 2));
+      ctx.fillText("Transformed with Redo AI", canvas.width / 2, canvas.height - (padding / 2));
 
-      // Divider line
+      // Divider line (horizontal between images)
       ctx.strokeStyle = "rgba(255,255,255,0.3)";
-      ctx.lineWidth = Math.max(2, width / 500);
+      ctx.lineWidth = Math.max(2, height / 500);
       ctx.beginPath();
-      ctx.moveTo(width, 0);
+      ctx.moveTo(0, height);
       ctx.lineTo(width, height);
       ctx.stroke();
 
