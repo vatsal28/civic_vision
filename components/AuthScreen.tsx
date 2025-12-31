@@ -44,7 +44,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
                     </svg>
                 </motion.div>
 
-                <h1 className="text-2xl font-bold text-white mb-2">Welcome to Civic Vision</h1>
+                <h1 className="text-2xl font-bold text-white mb-2">Welcome to Redo AI</h1>
                 <p className="text-gray-400 mb-8 text-sm">
                     Transform cityscapes and interiors with AI. Sign in to get started.
                 </p>

@@ -70,7 +70,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
         amount: orderData.amount,
         currency: orderData.currency,
         order_id: orderData.orderId,
-        name: 'CivicVision',
+        name: 'Redo AI',
         description: `${orderData.credits} Credits - ${orderData.packageName}`,
         prefill: {
           email: user.email || '',
@@ -272,6 +272,36 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                   </ul>
                 </motion.div>
               ))}
+            </div>
+
+            {/* Custom Pricing Section */}
+            <div className="mt-6 p-4 bg-[#1e2638] rounded-xl border border-[#252f3f]">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <svg className="w-5 h-5 text-[#4f7eff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-semibold text-sm mb-1">Need Custom Pricing?</h3>
+                  <p className="text-gray-400 text-xs mb-3">
+                    For bulk orders or custom pricing plans, contact us directly.
+                  </p>
+                  <a
+                    href="mailto:vatsalmishra28@gmail.com?subject=Custom Pricing Inquiry - Redo AI"
+                    onClick={(e) => {
+                      // Analytics tracking
+                      analytics.trackShareClicked(); // Reusing this for now, or we could add a new event
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0f1520] hover:bg-[#151c2c] border border-[#252f3f] hover:border-[#4f7eff] rounded-lg text-[#4f7eff] hover:text-[#6366f1] text-sm font-medium transition-all"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Contact Us
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

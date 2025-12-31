@@ -112,12 +112,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                         const brandingFontSize = Math.max(18, width / 30);
                         ctx.font = `600 ${brandingFontSize}px Inter, sans-serif`;
                         ctx.fillStyle = mode === 'HOME' ? '#ec4899' : '#4f7eff';
-                        ctx.fillText('This image was created using Civic Vision AI', canvas.width / 2, height + brandingHeight - 25);
+                        ctx.fillText('This image was created using Redo AI', canvas.width / 2, height + brandingHeight - 25);
 
                         // Add website URL below
                         ctx.font = `${Math.max(14, width / 40)}px Inter, sans-serif`;
                         ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                        ctx.fillText('civicvision.ai', canvas.width / 2, height + brandingHeight - 5);
+                        ctx.fillText('redo-ai.com', canvas.width / 2, height + brandingHeight - 5); // TODO: Update domain when finalized
 
                         resolve(canvas.toDataURL('image/jpeg', 0.92));
                     }
@@ -176,11 +176,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
             const file = new File([blob], 'civic-vision-transformation.jpg', { type: 'image/jpeg' });
 
             const shareText = mode === 'HOME' 
-                ? 'I reimagined this space with civicvision AI'
-                : 'I transformed this place with civicvision AI';
+                ? 'I reimagined this space with Redo AI'
+                : 'I transformed this place with Redo AI';
 
             await navigator.share({
-                title: 'Civic Vision Transformation',
+                title: 'Redo AI Transformation',
                 text: shareText,
                 files: [file],
             });
