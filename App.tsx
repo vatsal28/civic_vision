@@ -527,7 +527,7 @@ const App: React.FC = () => {
 
               <div className="text-center mb-6 md:mb-10 space-y-2 md:space-y-3">
                 <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-                  {isHomeMode ? 'Reimagine Your Space' : 'Transform Cityscapes'}
+                  {isHomeMode ? 'Redo Your Space' : 'Redo Your Neighborhood'}
                 </h1>
                 <p className="text-sm md:text-lg text-gray-400 font-light max-w-lg mx-auto">
                   {isHomeMode
