@@ -19,7 +19,7 @@ Redo AI is an AI-powered web application that transforms photos into visualizati
 - No design skills required - AI handles the transformation
 - Dual modes: Urban renewal (City Mode) and Interior design (Home Mode)
 - Useful for urban planners, activists, homeowners, and real estate professionals
-- Free credits for new users (3 generations)
+- Free credits for new users (2 generations: 1 for City, 1 for Home)
 
 ---
 
@@ -92,7 +92,7 @@ flowchart TD
 | AI Transformation | ✅ Done | Google Gemini 3 Pro Image Preview |
 | Before/After Slider | ✅ Done | Interactive comparison slider with improved touch responsiveness |
 | Composite Image Download | ✅ Done | Vertical layout (before on top, after on bottom) with branding |
-| Credit System | ✅ Done | 3 free credits for new users |
+| Credit System | ✅ Done | 2 free credits for new users (1 for City, 1 for Home) |
 | BYOK Mode | ✅ Done | Bring Your Own API Key (unlimited) |
 | Demo Mode | ✅ Done | Special mode for Razorpay KYC review |
 | Payment Integration | ✅ Done | Full Razorpay integration with webhooks |
@@ -186,7 +186,7 @@ flowchart TD
 
 | Function | Trigger | Purpose |
 |----------|---------|---------|
-| `createUserDocument` | Auth.onCreate | Initialize new user with 3 credits |
+| `createUserDocument` | Auth.onCreate | Initialize new user with 2 credits (1 for City, 1 for Home) |
 | `generateImage` | HTTPS Callable | Proxy Gemini API for Guest mode, deducts 1 credit |
 | `addCredits` | HTTPS Callable | Manually add credits (for testing/admin) |
 | `createRazorpayOrder` | HTTPS Callable | Create payment order for credit purchase |
@@ -233,7 +233,7 @@ interface User {
   email: string;
   displayName: string;
   photoURL?: string;
-  credits: number;           // Default: 3
+  credits: number;           // Default: 2 (1 for City, 1 for Home)
   createdAt: Timestamp;
   lastUsedAt: Timestamp;
   lastPurchaseAt?: Timestamp;

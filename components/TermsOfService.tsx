@@ -85,7 +85,7 @@ export const TermsOfService: React.FC = () => {
 
               <h3 className="text-xl font-semibold text-white mt-4 mb-2">3.2 Account Types</h3>
               <ul className="list-disc list-inside ml-4 space-y-1">
-                <li><strong>Guest Mode:</strong> Uses our API key with credit limits (3 free credits for new users)</li>
+                <li><strong>Guest Mode:</strong> Uses our API key with credit limits (2 free credits for new users: 1 for City, 1 for Home)</li>
                 <li><strong>BYOK Mode:</strong> Uses your own Google Gemini API key (unlimited transformations)</li>
               </ul>
 
@@ -102,7 +102,7 @@ export const TermsOfService: React.FC = () => {
               <h3 className="text-xl font-semibold text-white mt-4 mb-2">4.1 Credits System</h3>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>Credits are required to generate transformed images (1 credit per generation)</li>
-                <li>New users receive 3 free credits upon account creation</li>
+                <li>New users receive 2 free credits upon account creation (1 for City, 1 for Home)</li>
                 <li>Credits can be purchased through credit packages</li>
                 <li>Credits do not expire</li>
               </ul>

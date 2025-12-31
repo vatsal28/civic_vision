@@ -23,7 +23,7 @@ The Service uses Google's Gemini AI to generate transformed images based on user
 - You must be at least 13 years old to use the Service
 
 ### 3.2 Account Types
-- **Guest Mode:** Uses our API key with credit limits (3 free credits for new users)
+- **Guest Mode:** Uses our API key with credit limits (2 free credits for new users: 1 for City, 1 for Home)
 - **BYOK Mode:** Uses your own Google Gemini API key (unlimited transformations)
 
 ### 3.3 Account Termination
@@ -33,7 +33,7 @@ We reserve the right to suspend or terminate your account if you violate these T
 
 ### 4.1 Credits System
 - Credits are required to generate transformed images (1 credit per generation)
-- New users receive 3 free credits upon account creation
+- New users receive 2 free credits upon account creation (1 for City, 1 for Home)
 - Credits can be purchased through credit packages
 - Credits do not expire
 

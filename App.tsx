@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
   // Demo mode for Razorpay KYC review
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const [demoCredits, setDemoCredits] = useState(3);
+  const [demoCredits, setDemoCredits] = useState(2);
 
   // Pull to refresh for mobile
   const { isPulling, pullDistance, progress } = usePullToRefresh();
