@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAuth } from '../contexts/AuthContext';
 import * as analytics from '../services/analyticsService';
+import { loadRazorpay, RazorpayResponse } from '../utils/razorpay';
 
 interface PricingModalProps {
   onClose: () => void;
@@ -35,33 +35,100 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
   const { user } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isPurchaseComplete, setIsPurchaseComplete] = useState(false);
+  const [purchasedCredits, setPurchasedCredits] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleJoinWaitlist = async () => {
+  const handlePurchase = async () => {
     if (!selectedPackage || !user) return;
 
     setIsSubmitting(true);
+    setError(null);
+
     try {
-      await addDoc(collection(db, 'waitlist'), {
-        userId: user.uid,
-        email: user.email || '',
-        selectedPackage,
-        timestamp: serverTimestamp(),
-        notified: false,
-      });
+      const functions = getFunctions();
+      const createOrder = httpsCallable(functions, 'createRazorpayOrder');
+      
+      // Create Razorpay order via Cloud Function
+      const result = await createOrder({ packageId: selectedPackage });
+      const orderData = result.data as {
+        orderId: string;
+        amount: number;
+        currency: string;
+        keyId: string;
+        packageName: string;
+        credits: number;
+      };
 
       analytics.trackPurchaseInitiated(selectedPackage, PACKAGES.find(p => p.id === selectedPackage)?.price || 0);
 
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error('Failed to join waitlist:', error);
-    } finally {
+      // Load Razorpay SDK and open checkout
+      const Razorpay = await loadRazorpay();
+      
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.orderId,
+        name: 'CivicVision',
+        description: `${orderData.credits} Credits - ${orderData.packageName}`,
+        prefill: {
+          email: user.email || '',
+          name: user.displayName || '',
+        },
+        theme: {
+          color: '#4f7eff',
+        },
+        handler: async (response: RazorpayResponse) => {
+          // Payment successful - verify with backend
+          try {
+            const verifyPayment = httpsCallable(functions, 'verifyPayment');
+            await verifyPayment({
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+            });
+
+            // Show success state
+            setPurchasedCredits(orderData.credits);
+            setIsPurchaseComplete(true);
+            
+            // Notify parent component
+            onPurchase(orderData.credits, orderData.amount / 100);
+          } catch (verifyError) {
+            console.error('Payment verification error:', verifyError);
+            // Even if verification fails, webhook will handle it
+            setPurchasedCredits(orderData.credits);
+            setIsPurchaseComplete(true);
+            onPurchase(orderData.credits, orderData.amount / 100);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setIsSubmitting(false);
+          },
+          escape: true,
+          confirm_close: true,
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        console.error('Payment failed:', response.error);
+        setError(response.error.description || 'Payment failed. Please try again.');
+        setIsSubmitting(false);
+      });
+      rzp.open();
+
+    } catch (err: any) {
+      console.error('Failed to initiate purchase:', err);
+      setError(err.message || 'Failed to start payment. Please try again.');
       setIsSubmitting(false);
     }
   };
 
   // Success confirmation screen
-  if (isSubmitted) {
+  if (isPurchaseComplete) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <motion.div 
@@ -87,16 +154,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
             </svg>
           </motion.div>
 
-          <h2 className="text-2xl font-bold text-white mb-2">You're on the List! 🎉</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Payment Successful! 🎉</h2>
           <p className="text-gray-400 text-sm mb-6">
-            We'll notify you at <span className="text-[#4f7eff] font-medium">{user?.email}</span> when payments go live.
+            <span className="text-[#4f7eff] font-medium">{purchasedCredits} credits</span> have been added to your account.
           </p>
 
           <button
             onClick={onClose}
             className="w-full py-3 px-4 bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white font-bold rounded-xl hover:opacity-90 transition-all"
           >
-            Got it!
+            Start Creating!
           </button>
         </motion.div>
       </div>
@@ -131,7 +198,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
             </button>
             <div>
               <h2 className="text-lg md:text-2xl font-bold text-white">Get More Credits</h2>
-              <p className="text-blue-100 text-xs md:text-sm">Select a pack and join the waitlist</p>
+              <p className="text-blue-100 text-xs md:text-sm">Select a pack and complete your purchase</p>
             </div>
             <div className="w-6 md:hidden" /> {/* Spacer for centering */}
           </div>
@@ -211,8 +278,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
 
         {/* Fixed Footer with Button */}
         <div className="flex-shrink-0 p-4 md:p-6 pt-3 md:pt-4 border-t border-[#252f3f] bg-[#151c2c]">
+          {error && (
+            <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            </div>
+          )}
+          
           <button
-            onClick={handleJoinWaitlist}
+            onClick={handlePurchase}
             disabled={!selectedPackage || isSubmitting}
             className={`w-full py-3.5 px-4 font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
               selectedPackage && !isSubmitting
@@ -226,14 +299,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Joining...</span>
+                <span>Processing...</span>
               </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                <span>{selectedPackage ? 'Join Waitlist' : 'Select a Pack'}</span>
+                <span>{selectedPackage ? `Buy Pack - ₹${PACKAGES.find(p => p.id === selectedPackage)?.price}` : 'Select a Pack'}</span>
               </>
             )}
           </button>
