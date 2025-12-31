@@ -74,6 +74,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
                         <span>Sign in with Google</span>
                     </motion.button>
 
+                    {/* Free generations text */}
+                    <p className="text-center text-sm text-[#4f7eff] font-medium">
+                        Login and get 2 generations for free!
+                    </p>
+
                     {/* Divider */}
                     <div className="relative flex py-3 items-center">
                         <div className="flex-grow border-t border-[#252f3f]"></div>
