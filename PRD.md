@@ -1,23 +1,25 @@
-# Fix My City - Product Requirements Document (PRD)
+# Redo AI - Product Requirements Document (PRD)
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Last Updated:** January 2025  
-**Author:** Vatsal Mishra
+**Author:** Vatsal Mishra  
+**Domain:** [re-do.ai](https://re-do.ai)
 
 ---
 
 ## 1. Executive Summary
 
-Fix My City is an AI-powered web application that transforms photos into visualizations of improved environments. The app operates in two modes: **City Vision** (urban renewal) and **Home Vision** (interior design). Users upload photos and the app generates idealized versions using Google's Gemini AI.
+Redo AI is an AI-powered web application that transforms photos into visualizations of improved environments. The app operates in two modes: **City Mode** (urban renewal) and **Home Mode** (interior design). Users upload photos and the app generates idealized versions using Google's Gemini AI.
 
 ### Mission
-> *"Visualize a cleaner, greener India"*
+> *"Redo your city and home with AI-powered visualization"*
 
 ### Key Value Proposition
 - Instantly see how public spaces or interiors could look with improvements
 - No design skills required - AI handles the transformation
-- Dual modes: Urban renewal (City Vision) and Interior design (Home Vision)
+- Dual modes: Urban renewal (City Mode) and Interior design (Home Mode)
 - Useful for urban planners, activists, homeowners, and real estate professionals
+- Free credits for new users (3 generations)
 
 ---
 
@@ -83,17 +85,18 @@ flowchart TD
 
 | Feature | Status | Description |
 |---------|--------|-------------|
-| Google Sign-In | ✅ Done | Firebase Authentication |
-| Dual Mode System | ✅ Done | City Vision (urban) + Home Vision (interior) |
+| Google Sign-In | ✅ Done | Firebase Authentication with "Login and get 2 generations for free!" message |
+| Dual Mode System | ✅ Done | City Mode (urban) + Home Mode (interior) |
 | Image Upload | ✅ Done | Drag & drop, JPEG, PNG, WEBP support |
-| Filter Selection | ✅ Done | 11 city filters, 25+ home filters (categorized) |
+| Filter Selection | ✅ Done | 13 city filters, 25+ home filters (categorized) |
 | AI Transformation | ✅ Done | Google Gemini 3 Pro Image Preview |
-| Before/After Slider | ✅ Done | Interactive comparison slider |
-| Composite Image Download | ✅ Done | Side-by-side before/after with branding |
+| Before/After Slider | ✅ Done | Interactive comparison slider with improved touch responsiveness |
+| Composite Image Download | ✅ Done | Vertical layout (before on top, after on bottom) with branding |
 | Credit System | ✅ Done | 3 free credits for new users |
 | BYOK Mode | ✅ Done | Bring Your Own API Key (unlimited) |
 | Demo Mode | ✅ Done | Special mode for Razorpay KYC review |
 | Payment Integration | ✅ Done | Full Razorpay integration with webhooks |
+| Legal Pages | ✅ Done | Privacy Policy and Terms of Service pages with routing |
 
 ### 4.2 Enhancement Features
 
@@ -105,11 +108,14 @@ flowchart TD
 | Mode Switcher | ✅ Done | Toggle between City/Home modes |
 | Bottom Navigation | ✅ Done | Mobile-optimized navigation bar |
 | Filter Categories | ✅ Done | Home filters organized by style/colors/furniture/architectural |
-| Share Modal | ✅ Done | Enhanced sharing with social media previews |
+| Share Modal | ✅ Done | Native device share menu with before/after composite image |
 | Analytics Tracking | ✅ Done | Firebase Analytics with comprehensive events |
 | Real-time Credit Updates | ✅ Done | Firestore listener for instant credit balance |
 | Error Handling | ✅ Done | Detailed error messages for API issues |
-| Responsive Design | ✅ Done | Mobile-first, works on all screen sizes |
+| Responsive Design | ✅ Done | Mobile-first, works on all screen sizes with safe area insets |
+| Legal Pages | ✅ Done | Privacy Policy and Terms of Service accessible at /privacy-policy and /terms-of-service |
+| Payment Disclaimer | ✅ Done | "International payments & subscriptions coming soon" notice |
+| Custom Pricing Contact | ✅ Done | Email link for bulk orders and custom pricing inquiries |
 
 ### 4.3 Planned Features (Roadmap)
 
@@ -171,8 +177,9 @@ flowchart TD
 | Serverless | Firebase Functions (Node 20) | API proxy, webhooks, credit management |
 | AI SDK | @google/genai 1.34 | Gemini API client |
 | AI Model | Gemini 3 Pro Image Preview | High-quality image editing |
-| Payment | Razorpay | Credit purchases (Full Integration) |
-| Hosting | Vercel | Frontend deployment |
+| Payment | Razorpay | Credit purchases (Full Integration, India only) |
+| Hosting | Vercel | Frontend deployment with client-side routing |
+| Routing | React Router DOM 6.26 | Client-side routing for legal pages |
 | Analytics | Firebase Analytics + Vercel Analytics | User behavior tracking |
 
 ### 5.3 Firebase Functions
@@ -190,15 +197,18 @@ flowchart TD
 
 **Core Components:**
 - `App.tsx` - Main application orchestrator, state management
+- `AppRouter.tsx` - React Router setup for legal pages routing
 - `AuthScreen.tsx` - Authentication selection (Google Sign-In / BYOK)
 - `ImageUploader.tsx` - Drag & drop image upload with preview
 - `FilterControls.tsx` - Filter selection sidebar (categorized for Home mode)
-- `ComparisonSlider.tsx` - Interactive before/after slider
-- `PricingModal.tsx` - Credit packages and Razorpay integration
+- `ComparisonSlider.tsx` - Interactive before/after slider with improved touch handling
+- `PricingModal.tsx` - Credit packages and Razorpay integration with custom pricing contact
 - `Onboarding.tsx` - 7-step interactive tutorial
 - `ModeSwitcher.tsx` - Toggle between City/Home modes
 - `BottomNavBar.tsx` - Mobile navigation and upload trigger
-- `ShareModal.tsx` - Results sharing and download portal
+- `ShareModal.tsx` - Native device share menu with composite image
+- `PrivacyPolicy.tsx` - Privacy Policy page component
+- `TermsOfService.tsx` - Terms of Service page component
 
 **Contexts & Hooks:**
 - `AuthContext.tsx` - User authentication and credit management
@@ -209,7 +219,7 @@ flowchart TD
 - `analyticsService.ts` - Firebase Analytics event tracking
 
 **Utilities:**
-- `imageUtils.ts` - Composite image generation (side-by-side before/after)
+- `imageUtils.ts` - Composite image generation (vertical layout: before on top, after on bottom)
 
 ---
 
@@ -312,8 +322,12 @@ interface FailedPayment {
 ```
 
 **Mode-Specific Prompts:**
-- **City Vision:** Urban renewal focus (trash removal, paint, greenery, infrastructure)
-- **Home Vision:** Interior design focus (style presets, colors, furniture, architectural changes)
+- **City Mode:** Urban renewal focus (trash removal, paint, greenery, infrastructure, wire removal, flowers)
+- **Home Mode:** Interior design focus (style presets, colors, furniture, architectural changes)
+
+**Headlines:**
+- **City Mode:** "Redo Your Neighborhood"
+- **Home Mode:** "Redo Your Space"
 
 ### 7.2 Error Handling
 
@@ -356,6 +370,8 @@ interface FailedPayment {
 - Only email and display name stored
 - Images processed via Gemini API, not stored on our servers
 - GDPR-compliant (delete on request)
+- Privacy Policy and Terms of Service available at `/privacy-policy` and `/terms-of-service`
+- Links to legal pages in authentication screen footer
 
 ---
 
@@ -401,7 +417,7 @@ interface FailedPayment {
 
 ### 11.1 Filter System
 
-**City Vision Filters (11 total):**
+**City Mode Filters (13 total):**
 - Remove Trash (default)
 - Manicured Greenery (default)
 - Fresh Paint & Repair
@@ -414,7 +430,7 @@ interface FailedPayment {
 - Remove Wires
 - Add Flowers & Plants
 
-**Home Vision Filters (20+ total, categorized):**
+**Home Mode Filters (20+ total, categorized):**
 - **Style Presets:** Modern (default), Scandinavian, Minimalist, Bohemian, Industrial, Mid-Century Modern, Japanese Zen, Coastal
 - **Colors & Paint:** Warm Neutrals, Cool Tones, Bold Accent Wall, Earthy Palette
 - **Furniture & Decor:** Modern Furniture (default), Indoor Plants (default), Warm Lighting (default), Cozy Textiles (default), Declutter, Wall Art & Decor
@@ -445,13 +461,14 @@ enum AppState {
 
 ### 11.4 Composite Image Generation
 
-The download feature creates a side-by-side composite image:
-- **Dimensions:** Original image aspect ratio, max height 2048px
-- **Layout:** Before (left) | After (right)
-- **Branding:** "BEFORE" label (left), "FIX MY CITY" label (right)
-- **Footer:** "Transformed with Fix My City AI"
+The share/download feature creates a vertical composite image:
+- **Dimensions:** Original image aspect ratio, max height 2048px per image
+- **Layout:** Before (top) | After (bottom) - optimized for mobile sharing
+- **Branding:** "BEFORE" label (top-left), "AFTER" label (top-left of bottom section)
+- **Footer:** "Transformed with Redo AI" at bottom
 - **Format:** JPEG, 85% quality
-- **Gradients:** Top/bottom overlays for text readability
+- **Gradients:** Top, middle (divider), and bottom overlays for text readability
+- **Share Text:** "I reimagined this space with Redo AI"
 
 ### 11.5 Demo Mode
 
@@ -467,7 +484,9 @@ Special mode activated via URL parameter `?demo=razorpay`:
 ### Phase 2: Monetization (Q1 2025)
 - [x] Razorpay backend integration
 - [x] Frontend payment flow integration
+- [x] Custom pricing contact section
 - [ ] Subscription model option
+- [ ] International payments support
 - [ ] Referral bonus credits
 
 ### Phase 3: Expansion (Q2 2025)
