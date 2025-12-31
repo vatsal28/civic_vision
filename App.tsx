@@ -55,7 +55,7 @@ const App: React.FC = () => {
       setIsDemoMode(true);
       setAuthMode(AuthMode.GUEST);
       // Show onboarding for demo users too
-      const completed = localStorage.getItem('civic_vision_demo_onboarding');
+      const completed = localStorage.getItem('redo_ai_demo_onboarding');
       if (!completed) {
         setShowOnboarding(true);
       }
@@ -72,7 +72,7 @@ const App: React.FC = () => {
   // Check if user needs onboarding (first time)
   React.useEffect(() => {
     if ((user || isDemoMode) && authMode && !loading) {
-      const storageKey = isDemoMode ? 'civic_vision_demo_onboarding' : 'civic_vision_onboarding_complete';
+      const storageKey = isDemoMode ? 'redo_ai_demo_onboarding' : 'redo_ai_onboarding_complete';
       const completed = localStorage.getItem(storageKey);
       if (!completed) {
         setShowOnboarding(true);
@@ -82,13 +82,13 @@ const App: React.FC = () => {
 
   // Handle onboarding completion
   const handleOnboardingComplete = () => {
-    localStorage.setItem('civic_vision_onboarding_complete', 'true');
+    localStorage.setItem('redo_ai_onboarding_complete', 'true');
     setShowOnboarding(false);
     analytics.trackOnboardingCompleted();
   };
 
   const handleOnboardingSkip = () => {
-    localStorage.setItem('civic_vision_onboarding_complete', 'true');
+    localStorage.setItem('redo_ai_onboarding_complete', 'true');
     setShowOnboarding(false);
     analytics.trackOnboardingSkipped();
   };
@@ -105,7 +105,7 @@ const App: React.FC = () => {
     if (input.trim().length > 10) {
       setUserApiKey(input.trim());
       setAuthMode(AuthMode.BYOK);
-      sessionStorage.setItem('civic_vision_key', input.trim());
+      sessionStorage.setItem('redo_ai_key', input.trim());
       analytics.trackAuthModeSelected('byok');
     }
   };
@@ -304,7 +304,7 @@ const App: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'civic-vision-transformation.jpg';
+      a.download = 'redo-ai-transformation.jpg';
       a.click();
       URL.revokeObjectURL(url);
       analytics.trackImageDownloaded();
@@ -473,7 +473,7 @@ const App: React.FC = () => {
               setOriginalImage(null);
               setGeneratedImage(null);
               setAppState(AppState.IDLE);
-              sessionStorage.removeItem('civic_vision_key');
+              sessionStorage.removeItem('redo_ai_key');
             }}
             className="text-[11px] text-gray-500 hover:text-white transition-colors bg-[#151c2c] px-3 py-1.5 rounded-full border border-[#252f3f]"
           >

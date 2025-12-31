@@ -173,7 +173,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
             // Convert data URL to blob for sharing
             const response = await fetch(shareImageUrl);
             const blob = await response.blob();
-            const file = new File([blob], 'civic-vision-transformation.jpg', { type: 'image/jpeg' });
+            const file = new File([blob], 'redo-ai-transformation.jpg', { type: 'image/jpeg' });
 
             const shareText = mode === 'HOME' 
                 ? 'I reimagined this space with Redo AI'
@@ -204,7 +204,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
 
         const link = document.createElement('a');
         link.href = shareImageUrl;
-        link.download = 'civic-vision-transformation.jpg';
+        link.download = 'redo-ai-transformation.jpg';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

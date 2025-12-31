@@ -24,33 +24,44 @@ const STEPS: Step[] = [
             </svg>
         ),
         title: "Welcome to Redo AI",
-        description: "Transform your city photos with AI-powered improvements. Let's take a quick tour!",
+        description: "Transform cities and interiors with AI-powered visualization. Let's take a quick tour!",
         highlight: 'welcome'
     },
     {
         id: 1,
         icon: (
             <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+        ),
+        title: "Choose Your Mode",
+        description: "Switch between City Mode for urban renewal or Home Mode for interior design transformations.",
+        highlight: 'mode'
+    },
+    {
+        id: 2,
+        icon: (
+            <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
         ),
         title: "Upload Your Image",
-        description: "Start by uploading a photo of any urban scene, street, or cityscape you want to transform.",
+        description: "Upload a city street, neighborhood, or room interior you want to transform.",
         highlight: 'uploader'
     },
     {
-        id: 2,
+        id: 3,
         icon: (
             <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
         ),
         title: "Select Improvements",
-        description: "Choose what you want to fix — remove trash, add greenery, repair walls, and more!",
+        description: "City: remove trash, add greenery, fresh paint. Home: change style, add plants, upgrade furniture!",
         highlight: 'filters'
     },
     {
-        id: 3,
+        id: 4,
         icon: (
             <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -61,7 +72,7 @@ const STEPS: Step[] = [
         highlight: 'transform'
     },
     {
-        id: 4,
+        id: 5,
         icon: (
             <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
@@ -72,25 +83,25 @@ const STEPS: Step[] = [
         highlight: 'slider'
     },
     {
-        id: 5,
+        id: 6,
         icon: (
             <svg className="w-12 h-12 md:w-14 md:h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
         ),
         title: "Download & Share",
-        description: "Save your transformed image and share your vision of a better city!",
+        description: "Save your transformed image and share your vision of a better space!",
         highlight: 'download'
     },
     {
-        id: 6,
+        id: 7,
         icon: (
             <svg className="w-16 h-16 md:w-20 md:h-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         ),
         title: "You're All Set!",
-        description: "Start transforming cityscapes now. Click the '?' Tour button in the top bar anytime to replay this tour.",
+        description: "Start transforming spaces now. Click the '?' button in the top bar anytime to replay this tour.",
         highlight: 'complete'
     }
 ];
@@ -286,6 +297,28 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) =>
                                     transition={{ delay: 0.4 }}
                                 >
                                     <div className={`onboarding-demo onboarding-demo-${step.highlight}`}>
+                                        {step.highlight === 'mode' && (
+                                            <div className="demo-mode">
+                                                <div className="demo-mode-switcher">
+                                                    <motion.div
+                                                        className="demo-mode-option demo-mode-city"
+                                                        animate={{ scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
+                                                        transition={{ repeat: Infinity, duration: 2, delay: 0 }}
+                                                    >
+                                                        <span className="demo-mode-icon">🏙️</span>
+                                                        <span>City</span>
+                                                    </motion.div>
+                                                    <motion.div
+                                                        className="demo-mode-option demo-mode-home"
+                                                        animate={{ scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
+                                                        transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+                                                    >
+                                                        <span className="demo-mode-icon">🏠</span>
+                                                        <span>Home</span>
+                                                    </motion.div>
+                                                </div>
+                                            </div>
+                                        )}
                                         {step.highlight === 'uploader' && (
                                             <div className="demo-upload">
                                                 <motion.div
@@ -302,24 +335,32 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) =>
                                         )}
                                         {step.highlight === 'filters' && (
                                             <div className="demo-filters">
-                                                {['Remove Trash', 'Add Greenery', 'Fresh Paint'].map((filter, i) => (
+                                                {[
+                                                    { label: 'Remove Trash', mode: 'city' },
+                                                    { label: 'Add Greenery', mode: 'city' },
+                                                    { label: 'Modern Style', mode: 'home' },
+                                                    { label: 'Add Plants', mode: 'home' }
+                                                ].map((filter, i) => (
                                                     <motion.div
-                                                        key={filter}
-                                                        className="demo-filter-item"
+                                                        key={filter.label}
+                                                        className={`demo-filter-item ${filter.mode === 'home' ? 'demo-filter-home' : ''}`}
                                                         initial={{ opacity: 0, x: -20 }}
                                                         animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.5 + i * 0.15 }}
+                                                        transition={{ delay: 0.5 + i * 0.12 }}
                                                     >
                                                         <motion.div
-                                                            className="demo-checkbox"
+                                                            className={`demo-checkbox ${filter.mode === 'home' ? 'demo-checkbox-home' : ''}`}
                                                             animate={{ scale: [1, 1.2, 1] }}
-                                                            transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
+                                                            transition={{ repeat: Infinity, duration: 2, delay: i * 0.25 }}
                                                         >
                                                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                             </svg>
                                                         </motion.div>
-                                                        <span>{filter}</span>
+                                                        <span>{filter.label}</span>
+                                                        <span className={`demo-filter-badge ${filter.mode === 'home' ? 'demo-filter-badge-home' : ''}`}>
+                                                            {filter.mode === 'city' ? '🏙️' : '🏠'}
+                                                        </span>
                                                     </motion.div>
                                                 ))}
                                             </div>
