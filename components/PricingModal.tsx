@@ -275,10 +275,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
             </div>
 
             {/* International Payments Disclaimer */}
-            <div className="mt-4 text-center">
-              <p className="text-xs text-gray-500 italic">
-                International payments coming soon
-              </p>
+            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <div className="flex items-center justify-center gap-2">
+                <svg className="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs text-amber-200 font-medium">
+                  International payments & subscriptions coming soon
+                </p>
+              </div>
             </div>
 
             {/* Custom Pricing Section */}
