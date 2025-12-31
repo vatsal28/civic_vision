@@ -73,6 +73,22 @@ export const CITY_FILTERS: FilterOption[] = [
     description: 'Polish railings and poles',
     promptFragment: 'If there are metal structures like railings, poles, or gates, remove any rust, bird droppings, and dirt, making them look polished and new.',
     isDefault: false
+  },
+  {
+    id: 'wires',
+    icon: '🔌',
+    label: 'Remove Wires',
+    description: 'Clear stray cables and wires',
+    promptFragment: 'Remove all visible stray wires, hanging cables, tangled power lines, and loose electrical cords from the scene. This includes wires strung between buildings, dangling from poles, and lying on the ground. Leave a clean, uncluttered sky and facade.',
+    isDefault: false
+  },
+  {
+    id: 'flowers',
+    icon: '🌸',
+    label: 'Add Flowers & Plants',
+    description: 'Beautify with colorful vegetation',
+    promptFragment: 'Add colorful flowers, flowering plants, and decorative vegetation to viable areas such as window boxes, planters, garden beds, sidewalk edges, and building entrances. Include a mix of blooming flowers in vibrant colors to create a charming, welcoming atmosphere.',
+    isDefault: false
   }
 ];
 
