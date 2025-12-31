@@ -116,7 +116,20 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
 
                 {/* Footer */}
                 <p className="mt-6 text-[10px] text-gray-600">
-                    By signing in, you agree to our Terms of Service and Privacy Policy
+                    By signing in, you agree to our{' '}
+                    <a 
+                        href="/terms-of-service" 
+                        className="text-[#4f7eff] hover:underline"
+                    >
+                        Terms of Service
+                    </a>
+                    {' '}and{' '}
+                    <a 
+                        href="/privacy-policy" 
+                        className="text-[#4f7eff] hover:underline"
+                    >
+                        Privacy Policy
+                    </a>
                 </p>
             </motion.div>
         </div>

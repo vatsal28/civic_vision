@@ -92,6 +92,12 @@
     /* Prevent overscroll on iOS */
     html, body {
         overscroll-behavior: none;
+        overflow-x: hidden;
+    }
+    
+    /* Allow scrolling on legal pages */
+    html.legal-page, body.legal-page {
+        overflow-y: auto;
     }
 }
 

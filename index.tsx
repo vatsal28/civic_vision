@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import { AppRouter } from './AppRouter';
 import { AuthProvider } from './contexts/AuthContext';
 
 const rootElement = document.getElementById('root');
@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <AppRouter />
     </AuthProvider>
   </React.StrictMode>
 );
