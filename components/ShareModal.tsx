@@ -117,7 +117,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                         // Add website URL below
                         ctx.font = `${Math.max(14, width / 40)}px Inter, sans-serif`;
                         ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                        ctx.fillText('redo-ai.com', canvas.width / 2, height + brandingHeight - 5); // TODO: Update domain when finalized
+                        ctx.fillText('re-do.ai', canvas.width / 2, height + brandingHeight - 5);
 
                         resolve(canvas.toDataURL('image/jpeg', 0.92));
                     }
