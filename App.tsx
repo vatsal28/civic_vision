@@ -363,8 +363,12 @@ const App: React.FC = () => {
       {/* Pull to Refresh Indicator */}
       {isPulling && (
         <div
-          className="fixed top-0 left-0 right-0 flex justify-center items-center z-50 pointer-events-none md:hidden"
-          style={{ height: `${pullDistance}px`, maxHeight: '100px' }}
+          className="fixed left-0 right-0 flex justify-center items-center z-50 pointer-events-none md:hidden"
+          style={{ 
+            top: `env(safe-area-inset-top, 0px)`,
+            height: `${pullDistance}px`, 
+            maxHeight: '100px' 
+          }}
         >
           <div
             className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-[#151c2c] shadow-lg transition-transform ${progress >= 1 ? 'border-green-400 bg-green-500' : ''}`}
@@ -421,7 +425,7 @@ const App: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 relative flex flex-col h-full overflow-hidden z-10">
         {/* Top Bar: Credits, Settings */}
-        <div className="absolute top-3 md:top-4 right-3 md:right-4 z-40 flex items-center gap-2 flex-wrap justify-end">
+        <div className="absolute right-3 md:right-4 z-40 flex items-center gap-2 flex-wrap justify-end" style={{ top: `max(env(safe-area-inset-top, 0px), 0.75rem)` }}>
           {(authMode === AuthMode.GUEST || isDemoMode) && (
             <>
               {isDemoMode && (
@@ -482,7 +486,8 @@ const App: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-14 md:top-16 left-1/2 transform -translate-x-1/2 z-50 bg-red-900/90 backdrop-blur-md border border-red-500/50 text-red-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-[90vw] md:max-w-lg"
+              className="absolute left-1/2 transform -translate-x-1/2 z-50 bg-red-900/90 backdrop-blur-md border border-red-500/50 text-red-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-[90vw] md:max-w-lg"
+              style={{ top: `max(calc(env(safe-area-inset-top, 0px) + 3.5rem), 3.5rem)` }}
             >
               <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -493,7 +498,7 @@ const App: React.FC = () => {
         </AnimatePresence>
 
         {/* Content Container */}
-        <div className="flex-1 w-full h-full p-4 md:p-8 pt-14 md:pt-16 pb-24 md:pb-8 flex flex-col items-center justify-start md:justify-center relative min-h-0 overflow-y-auto">
+        <div className="flex-1 w-full h-full p-4 md:p-8 pb-24 md:pb-8 flex flex-col items-center justify-start md:justify-center relative min-h-0 overflow-y-auto" style={{ paddingTop: `max(calc(env(safe-area-inset-top, 0px) + 3.5rem), 3.5rem)` }}>
           
           {/* IDLE STATE: Upload Screen */}
           {appState === AppState.IDLE && (

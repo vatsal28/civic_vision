@@ -585,7 +585,24 @@ async function handleRefund(payload, event, res) {
     const paymentData = paymentDoc.data();
     const { userId, credits, packageId } = paymentData;
 
-    // 3. Deduct credits using transaction
+    // 3. Only deduct credits if refund status is 'processed'
+    // For 'created' or 'failed' refunds, just log the event
+    if (refundStatus !== 'processed') {
+        console.log(`Refund ${refundId} status is '${refundStatus}', not processing credit deduction yet`);
+        
+        // Record the refund event for tracking, but don't deduct credits
+        await refundsRef.doc(refundId).set({
+            paymentId,
+            refundId,
+            amount: refundAmount / 100,
+            status: refundStatus,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        
+        return res.status(200).send('OK');
+    }
+
+    // 4. Deduct credits using transaction (only for processed refunds)
     const userRef = admin.firestore().collection('users').doc(userId);
 
     await admin.firestore().runTransaction(async (transaction) => {
