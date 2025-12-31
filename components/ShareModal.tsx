@@ -14,9 +14,15 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
 
     const generateShareImage = async (): Promise<string> => {
         return new Promise((resolve, reject) => {
+            // Add timeout to prevent infinite hanging
+            const timeout = setTimeout(() => {
+                reject(new Error('Image generation timed out. Please try again.'));
+            }, 30000); // 30 second timeout
+
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             if (!ctx) {
+                clearTimeout(timeout);
                 reject(new Error('Could not get canvas context'));
                 return;
             }
@@ -24,13 +30,19 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
             const img1 = new Image();
             const img2 = new Image();
 
-            img1.crossOrigin = 'anonymous';
-            img2.crossOrigin = 'anonymous';
+            // Don't set crossOrigin for data URLs - it causes CORS issues
+            if (!originalImage.startsWith('data:')) {
+                img1.crossOrigin = 'anonymous';
+            }
+            if (!generatedImage.startsWith('data:')) {
+                img2.crossOrigin = 'anonymous';
+            }
 
             let loadedCount = 0;
             const onLoad = () => {
                 loadedCount++;
                 if (loadedCount === 2) {
+                    clearTimeout(timeout);
                     // Calculate dimensions - side by side layout
                     const MAX_HEIGHT = 2048;
                     let width = img1.width;
@@ -101,11 +113,30 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                 }
             };
 
-            img1.onerror = () => reject(new Error('Failed to load original image'));
-            img2.onerror = () => reject(new Error('Failed to load generated image'));
+            img1.onerror = () => {
+                clearTimeout(timeout);
+                reject(new Error('Failed to load original image'));
+            };
+            img2.onerror = () => {
+                clearTimeout(timeout);
+                reject(new Error('Failed to load generated image'));
+            };
 
+            // Set up load handlers
+            img1.onload = onLoad;
+            img2.onload = onLoad;
+
+            // Set src
             img1.src = originalImage;
             img2.src = generatedImage;
+
+            // Check if images are already loaded (cached) - use setTimeout to ensure handlers are set
+            setTimeout(() => {
+                if (img1.complete && img2.complete && loadedCount < 2) {
+                    // Both images already loaded, call onLoad directly
+                    onLoad();
+                }
+            }, 10);
         });
     };
 

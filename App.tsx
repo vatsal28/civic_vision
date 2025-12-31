@@ -557,21 +557,22 @@ const App: React.FC = () => {
               </div>
 
               {/* Action Bar */}
-              <div className="mt-4 flex flex-wrap justify-center items-center gap-3 bg-[#151c2c] p-4 rounded-xl border border-[#252f3f] flex-shrink-0">
+              <div className="mt-4 flex flex-wrap justify-center items-center gap-2 md:gap-3 bg-[#151c2c] p-3 md:p-4 rounded-xl border border-[#252f3f] flex-shrink-0">
                 {/* Mobile only: Adjust Filters button */}
                 <button
                   onClick={() => setAppState(AppState.READY)}
-                  className="md:hidden px-4 py-2 bg-[#1e2638] text-gray-300 hover:text-white rounded-lg text-sm font-medium border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-2"
+                  className="md:hidden px-3 py-2 bg-[#1e2638] text-gray-300 hover:text-white rounded-lg text-xs md:text-sm font-medium border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-1.5"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                   </svg>
-                  Adjust Filters
+                  <span className="hidden xs:inline">Adjust Filters</span>
+                  <span className="xs:hidden">Filters</span>
                 </button>
 
                 <button
                   onClick={handleReset}
-                  className="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                  className="px-3 md:px-4 py-2 text-gray-400 hover:text-white text-xs md:text-sm font-medium transition-colors"
                 >
                   Upload New
                 </button>
@@ -583,26 +584,26 @@ const App: React.FC = () => {
                     setShowShare(true);
                     analytics.trackShareModalOpened();
                   }}
-                  className="px-5 py-2 text-white text-sm font-bold rounded-lg shadow-lg transition-all flex items-center gap-2"
+                  className="px-4 md:px-5 py-2 text-white text-xs md:text-sm font-bold rounded-lg shadow-lg transition-all flex items-center gap-1.5 md:gap-2 flex-shrink-0"
                   style={{ 
                     background: `linear-gradient(135deg, ${accentColor}, ${isHomeMode ? '#f472b6' : '#6366f1'})`,
                     boxShadow: `0 4px 15px ${accentColor}40`
                   }}
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                   </svg>
-                  Share
+                  <span>Share</span>
                 </button>
 
                 <button
                   onClick={handleDownloadComposite}
-                  className="px-5 py-2 bg-[#1e2638] text-gray-300 hover:text-white text-sm font-medium rounded-lg border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-2"
+                  className="px-4 md:px-5 py-2 bg-[#1e2638] text-gray-300 hover:text-white text-xs md:text-sm font-medium rounded-lg border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-1.5 md:gap-2 flex-shrink-0"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Download
+                  <span>Download</span>
                 </button>
               </div>
             </motion.div>

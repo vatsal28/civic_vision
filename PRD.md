@@ -86,13 +86,14 @@ flowchart TD
 | Google Sign-In | ✅ Done | Firebase Authentication |
 | Dual Mode System | ✅ Done | City Vision (urban) + Home Vision (interior) |
 | Image Upload | ✅ Done | Drag & drop, JPEG, PNG, WEBP support |
-| Filter Selection | ✅ Done | 9 city filters, 25+ home filters (categorized) |
+| Filter Selection | ✅ Done | 11 city filters, 25+ home filters (categorized) |
 | AI Transformation | ✅ Done | Google Gemini 3 Pro Image Preview |
 | Before/After Slider | ✅ Done | Interactive comparison slider |
 | Composite Image Download | ✅ Done | Side-by-side before/after with branding |
 | Credit System | ✅ Done | 3 free credits for new users |
 | BYOK Mode | ✅ Done | Bring Your Own API Key (unlimited) |
 | Demo Mode | ✅ Done | Special mode for Razorpay KYC review |
+| Payment Integration | ✅ Done | Full Razorpay integration with webhooks |
 
 ### 4.2 Enhancement Features
 
@@ -102,8 +103,9 @@ flowchart TD
 | Pull-to-Refresh | ✅ Done | Mobile UX improvement |
 | Mobile Image Preview | ✅ Done | See image while selecting filters |
 | Mode Switcher | ✅ Done | Toggle between City/Home modes |
+| Bottom Navigation | ✅ Done | Mobile-optimized navigation bar |
 | Filter Categories | ✅ Done | Home filters organized by style/colors/furniture/architectural |
-| Waitlist System | ✅ Done | Capture purchase intent for credit packages |
+| Share Modal | ✅ Done | Enhanced sharing with social media previews |
 | Analytics Tracking | ✅ Done | Firebase Analytics with comprehensive events |
 | Real-time Credit Updates | ✅ Done | Firestore listener for instant credit balance |
 | Error Handling | ✅ Done | Detailed error messages for API issues |
@@ -113,12 +115,12 @@ flowchart TD
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
-| Payment Integration | High | Razorpay webhook integration (backend ready, needs frontend) |
+| Subscription Model | Medium | Monthly recurring credit plans |
 | Before/After Video | Medium | Animated transformation |
 | Batch Processing | Low | Multiple images at once |
 | Custom Filters | Low | User-defined improvements |
 | AI Studio Integration | Medium | Direct integration with Google AI Studio key selector |
-| Share Modal | Low | Enhanced sharing with social media previews |
+| Referral System | Low | Bonus credits for inviting friends |
 
 ---
 
@@ -159,17 +161,17 @@ flowchart TD
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Frontend | React 19 + TypeScript | UI Framework |
-| Build Tool | Vite 6 | Fast development and builds |
-| Styling | TailwindCSS 4 | Utility-first CSS |
-| Animations | Framer Motion | Smooth UI transitions |
+| Frontend | React 19.2 + TypeScript 5.8 | UI Framework |
+| Build Tool | Vite 6.2 | Fast development and builds |
+| Styling | TailwindCSS 4.1 | Utility-first CSS |
+| Animations | Framer Motion 12 | Smooth UI transitions |
 | State | React Hooks + Context | Local state management |
 | Auth | Firebase Auth | Google Sign-In |
-| Database | Firestore | User data, credits, waitlist, payments |
+| Database | Firestore | User data, credits, payments |
 | Serverless | Firebase Functions (Node 20) | API proxy, webhooks, credit management |
-| AI SDK | @google/genai | Gemini API client |
+| AI SDK | @google/genai 1.34 | Gemini API client |
 | AI Model | Gemini 3 Pro Image Preview | High-quality image editing |
-| Payment | Razorpay | Credit purchases (backend ready) |
+| Payment | Razorpay | Credit purchases (Full Integration) |
 | Hosting | Vercel | Frontend deployment |
 | Analytics | Firebase Analytics + Vercel Analytics | User behavior tracking |
 
@@ -178,10 +180,11 @@ flowchart TD
 | Function | Trigger | Purpose |
 |----------|---------|---------|
 | `createUserDocument` | Auth.onCreate | Initialize new user with 3 credits |
-| `generateImage` | HTTPS Callable | Proxy Gemini API for Guest mode, deducts credits |
+| `generateImage` | HTTPS Callable | Proxy Gemini API for Guest mode, deducts 1 credit |
 | `addCredits` | HTTPS Callable | Manually add credits (for testing/admin) |
 | `createRazorpayOrder` | HTTPS Callable | Create payment order for credit purchase |
 | `razorpayWebhook` | HTTPS Request | Verify payment and add credits automatically |
+| `verifyPayment` | HTTPS Callable | Client-side signature verification after payment |
 
 ### 5.4 Component Architecture
 
@@ -191,9 +194,11 @@ flowchart TD
 - `ImageUploader.tsx` - Drag & drop image upload with preview
 - `FilterControls.tsx` - Filter selection sidebar (categorized for Home mode)
 - `ComparisonSlider.tsx` - Interactive before/after slider
-- `PricingModal.tsx` - Credit packages and waitlist signup
+- `PricingModal.tsx` - Credit packages and Razorpay integration
 - `Onboarding.tsx` - 7-step interactive tutorial
 - `ModeSwitcher.tsx` - Toggle between City/Home modes
+- `BottomNavBar.tsx` - Mobile navigation and upload trigger
+- `ShareModal.tsx` - Results sharing and download portal
 
 **Contexts & Hooks:**
 - `AuthContext.tsx` - User authentication and credit management
@@ -222,17 +227,7 @@ interface User {
   createdAt: Timestamp;
   lastUsedAt: Timestamp;
   lastPurchaseAt?: Timestamp;
-}
-```
-
-#### `waitlist/{docId}`
-```typescript
-interface WaitlistEntry {
-  userId: string;
-  email: string;
-  selectedPackage: 'starter' | 'popular' | 'pro';
-  timestamp: Timestamp;
-  notified: boolean;
+  lastRefundAt?: Timestamp;
 }
 ```
 
@@ -242,10 +237,38 @@ interface Payment {
   userId: string;
   orderId: string;
   paymentId: string;
+  packageId: string;
   amount: number;           // in rupees
   credits: number;
-  status: 'captured' | 'failed';
+  status: 'captured' | 'failed' | 'refunded';
   createdAt: Timestamp;
+  refundId?: string;
+  refundedAt?: Timestamp;
+}
+```
+
+#### `refunds/{refundId}`
+```typescript
+interface Refund {
+  userId: string;
+  paymentId: string;
+  refundId: string;
+  packageId: string;
+  amount: number;
+  creditsDeducted: number;
+  status: 'processed' | 'failed' | 'payment_not_found';
+  createdAt: Timestamp;
+}
+```
+
+#### `failed_payments/{docId}`
+```typescript
+interface FailedPayment {
+  orderId: string;
+  paymentId: string;
+  errorCode: string;
+  errorDescription: string;
+  timestamp: Timestamp;
 }
 ```
 
@@ -314,14 +337,24 @@ interface Payment {
 
 ### 8.2 API Key Protection
 - **Guest Mode:** API key stored in Firebase Functions secrets (server-side only)
-- **BYOK Mode:** Key stored in sessionStorage (cleared on page close)
+- **BYOK Mode:** Key stored in `sessionStorage` (cleared on page close)
 - **Demo Mode:** Uses environment variable (for KYC review purposes)
 - Never logged or transmitted to our servers
 - BYOK keys never sent to Firebase Functions
 
-### 8.3 Data Privacy
+### 8.3 Payment Security
+- **Razorpay Integration:** 
+  - Server-side order creation (never trust client amounts)
+  - Webhook signature verification using HMAC-SHA256 and raw body
+  - Duplicate payment processing prevention
+  - Automatic credit deduction on refunds
+- **Credit Management:** 
+  - Atomic transactions in Firestore for credit deduction and addition
+  - Server-side validation of credit balance before AI calls
+
+### 8.4 Data Privacy
 - Only email and display name stored
-- Images processed server-side, not stored
+- Images processed via Gemini API, not stored on our servers
 - GDPR-compliant (delete on request)
 
 ---
@@ -347,7 +380,9 @@ interface Payment {
 ### Monetization
 - `pricing_modal_opened` - Viewed pricing (includes current credits)
 - `credits_exhausted` - Ran out of credits
-- `purchase_initiated` - Started purchase/waitlist (includes package ID, amount)
+- `purchase_initiated` - Started purchase (includes package ID, amount)
+- `purchase_success` - Payment completed successfully
+- `purchase_error` - Payment failed or was cancelled
 
 ---
 
@@ -366,31 +401,34 @@ interface Payment {
 
 ### 11.1 Filter System
 
-**City Vision Filters (9 total):**
-- Remove Trash & Garbage (default)
-- Fresh Paint & Repair (default)
-- Remove People (default)
-- Deep Clean (default)
-- Clear Debris (default)
+**City Vision Filters (11 total):**
+- Remove Trash (default)
 - Manicured Greenery (default)
-- Restore Metalwork (default)
-- European Infrastructure (optional)
-- European Aesthetics (optional)
+- Fresh Paint & Repair
+- Remove Debris
+- European Infrastructure
+- European Aesthetics
+- Remove People
+- Deep Clean
+- Restore Metalwork
+- Remove Wires
+- Add Flowers & Plants
 
-**Home Vision Filters (25+ total, categorized):**
-- **Style Presets:** Scandinavian, Minimalist, Bohemian, Industrial, Mid-Century Modern, Japanese Zen, Coastal, Modern Farmhouse
-- **Colors & Paint:** Warm Neutrals (default), Cool Tones, Bold Accent Wall, Earthy Palette, Monochromatic
-- **Furniture & Decor:** Modern Furniture (default), Cozy Textiles (default), Declutter (default), Indoor Plants (default), Upgrade Lighting, Rearrange Furniture
-- **Architectural:** Open Floor Concept, Add Natural Light, Upgrade Flooring, Kitchen Upgrade, Bathroom Upgrade
+**Home Vision Filters (20+ total, categorized):**
+- **Style Presets:** Modern (default), Scandinavian, Minimalist, Bohemian, Industrial, Mid-Century Modern, Japanese Zen, Coastal
+- **Colors & Paint:** Warm Neutrals, Cool Tones, Bold Accent Wall, Earthy Palette
+- **Furniture & Decor:** Modern Furniture (default), Indoor Plants (default), Warm Lighting (default), Cozy Textiles (default), Declutter, Wall Art & Decor
+- **Architectural:** Natural Light, Upgrade Flooring, Open Floor Concept
 
 ### 11.2 App States
 
 ```typescript
 enum AppState {
-  IDLE = 'IDLE',           // Initial state, show uploader
-  READY = 'READY',         // Image loaded, ready to generate
-  GENERATING = 'GENERATING', // AI processing
-  COMPARING = 'COMPARING'   // Showing results
+  IDLE = 'IDLE',               // Initial state, show uploader
+  UPLOADING = 'UPLOADING',     // Processing initial upload
+  READY = 'READY',             // Image loaded, ready to generate
+  GENERATING = 'GENERATING',   // AI processing
+  COMPARING = 'COMPARING'       // Showing results
 }
 ```
 
@@ -427,8 +465,8 @@ Special mode activated via URL parameter `?demo=razorpay`:
 ## 12. Future Roadmap
 
 ### Phase 2: Monetization (Q1 2025)
-- [x] Razorpay backend integration (done)
-- [ ] Frontend payment flow integration
+- [x] Razorpay backend integration
+- [x] Frontend payment flow integration
 - [ ] Subscription model option
 - [ ] Referral bonus credits
 
