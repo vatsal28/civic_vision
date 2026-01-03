@@ -20,6 +20,7 @@ interface FilterControlsProps {
 // Group filters by category
 const groupFiltersByCategory = (filters: FilterOption[]): Record<FilterCategory, FilterOption[]> => {
   const grouped: Record<FilterCategory, FilterOption[]> = {
+    roomType: [],
     style: [],
     colors: [],
     furniture: [],
@@ -39,6 +40,12 @@ const groupFiltersByCategory = (filters: FilterOption[]): Record<FilterCategory,
 const getSelectedStyleName = (selectedFilters: string[], styleFilters: FilterOption[]): string => {
   const selectedStyle = styleFilters.find(f => selectedFilters.includes(f.id));
   return selectedStyle?.label || 'Select style';
+};
+
+// Get selected room type name for Home mode
+const getSelectedRoomTypeName = (selectedFilters: string[], roomTypeFilters: FilterOption[]): string => {
+  const selectedRoom = roomTypeFilters.find(f => selectedFilters.includes(f.id));
+  return selectedRoom?.label || 'Select room type';
 };
 
 export const FilterControls: React.FC<FilterControlsProps> = ({
@@ -83,7 +90,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   };
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<FilterCategory>>(
-    new Set(['furniture']) // Default expanded category
+    new Set(['roomType']) // Default expanded category
   );
   const [showOriginalPreview, setShowOriginalPreview] = useState(false);
 
@@ -114,7 +121,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   // Render a single filter item
   const renderFilterItem = (filter: FilterOption, compact = false) => {
     const isSelected = selectedFilters.includes(filter.id);
-    
+    const isRoomType = filter.category === 'roomType';
+
     return (
       <button
         key={filter.id}
@@ -129,7 +137,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-[#1e2638]">
           {filter.icon}
         </span>
-        
+
         {/* Text */}
         <div className="flex-1 text-left min-w-0">
           <div className="text-sm font-medium text-white truncate">{filter.label}</div>
@@ -137,21 +145,35 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             <div className="text-xs text-gray-500 truncate">{filter.description}</div>
           )}
         </div>
-        
-        {/* Checkbox */}
-        <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
-          isSelected 
-            ? isHomeMode 
-              ? 'bg-[#ec4899] border-[#ec4899]' 
-              : 'bg-[#4f7eff] border-[#4f7eff]'
-            : 'border-gray-600 bg-transparent'
-        }`}>
-          {isSelected && (
-            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </div>
+
+        {/* Radio button for room types, Checkbox for others */}
+        {isRoomType ? (
+          // Radio button (circular)
+          <div className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
+            isSelected
+              ? 'bg-transparent border-[#ec4899]'
+              : 'border-gray-600 bg-transparent'
+          }`}>
+            {isSelected && (
+              <div className="w-2.5 h-2.5 rounded-full bg-[#ec4899]" />
+            )}
+          </div>
+        ) : (
+          // Checkbox (square)
+          <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
+            isSelected
+              ? isHomeMode
+                ? 'bg-[#ec4899] border-[#ec4899]'
+                : 'bg-[#4f7eff] border-[#4f7eff]'
+              : 'border-gray-600 bg-transparent'
+          }`}>
+            {isSelected && (
+              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </div>
+        )}
       </button>
     );
   };
@@ -159,13 +181,14 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   // Render category accordion for Home mode
   const renderCategoryAccordion = (category: FilterCategory) => {
     if (!groupedFilters) return null;
-    
+
     const categoryFilters = groupedFilters[category];
     if (categoryFilters.length === 0) return null;
 
     const isExpanded = expandedCategories.has(category);
     const activeCount = getActiveCount(category);
     const isStyleCategory = category === 'style';
+    const isRoomTypeCategory = category === 'roomType';
 
     return (
       <div key={category} className="border border-[#252f3f] rounded-xl overflow-hidden bg-[#151c2c]">
@@ -179,22 +202,25 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
               {FILTER_CATEGORY_LABELS[category]}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            {isStyleCategory ? (
+            {isRoomTypeCategory || isStyleCategory ? (
               <span className="text-xs text-gray-400 bg-[#1e2638] px-2.5 py-1 rounded-lg">
-                {getSelectedStyleName(selectedFilters, categoryFilters)}
+                {isRoomTypeCategory
+                  ? getSelectedRoomTypeName(selectedFilters, categoryFilters)
+                  : getSelectedStyleName(selectedFilters, categoryFilters)
+                }
               </span>
             ) : activeCount > 0 ? (
               <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                isHomeMode 
+                isHomeMode
                   ? 'bg-[#ec4899]/20 text-[#ec4899]'
                   : 'bg-[#4f7eff]/20 text-[#4f7eff]'
               }`}>
                 {activeCount} active
               </span>
             ) : null}
-            
+
             <svg
               className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
               fill="none"
@@ -205,7 +231,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             </svg>
           </div>
         </button>
-        
+
         <AnimatePresence>
           {isExpanded && (
             <motion.div

@@ -94,6 +94,71 @@ export const CITY_FILTERS: FilterOption[] = [
 
 // Home Vision Filters - Interior design and room decor transformations
 export const HOME_FILTERS: FilterOption[] = [
+  // Room Types
+  {
+    id: 'bedroom',
+    icon: '🛏️',
+    label: 'Bedroom',
+    description: 'Rest and relaxation space',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add bedroom-specific furniture including a bed as the focal point, nightstands, appropriate lighting for rest and reading, and decor that creates a peaceful, restful sanctuary for sleep and relaxation.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'living_room',
+    icon: '🛋️',
+    label: 'Living Room',
+    description: 'Gathering and entertainment',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add living room furniture including a comfortable sofa or sectional, coffee table, entertainment center or TV unit, accent chairs, and decor that creates an inviting space for conversation, relaxation, and entertainment.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'kitchen',
+    icon: '🍳',
+    label: 'Kitchen',
+    description: 'Cooking and meal prep',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add kitchen-specific elements including modern appliances, functional counter space, storage cabinets, a kitchen island or dining area if space allows, and decor that makes this a warm, functional space for cooking and gathering.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'dining_room',
+    icon: '🍽️',
+    label: 'Dining Room',
+    description: 'Meals and hosting',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add dining room furniture including a dining table sized appropriately for the space, matching chairs, a buffet or sideboard if room allows, statement lighting above the table, and decor that creates an elegant atmosphere for meals and hosting.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'bathroom',
+    icon: '🚿',
+    label: 'Bathroom',
+    description: 'Spa-like sanctuary',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add bathroom-specific elements including a vanity with mirror, modern fixtures, storage solutions, towel racks, and spa-like decor with plants, candles, or artwork that creates a clean, relaxing sanctuary.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'home_office',
+    icon: '💼',
+    label: 'Home Office/Study',
+    description: 'Productive workspace',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add home office furniture including a functional desk, ergonomic chair, shelving or storage for books and supplies, task lighting, and decor that creates a focused, productive environment for work or study.',
+    isDefault: false,
+    category: 'roomType'
+  },
+  {
+    id: 'media_room',
+    icon: '📺',
+    label: 'Media Room',
+    description: 'Entertainment hub',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add media room elements including a large TV or projection setup, comfortable theater-style seating, sound system components, ambient lighting, and decor that creates an immersive entertainment experience.',
+    isDefault: false,
+    category: 'roomType'
+  },
+
   // Style Presets
   {
     id: 'modern',
@@ -109,7 +174,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌲',
     label: 'Scandinavian',
     description: 'Cozy minimalism with natural materials',
-    promptFragment: 'While keeping the exact same room layout and architectural features, redesign with a Scandinavian style featuring clean lines, light wood tones, white/light gray walls, simple functional furniture, cozy textiles like wool throws, and natural materials. Add hygge elements for warmth.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a Scandinavian style featuring clean lines, light wood tones, white/light gray walls, simple functional furniture, cozy textiles like wool throws, and natural materials. Add hygge elements for warmth.',
     isDefault: false,
     category: 'style'
   },
@@ -118,7 +183,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '◻️',
     label: 'Minimalist',
     description: 'Sleek and clutter-free',
-    promptFragment: 'Keeping the same room structure and architectural elements, redesign with a minimalist "less is more" approach. Remove visual clutter, use a monochromatic or very limited color palette, sleek furniture with clean geometry, and create open empty spaces that feel calm and serene.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a minimalist "less is more" approach. Remove visual clutter, use a monochromatic or very limited color palette, sleek furniture with clean geometry, and create open empty spaces that feel calm and serene.',
     isDefault: false,
     category: 'style'
   },
@@ -127,7 +192,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎨',
     label: 'Bohemian',
     description: 'Eclectic and colorful',
-    promptFragment: 'While preserving the existing room layout, walls, and architectural features, redesign with a bohemian style featuring layered textiles, rich colors and patterns, macramé, plants, vintage and globally-sourced decor, floor cushions, and an eclectic mix of furniture that feels collected and personal.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a bohemian style featuring layered textiles, rich colors and patterns, macramé, plants, vintage and globally-sourced decor, floor cushions, and an eclectic mix of furniture that feels collected and personal.',
     isDefault: false,
     category: 'style'
   },
@@ -136,7 +201,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🏭',
     label: 'Industrial',
     description: 'Urban loft vibes',
-    promptFragment: 'Maintaining the same room structure and dimensions, redesign with an industrial style featuring exposed brick wall treatments, metal light fixtures and furniture accents, concrete or distressed wood floor finishes, Edison bulbs, leather furniture, and a neutral palette with black metal frames.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with an industrial style featuring exposed brick wall treatments, metal light fixtures and furniture accents, concrete or distressed wood floor finishes, Edison bulbs, leather furniture, and a neutral palette with black metal frames.',
     isDefault: false,
     category: 'style'
   },
@@ -145,7 +210,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🪑',
     label: 'Mid-Century Modern',
     description: 'Retro 1950s-60s design',
-    promptFragment: 'While keeping the existing room layout and architectural structure intact, redesign with mid-century modern style featuring iconic furniture pieces with organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, statement lighting, and a clean yet warm aesthetic.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with mid-century modern style featuring iconic furniture pieces with organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, statement lighting, and a clean yet warm aesthetic.',
     isDefault: false,
     category: 'style'
   },
@@ -154,7 +219,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎋',
     label: 'Japanese Zen',
     description: 'Serene and balanced',
-    promptFragment: 'Preserving the exact room boundaries and architectural features, redesign with a Japanese-inspired Zen style featuring natural materials, a muted earth-tone palette, low furniture, shoji screen-inspired elements, indoor plants, clean lines, and an emphasis on tranquility and balance.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a Japanese-inspired Zen style featuring natural materials, a muted earth-tone palette, low furniture, shoji screen-inspired elements, indoor plants, clean lines, and an emphasis on tranquility and balance.',
     isDefault: false,
     category: 'style'
   },
@@ -163,7 +228,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌊',
     label: 'Coastal',
     description: 'Beach-inspired design',
-    promptFragment: 'While maintaining the same room structure and layout, redesign with a coastal style featuring a white and blue color palette, natural textures like rattan and jute, light-washed wood, nautical accents, airy fabrics, and a relaxed beach house atmosphere.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a coastal style featuring a white and blue color palette, natural textures like rattan and jute, light-washed wood, nautical accents, airy fabrics, and a relaxed beach house atmosphere.',
     isDefault: false,
     category: 'style'
   },
@@ -294,6 +359,7 @@ export const HOME_FILTERS: FilterOption[] = [
 
 // Helper to get filter category labels
 export const FILTER_CATEGORY_LABELS: Record<FilterCategory, string> = {
+  roomType: 'Room Type',
   style: 'Style Presets',
   colors: 'Colors & Paint',
   furniture: 'Furniture & Decor',
@@ -302,6 +368,7 @@ export const FILTER_CATEGORY_LABELS: Record<FilterCategory, string> = {
 
 // Category icons
 export const FILTER_CATEGORY_ICONS: Record<FilterCategory, string> = {
+  roomType: '🏠',
   style: '✨',
   colors: '🎨',
   furniture: '🛋️',

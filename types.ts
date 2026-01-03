@@ -32,7 +32,7 @@ export enum AppMode {
   HOME = 'HOME'    // Interior design / room decor transformation
 }
 
-export type FilterCategory = 'style' | 'colors' | 'furniture' | 'architectural';
+export type FilterCategory = 'roomType' | 'style' | 'colors' | 'furniture' | 'architectural';
 
 declare global {
   interface AIStudio {

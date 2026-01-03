@@ -120,11 +120,33 @@ const App: React.FC = () => {
   };
 
   const handleToggleFilter = (id: string) => {
-    setSelectedFilters(prev =>
-      prev.includes(id)
-        ? prev.filter(f => f !== id)
-        : [...prev, id]
-    );
+    const filter = currentFilters.find(f => f.id === id);
+    const isRoomType = filter?.category === 'roomType';
+
+    setSelectedFilters(prev => {
+      const isCurrentlySelected = prev.includes(id);
+
+      if (isRoomType) {
+        // Single-selection for room types
+        if (isCurrentlySelected) {
+          // User clicked already selected room type - deselect it
+          return prev.filter(f => f !== id);
+        } else {
+          // User selected a new room type
+          // Remove all other room types, keep other categories
+          const allRoomTypeIds = currentFilters
+            .filter(f => f.category === 'roomType')
+            .map(f => f.id);
+          const withoutRoomTypes = prev.filter(fId => !allRoomTypeIds.includes(fId));
+          return [...withoutRoomTypes, id];
+        }
+      } else {
+        // Multi-selection for all other categories (existing behavior)
+        return prev.includes(id)
+          ? prev.filter(f => f !== id)
+          : [...prev, id];
+      }
+    });
   };
 
   const handleModeChange = (newMode: AppMode) => {
