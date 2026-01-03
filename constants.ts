@@ -100,7 +100,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '✨',
     label: 'Modern',
     description: 'Clean contemporary design',
-    promptFragment: 'Transform this room into a modern contemporary interior with clean lines, neutral colors with bold accents, sleek furniture, and minimalist decor that feels current and sophisticated.',
+    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, update the furniture, colors, and decor to a modern contemporary style featuring clean lines, neutral colors with bold accents, sleek furniture pieces, and minimalist decor that feels current and sophisticated.',
     isDefault: true,
     category: 'style'
   },
@@ -109,7 +109,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌲',
     label: 'Scandinavian',
     description: 'Cozy minimalism with natural materials',
-    promptFragment: 'Transform this room into a Scandinavian-style interior with clean lines, light wood tones, white/light gray walls, simple functional furniture, cozy textiles like wool throws, and natural materials. Add hygge elements for warmth.',
+    promptFragment: 'While keeping the exact same room layout and architectural features, redesign with a Scandinavian style featuring clean lines, light wood tones, white/light gray walls, simple functional furniture, cozy textiles like wool throws, and natural materials. Add hygge elements for warmth.',
     isDefault: false,
     category: 'style'
   },
@@ -118,7 +118,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '◻️',
     label: 'Minimalist',
     description: 'Sleek and clutter-free',
-    promptFragment: 'Transform this into a minimalist interior with a "less is more" approach. Remove visual clutter, use a monochromatic or very limited color palette, sleek furniture with clean geometry, and open empty spaces that feel calm and serene.',
+    promptFragment: 'Keeping the same room structure and architectural elements, redesign with a minimalist "less is more" approach. Remove visual clutter, use a monochromatic or very limited color palette, sleek furniture with clean geometry, and create open empty spaces that feel calm and serene.',
     isDefault: false,
     category: 'style'
   },
@@ -127,7 +127,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎨',
     label: 'Bohemian',
     description: 'Eclectic and colorful',
-    promptFragment: 'Transform this room into a bohemian-style space with layered textiles, rich colors and patterns, macramé, plants, vintage and globally-sourced decor, floor cushions, and an eclectic mix of furniture that feels collected and personal.',
+    promptFragment: 'While preserving the existing room layout, walls, and architectural features, redesign with a bohemian style featuring layered textiles, rich colors and patterns, macramé, plants, vintage and globally-sourced decor, floor cushions, and an eclectic mix of furniture that feels collected and personal.',
     isDefault: false,
     category: 'style'
   },
@@ -136,7 +136,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🏭',
     label: 'Industrial',
     description: 'Urban loft vibes',
-    promptFragment: 'Transform this into an industrial-style interior with exposed brick walls, metal light fixtures and furniture accents, concrete or distressed wood floors, Edison bulbs, leather furniture, and a neutral palette with black metal frames.',
+    promptFragment: 'Maintaining the same room structure and dimensions, redesign with an industrial style featuring exposed brick wall treatments, metal light fixtures and furniture accents, concrete or distressed wood floor finishes, Edison bulbs, leather furniture, and a neutral palette with black metal frames.',
     isDefault: false,
     category: 'style'
   },
@@ -145,7 +145,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🪑',
     label: 'Mid-Century Modern',
     description: 'Retro 1950s-60s design',
-    promptFragment: 'Transform this room into a mid-century modern interior with iconic furniture pieces featuring organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, statement lighting, and a clean yet warm aesthetic.',
+    promptFragment: 'While keeping the existing room layout and architectural structure intact, redesign with mid-century modern style featuring iconic furniture pieces with organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, statement lighting, and a clean yet warm aesthetic.',
     isDefault: false,
     category: 'style'
   },
@@ -154,7 +154,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎋',
     label: 'Japanese Zen',
     description: 'Serene and balanced',
-    promptFragment: 'Transform this into a Japanese-inspired Zen interior with natural materials, a muted earth-tone palette, low furniture, shoji screens or paper elements, indoor plants, clean lines, and an emphasis on tranquility and balance.',
+    promptFragment: 'Preserving the exact room boundaries and architectural features, redesign with a Japanese-inspired Zen style featuring natural materials, a muted earth-tone palette, low furniture, shoji screen-inspired elements, indoor plants, clean lines, and an emphasis on tranquility and balance.',
     isDefault: false,
     category: 'style'
   },
@@ -163,7 +163,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌊',
     label: 'Coastal',
     description: 'Beach-inspired design',
-    promptFragment: 'Transform this into a coastal-style interior with a white and blue color palette, natural textures like rattan and jute, light-washed wood, nautical accents, airy fabrics, and a relaxed beach house atmosphere.',
+    promptFragment: 'While maintaining the same room structure and layout, redesign with a coastal style featuring a white and blue color palette, natural textures like rattan and jute, light-washed wood, nautical accents, airy fabrics, and a relaxed beach house atmosphere.',
     isDefault: false,
     category: 'style'
   },
@@ -201,7 +201,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🍂',
     label: 'Earthy Palette',
     description: 'Terracotta and natural browns',
-    promptFragment: 'Transform the color scheme to an earthy, natural palette featuring terracotta, olive green, rust orange, ochre, and warm browns. Create a grounded, organic feel.',
+    promptFragment: 'While keeping the same room structure, update the color scheme to an earthy, natural palette featuring terracotta, olive green, rust orange, ochre, and warm browns. Create a grounded, organic feel.',
     isDefault: false,
     category: 'colors'
   },
@@ -212,7 +212,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🛋️',
     label: 'Modern Furniture',
     description: 'Contemporary stylish pieces',
-    promptFragment: 'Replace existing furniture with modern, contemporary pieces featuring clean lines, quality materials, and stylish design. Update sofas, chairs, tables, and storage to current trends while maintaining functionality.',
+    promptFragment: 'Keeping the same room layout and architectural features, update the furniture to modern, contemporary pieces featuring clean lines, quality materials, and stylish design. Replace sofas, chairs, tables, and storage with current trends while maintaining the room\'s structure and functionality.',
     isDefault: true,
     category: 'furniture'
   },
@@ -268,7 +268,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '☀️',
     label: 'Natural Light',
     description: 'Brighter, airy atmosphere',
-    promptFragment: 'Enhance natural light in the space - add larger windows, skylights, or glass doors. Use sheer curtains and remove heavy drapes to let light flood in. Create a bright, airy atmosphere.',
+    promptFragment: 'Keeping the existing windows and openings in their current positions, enhance the natural light by using sheer curtains instead of heavy drapes, removing window obstructions, and creating a brighter, airier atmosphere with lighter colors and reflective surfaces that maximize the existing light.',
     isDefault: false,
     category: 'architectural'
   },
@@ -277,7 +277,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🪵',
     label: 'Upgrade Flooring',
     description: 'Hardwood or modern tiles',
-    promptFragment: 'Replace the flooring with premium materials - warm hardwood, elegant tile, or modern luxury vinyl. Choose a finish that complements the overall design style and adds value to the space.',
+    promptFragment: 'Maintaining the same floor layout and room boundaries, update the flooring material to premium finishes like warm hardwood, elegant tile, or modern luxury vinyl. Choose a finish that complements the overall design style while keeping the exact same floor plan.',
     isDefault: false,
     category: 'architectural'
   },
@@ -286,7 +286,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🚪',
     label: 'Open Floor Concept',
     description: 'Remove visual barriers',
-    promptFragment: 'Transform the space into a more open concept layout by visually removing or minimizing walls between living areas. Create a flowing, connected space while maintaining defined zones for different activities.',
+    promptFragment: 'While keeping the main structural walls and room boundaries intact, create a more open, flowing feel by using lighter colors, removing visual clutter, and suggesting openness through furniture placement and design. Maintain the existing architectural structure.',
     isDefault: false,
     category: 'architectural'
   }
