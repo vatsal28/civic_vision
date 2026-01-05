@@ -147,33 +147,38 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
     setWaitlistError(null);
 
     try {
+      const payload = {
+        data: {
+          Email: waitlistEmail,
+          Country: waitlistCountry,
+          Timestamp: new Date().toISOString(),
+        }
+      };
+
+      console.log('Sending to SheetDB:', payload);
+
       const response = await fetch('https://sheetdb.io/api/v1/52pld98y7re25', {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          data: [
-            {
-              email: waitlistEmail,
-              country: waitlistCountry,
-              timestamp: new Date().toISOString(),
-            }
-          ]
-        }),
+        body: JSON.stringify(payload),
       });
 
+      const responseData = await response.json();
+      console.log('SheetDB response:', responseData);
+
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('SheetDB error response:', errorData);
-        throw new Error('Failed to join waitlist');
+        console.error('SheetDB error:', responseData);
+        throw new Error(responseData.message || 'Failed to join waitlist');
       }
 
       setIsWaitlistSuccess(true);
       analytics.trackShareClicked(); // Track waitlist signup
     } catch (err: any) {
       console.error('Waitlist submission error:', err);
-      setWaitlistError('Failed to join waitlist. Please try again.');
+      setWaitlistError(err.message || 'Failed to join waitlist. Please try again.');
     } finally {
       setIsSubmittingWaitlist(false);
     }
