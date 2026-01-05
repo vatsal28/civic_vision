@@ -103,7 +103,7 @@ export const createCompositeImage = (
       ctx.fillStyle = "rgba(255,255,255,0.7)";
       ctx.textAlign = "center";
       ctx.shadowBlur = 0;
-      ctx.fillText("Transformed with Redo AI", canvas.width / 2, canvas.height - (padding / 2));
+      ctx.fillText("Created with re-do.ai", canvas.width / 2, canvas.height - (padding / 2));
 
       // Divider line (horizontal between images)
       ctx.strokeStyle = "rgba(255,255,255,0.3)";
