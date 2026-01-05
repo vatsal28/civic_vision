@@ -153,15 +153,19 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          data: {
-            email: waitlistEmail,
-            country: waitlistCountry,
-            timestamp: new Date().toISOString(),
-          }
+          data: [
+            {
+              email: waitlistEmail,
+              country: waitlistCountry,
+              timestamp: new Date().toISOString(),
+            }
+          ]
         }),
       });
 
       if (!response.ok) {
+        const errorData = await response.text();
+        console.error('SheetDB error response:', errorData);
         throw new Error('Failed to join waitlist');
       }
 
