@@ -43,6 +43,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
   const [showWaitlistForm, setShowWaitlistForm] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistCountry, setWaitlistCountry] = useState('');
+  const [waitlistCustomCountry, setWaitlistCustomCountry] = useState('');
   const [isSubmittingWaitlist, setIsSubmittingWaitlist] = useState(false);
   const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false);
   const [waitlistError, setWaitlistError] = useState<string | null>(null);
@@ -143,14 +144,21 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
       return;
     }
 
+    if (waitlistCountry === 'Other' && !waitlistCustomCountry.trim()) {
+      setWaitlistError('Please enter your country name');
+      return;
+    }
+
     setIsSubmittingWaitlist(true);
     setWaitlistError(null);
 
     try {
+      const finalCountry = waitlistCountry === 'Other' ? waitlistCustomCountry : waitlistCountry;
+
       const payload = {
         data: {
           Email: waitlistEmail,
-          Country: waitlistCountry,
+          Country: finalCountry,
           Timestamp: new Date().toISOString(),
         }
       };
@@ -403,6 +411,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                     onClick={() => {
                       setShowWaitlistForm(false);
                       setWaitlistError(null);
+                      setWaitlistEmail('');
+                      setWaitlistCountry('');
+                      setWaitlistCustomCountry('');
                     }}
                     className="text-gray-400 hover:text-white transition-colors"
                   >
@@ -523,6 +534,22 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                       <option value="Other">Other</option>
                     </select>
                   </div>
+
+                  {waitlistCountry === 'Other' && (
+                    <div>
+                      <label htmlFor="waitlist-custom-country" className="block text-xs text-gray-400 mb-1.5">
+                        Enter Country Name
+                      </label>
+                      <input
+                        type="text"
+                        id="waitlist-custom-country"
+                        value={waitlistCustomCountry}
+                        onChange={(e) => setWaitlistCustomCountry(e.target.value)}
+                        placeholder="e.g., Iceland"
+                        className="w-full px-3 py-2.5 bg-[#0f1520] border border-[#252f3f] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#4f7eff] transition-colors"
+                      />
+                    </div>
+                  )}
 
                   {waitlistError && (
                     <div className="p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
