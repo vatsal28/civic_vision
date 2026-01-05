@@ -39,6 +39,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
   const [purchasedCredits, setPurchasedCredits] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  // Waitlist state
+  const [showWaitlistForm, setShowWaitlistForm] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistCountry, setWaitlistCountry] = useState('');
+  const [isSubmittingWaitlist, setIsSubmittingWaitlist] = useState(false);
+  const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false);
+  const [waitlistError, setWaitlistError] = useState<string | null>(null);
+
   const handlePurchase = async () => {
     if (!selectedPackage || !user) return;
 
@@ -126,6 +134,89 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
       setIsSubmitting(false);
     }
   };
+
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!waitlistEmail || !waitlistCountry) {
+      setWaitlistError('Please fill in all fields');
+      return;
+    }
+
+    setIsSubmittingWaitlist(true);
+    setWaitlistError(null);
+
+    try {
+      const response = await fetch('https://sheetdb.io/api/v1/52pld98y7re25', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: {
+            email: waitlistEmail,
+            country: waitlistCountry,
+            timestamp: new Date().toISOString(),
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to join waitlist');
+      }
+
+      setIsWaitlistSuccess(true);
+      analytics.trackShareClicked(); // Track waitlist signup
+    } catch (err: any) {
+      console.error('Waitlist submission error:', err);
+      setWaitlistError('Failed to join waitlist. Please try again.');
+    } finally {
+      setIsSubmittingWaitlist(false);
+    }
+  };
+
+  // Waitlist success screen
+  if (isWaitlistSuccess) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute inset-0 bg-[#0a0f1a]/90 backdrop-blur-sm"
+          onClick={onClose}
+        />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative w-full max-w-md bg-[#151c2c] rounded-2xl shadow-2xl border border-[#252f3f] overflow-hidden p-6 md:p-8 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring' }}
+            className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#4f7eff] to-[#6366f1] rounded-2xl flex items-center justify-center"
+          >
+            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </motion.div>
+
+          <h2 className="text-2xl font-bold text-white mb-2">You're on the list! 🎉</h2>
+          <p className="text-gray-400 text-sm mb-6">
+            We'll notify you at <span className="text-[#4f7eff] font-medium">{waitlistEmail}</span> when international payments are available.
+          </p>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 px-4 bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white font-bold rounded-xl hover:opacity-90 transition-all"
+          >
+            Got it!
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   // Success confirmation screen
   if (isPurchaseComplete) {
@@ -274,17 +365,126 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
               ))}
             </div>
 
-            {/* International Payments Disclaimer */}
-            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-              <div className="flex items-center justify-center gap-2">
-                <svg className="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-xs text-amber-200 font-medium">
-                  International payments & subscriptions coming soon
-                </p>
+            {/* International Payments Waitlist */}
+            {!showWaitlistForm ? (
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#4f7eff]/10 to-[#6366f1]/10 border border-[#4f7eff]/30 rounded-xl">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 flex-1 text-center md:text-left">
+                    <svg className="w-5 h-5 text-[#4f7eff] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-xs md:text-sm text-[#4f7eff] font-medium">
+                      International payments coming soon
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowWaitlistForm(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white text-xs md:text-sm font-semibold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-[#4f7eff]/20 whitespace-nowrap"
+                  >
+                    Join Waitlist
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <form onSubmit={handleWaitlistSubmit} className="mt-4 p-4 bg-[#1e2638] border border-[#252f3f] rounded-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-white font-semibold text-sm">Join International Waitlist</h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowWaitlistForm(false);
+                      setWaitlistError(null);
+                    }}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label htmlFor="waitlist-email" className="block text-xs text-gray-400 mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="waitlist-email"
+                      value={waitlistEmail}
+                      onChange={(e) => setWaitlistEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="w-full px-3 py-2.5 bg-[#0f1520] border border-[#252f3f] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#4f7eff] transition-colors"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="waitlist-country" className="block text-xs text-gray-400 mb-1.5">
+                      Country
+                    </label>
+                    <select
+                      id="waitlist-country"
+                      value={waitlistCountry}
+                      onChange={(e) => setWaitlistCountry(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#0f1520] border border-[#252f3f] rounded-lg text-white text-sm focus:outline-none focus:border-[#4f7eff] transition-colors"
+                      required
+                    >
+                      <option value="">Select your country</option>
+                      <option value="United States">United States</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Canada">Canada</option>
+                      <option value="Australia">Australia</option>
+                      <option value="Germany">Germany</option>
+                      <option value="France">France</option>
+                      <option value="Spain">Spain</option>
+                      <option value="Italy">Italy</option>
+                      <option value="Netherlands">Netherlands</option>
+                      <option value="Sweden">Sweden</option>
+                      <option value="Norway">Norway</option>
+                      <option value="Denmark">Denmark</option>
+                      <option value="Singapore">Singapore</option>
+                      <option value="Japan">Japan</option>
+                      <option value="South Korea">South Korea</option>
+                      <option value="Brazil">Brazil</option>
+                      <option value="Mexico">Mexico</option>
+                      <option value="Argentina">Argentina</option>
+                      <option value="South Africa">South Africa</option>
+                      <option value="UAE">UAE</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  {waitlistError && (
+                    <div className="p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                      <p className="text-red-400 text-xs text-center">{waitlistError}</p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingWaitlist}
+                    className={`w-full py-2.5 px-4 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm ${
+                      isSubmittingWaitlist
+                        ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white hover:opacity-90 shadow-lg shadow-[#4f7eff]/20'
+                    }`}
+                  >
+                    {isSubmittingWaitlist ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Joining...</span>
+                      </>
+                    ) : (
+                      'Join Waitlist'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
 
             {/* Custom Pricing Section */}
             <div className="mt-6 p-4 bg-[#1e2638] rounded-xl border border-[#252f3f]">
