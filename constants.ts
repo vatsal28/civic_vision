@@ -100,7 +100,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🛏️',
     label: 'Bedroom',
     description: 'Rest and relaxation space',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add bedroom-specific furniture including a bed as the focal point, nightstands, appropriate lighting for rest and reading, and decor that creates a peaceful, restful sanctuary for sleep and relaxation.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing furniture or elements. If the room is empty, add bedroom furniture (bed, nightstands, lighting). If furniture already exists, enhance and style it as a bedroom with appropriate bedding, decor, and accessories that create a peaceful sanctuary.',
     isDefault: false,
     category: 'roomType'
   },
@@ -109,7 +109,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🛋️',
     label: 'Living Room',
     description: 'Gathering and entertainment',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add living room furniture including a comfortable sofa or sectional, coffee table, entertainment center or TV unit, accent chairs, and decor that creates an inviting space for conversation, relaxation, and entertainment.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing furniture or elements. If the room is empty, add living room furniture (sofa, coffee table, entertainment center). If furniture already exists, enhance and style it as a living room with appropriate decor and accessories.',
     isDefault: false,
     category: 'roomType'
   },
@@ -118,7 +118,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🍳',
     label: 'Kitchen',
     description: 'Cooking and meal prep',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add kitchen-specific elements including modern appliances, functional counter space, storage cabinets, a kitchen island or dining area if space allows, and decor that makes this a warm, functional space for cooking and gathering.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing elements, cabinets, or appliances. If the room is empty, add kitchen elements (appliances, counters, cabinets). If elements already exist, enhance and style them with modern finishes, decor, and accessories.',
     isDefault: false,
     category: 'roomType'
   },
@@ -127,7 +127,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🍽️',
     label: 'Dining Room',
     description: 'Meals and hosting',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add dining room furniture including a dining table sized appropriately for the space, matching chairs, a buffet or sideboard if room allows, statement lighting above the table, and decor that creates an elegant atmosphere for meals and hosting.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing furniture. If the room is empty, add dining furniture (table, chairs, buffet, lighting). If furniture already exists, enhance and style it as a dining room with appropriate table settings and decor.',
     isDefault: false,
     category: 'roomType'
   },
@@ -136,7 +136,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🚿',
     label: 'Bathroom',
     description: 'Spa-like sanctuary',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add bathroom-specific elements including a vanity with mirror, modern fixtures, storage solutions, towel racks, and spa-like decor with plants, candles, or artwork that creates a clean, relaxing sanctuary.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and all existing fixtures. DO NOT remove any existing elements. If the room is empty, add bathroom elements (vanity, fixtures). If elements already exist, enhance them with spa-like decor, plants, towels, and accessories.',
     isDefault: false,
     category: 'roomType'
   },
@@ -145,7 +145,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '💼',
     label: 'Home Office/Study',
     description: 'Productive workspace',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add home office furniture including a functional desk, ergonomic chair, shelving or storage for books and supplies, task lighting, and decor that creates a focused, productive environment for work or study.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing furniture. If the room is empty, add office furniture (desk, chair, shelving). If furniture already exists, enhance and style it as a home office with appropriate organization and decor.',
     isDefault: false,
     category: 'roomType'
   },
@@ -154,7 +154,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '📺',
     label: 'Media Room',
     description: 'Entertainment hub',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, add media room elements including a large TV or projection setup, comfortable theater-style seating, sound system components, ambient lighting, and decor that creates an immersive entertainment experience.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and floor. DO NOT remove any existing furniture or elements. If the room is empty, add media room elements (TV, seating, sound system). If elements already exist, enhance and style them for entertainment purposes.',
     isDefault: false,
     category: 'roomType'
   },
@@ -165,7 +165,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '✨',
     label: 'Modern',
     description: 'Clean contemporary design',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, update the furniture, colors, and decor to a modern contemporary style featuring clean lines, neutral colors with bold accents, sleek furniture pieces, and minimalist decor that feels current and sophisticated.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in a modern contemporary aesthetic using clean lines, neutral colors with bold accents, sleek finishes, and minimalist decor. Add ONLY complementary accessories if space allows.',
     isDefault: true,
     category: 'style'
   },
@@ -174,7 +174,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌲',
     label: 'Scandinavian',
     description: 'Cozy minimalism with natural materials',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a Scandinavian style featuring clean lines, light wood tones, white/light gray walls, simple functional furniture, cozy textiles like wool throws, and natural materials. Add hygge elements for warmth.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in Scandinavian aesthetic with light wood tones, white/light gray finishes, cozy textiles, and hygge elements. Add ONLY complementary accessories if space allows.',
     isDefault: false,
     category: 'style'
   },
@@ -183,7 +183,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '◻️',
     label: 'Minimalist',
     description: 'Sleek and clutter-free',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a minimalist "less is more" approach. Remove visual clutter, use a monochromatic or very limited color palette, sleek furniture with clean geometry, and create open empty spaces that feel calm and serene.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in a minimalist aesthetic using a monochromatic palette, clean geometry, simple finishes, and streamlined decor that feels calm and serene.',
     isDefault: false,
     category: 'style'
   },
@@ -192,7 +192,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎨',
     label: 'Bohemian',
     description: 'Eclectic and colorful',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a bohemian style featuring layered textiles, rich colors and patterns, macramé, plants, vintage and globally-sourced decor, floor cushions, and an eclectic mix of furniture that feels collected and personal.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in bohemian aesthetic with layered textiles, rich colors and patterns, macramé, plants, and vintage-inspired decor. Add ONLY complementary accessories.',
     isDefault: false,
     category: 'style'
   },
@@ -201,7 +201,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🏭',
     label: 'Industrial',
     description: 'Urban loft vibes',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with an industrial style featuring exposed brick wall treatments, metal light fixtures and furniture accents, concrete or distressed wood floor finishes, Edison bulbs, leather furniture, and a neutral palette with black metal frames.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in industrial aesthetic with exposed brick wall treatments, metal accents, concrete or distressed wood finishes, Edison bulbs, leather upholstery, and neutral palette with black frames.',
     isDefault: false,
     category: 'style'
   },
@@ -210,7 +210,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🪑',
     label: 'Mid-Century Modern',
     description: 'Retro 1950s-60s design',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with mid-century modern style featuring iconic furniture pieces with organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, statement lighting, and a clean yet warm aesthetic.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in mid-century modern aesthetic with organic curves, tapered legs, warm wood tones (walnut, teak), bold accent colors, and retro statement lighting.',
     isDefault: false,
     category: 'style'
   },
@@ -219,7 +219,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎋',
     label: 'Japanese Zen',
     description: 'Serene and balanced',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a Japanese-inspired Zen style featuring natural materials, a muted earth-tone palette, low furniture, shoji screen-inspired elements, indoor plants, clean lines, and an emphasis on tranquility and balance.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in Japanese Zen aesthetic with natural materials, muted earth tones, shoji-inspired elements, indoor plants, clean lines, and emphasis on tranquility.',
     isDefault: false,
     category: 'style'
   },
@@ -228,7 +228,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌊',
     label: 'Coastal',
     description: 'Beach-inspired design',
-    promptFragment: 'While keeping the exact same room structure, walls, windows, and doors, redesign with a coastal style featuring a white and blue color palette, natural textures like rattan and jute, light-washed wood, nautical accents, airy fabrics, and a relaxed beach house atmosphere.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture in their current positions. DO NOT remove anything. Style all existing elements in coastal aesthetic with white and blue palette, natural textures like rattan and jute, light-washed wood, nautical accents, and airy fabrics.',
     isDefault: false,
     category: 'style'
   },
@@ -239,7 +239,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🟤',
     label: 'Warm Neutrals',
     description: 'Beige, cream, and taupe tones',
-    promptFragment: 'Repaint the walls and update the color scheme to warm neutrals - think creamy whites, soft beiges, warm taupes, and gentle warm grays. Ensure furniture and decor complement this cozy, inviting palette.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture and elements. DO NOT remove anything. Repaint ONLY the walls to warm neutrals - creamy whites, soft beiges, warm taupes, and gentle warm grays. Style existing furniture and decor to complement this cozy palette.',
     isDefault: false,
     category: 'colors'
   },
@@ -248,7 +248,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🔵',
     label: 'Cool Tones',
     description: 'Soft blues and sage greens',
-    promptFragment: 'Update the color palette to cool, calming tones - soft blues, cool grays, sage greens, and crisp whites. Create a serene, refreshing atmosphere throughout the space.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture and elements. DO NOT remove anything. Repaint ONLY the walls to cool, calming tones - soft blues, cool grays, sage greens, and crisp whites. Style existing furniture to complement this serene palette.',
     isDefault: false,
     category: 'colors'
   },
@@ -257,7 +257,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🎯',
     label: 'Bold Accent Wall',
     description: 'Dramatic statement wall',
-    promptFragment: 'Add a bold, dramatic accent wall in a deep color like navy blue, forest green, terracotta, or charcoal. Keep other walls neutral to let the accent wall be the focal point.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture and elements. DO NOT remove anything. Paint ONE wall as a bold accent in a deep color like navy blue, forest green, terracotta, or charcoal. Keep other walls neutral.',
     isDefault: false,
     category: 'colors'
   },
@@ -266,7 +266,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🍂',
     label: 'Earthy Palette',
     description: 'Terracotta and natural browns',
-    promptFragment: 'While keeping the same room structure, update the color scheme to an earthy, natural palette featuring terracotta, olive green, rust orange, ochre, and warm browns. Create a grounded, organic feel.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, floor, and ALL existing furniture and elements. DO NOT remove anything. Repaint ONLY the walls to an earthy palette featuring terracotta, olive green, rust orange, ochre, and warm browns. Style existing furniture to complement this organic feel.',
     isDefault: false,
     category: 'colors'
   },
@@ -277,7 +277,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🛋️',
     label: 'Modern Furniture',
     description: 'Contemporary stylish pieces',
-    promptFragment: 'Keeping the same room layout and architectural features, update the furniture to modern, contemporary pieces featuring clean lines, quality materials, and stylish design. Replace sofas, chairs, tables, and storage with current trends while maintaining the room\'s structure and functionality.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, and ALL existing furniture in their current positions. DO NOT remove any furniture. Style all existing furniture pieces (sofas, chairs, tables, storage) with modern contemporary finishes, upholstery, and clean-lined aesthetics. Add ONLY small complementary accessories if space allows.',
     isDefault: true,
     category: 'furniture'
   },
@@ -286,7 +286,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🌿',
     label: 'Add Indoor Plants',
     description: 'Bring life with greenery',
-    promptFragment: 'Add an appropriate variety of indoor plants - large floor plants, hanging plants, shelf plants, and small potted plants. Include options like fiddle leaf fig, monstera, pothos, snake plant, and fresh flowers to bring life and color.',
+    promptFragment: 'CRITICAL: Keep ALL existing furniture and elements exactly as they are. DO NOT remove anything. Add tasteful indoor plants in available spaces - floor plants, hanging plants, shelf plants, and small potted plants like fiddle leaf fig, monstera, pothos, snake plant, and fresh flowers to bring life and color.',
     isDefault: true,
     category: 'furniture'
   },
@@ -295,7 +295,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '💡',
     label: 'Warm Lighting',
     description: 'Cozy ambient illumination',
-    promptFragment: 'Upgrade the lighting with warm, ambient illumination. Add stylish pendant lights, table lamps, floor lamps, and accent lighting to create a cozy, inviting atmosphere with warm color temperature.',
+    promptFragment: 'CRITICAL: Keep ALL existing furniture and elements exactly as they are. DO NOT remove anything. Enhance the lighting by styling existing fixtures and adding complementary warm-toned lamps, pendant lights, or accent lighting to create a cozy, inviting atmosphere.',
     isDefault: true,
     category: 'furniture'
   },
@@ -304,7 +304,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🧶',
     label: 'Cozy Textiles',
     description: 'Pillows, blankets, and rugs',
-    promptFragment: 'Layer in cozy textiles throughout the room - add plush throw pillows, soft blankets, area rugs, and curtains. Create warmth and comfort through fabric textures and patterns.',
+    promptFragment: 'CRITICAL: Keep ALL existing furniture and elements exactly as they are. DO NOT remove anything. Layer in cozy textiles - add plush throw pillows, soft blankets, area rugs, and curtains to existing furniture and spaces. Create warmth through fabric textures and patterns.',
     isDefault: true,
     category: 'furniture'
   },
@@ -312,8 +312,8 @@ export const HOME_FILTERS: FilterOption[] = [
     id: 'declutter',
     icon: '📦',
     label: 'Declutter',
-    description: 'Remove excess items',
-    promptFragment: 'Remove visual clutter, excess furniture, and unnecessary items. Organize what remains neatly, clear surfaces, and create a clean, spacious feel. Keep only essential and decorative pieces.',
+    description: 'Organize and simplify',
+    promptFragment: 'CRITICAL: Keep ALL existing major furniture pieces in their current positions. DO NOT remove structural furniture. Organize small items neatly, clear surface clutter, tidy accessories, and create a clean, organized feel while maintaining all major furniture elements.',
     isDefault: false,
     category: 'furniture'
   },
@@ -322,7 +322,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🖼️',
     label: 'Wall Art & Decor',
     description: 'Add artwork and mirrors',
-    promptFragment: 'Add tasteful wall art, framed prints, mirrors, and decorative wall elements. Create a gallery wall or statement pieces that complement the room style and add personality.',
+    promptFragment: 'CRITICAL: Keep ALL existing furniture and elements exactly as they are. DO NOT remove anything. Add tasteful wall art, framed prints, mirrors, and decorative wall elements on available wall space. Create gallery walls or statement pieces that complement the existing room.',
     isDefault: false,
     category: 'furniture'
   },
@@ -333,7 +333,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '☀️',
     label: 'Natural Light',
     description: 'Brighter, airy atmosphere',
-    promptFragment: 'Keeping the existing windows and openings in their current positions, enhance the natural light by using sheer curtains instead of heavy drapes, removing window obstructions, and creating a brighter, airier atmosphere with lighter colors and reflective surfaces that maximize the existing light.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows in their EXACT current positions, doors, ceiling, floor, and ALL existing furniture. DO NOT remove anything or change window locations. DO NOT add new windows. Enhance natural light ONLY by using sheer curtains, lighter wall colors, and reflective surfaces that maximize existing light from current windows.',
     isDefault: false,
     category: 'architectural'
   },
@@ -342,7 +342,7 @@ export const HOME_FILTERS: FilterOption[] = [
     icon: '🪵',
     label: 'Upgrade Flooring',
     description: 'Hardwood or modern tiles',
-    promptFragment: 'Maintaining the same floor layout and room boundaries, update the flooring material to premium finishes like warm hardwood, elegant tile, or modern luxury vinyl. Choose a finish that complements the overall design style while keeping the exact same floor plan.',
+    promptFragment: 'CRITICAL: Keep the EXACT same room structure, walls, windows, doors, ceiling, and ALL existing furniture in their positions. DO NOT remove anything or change the floor layout. Update ONLY the surface flooring material to premium finishes like warm hardwood, elegant tile, or modern luxury vinyl while keeping the exact same floor plan and room boundaries.',
     isDefault: false,
     category: 'architectural'
   },
@@ -350,8 +350,8 @@ export const HOME_FILTERS: FilterOption[] = [
     id: 'open_concept',
     icon: '🚪',
     label: 'Open Floor Concept',
-    description: 'Remove visual barriers',
-    promptFragment: 'While keeping the main structural walls and room boundaries intact, create a more open, flowing feel by using lighter colors, removing visual clutter, and suggesting openness through furniture placement and design. Maintain the existing architectural structure.',
+    description: 'Airy and flowing feel',
+    promptFragment: 'CRITICAL: Keep ALL structural walls, windows, doors, ceiling, floor, and room boundaries EXACTLY as they are. DO NOT remove any walls or architectural elements. Create an open, flowing FEEL ONLY through lighter wall colors, reduced visual clutter, strategic furniture placement, and design elements while maintaining the exact existing architectural structure.',
     isDefault: false,
     category: 'architectural'
   }
