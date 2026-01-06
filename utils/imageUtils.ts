@@ -99,8 +99,8 @@ export const createCompositeImage = (
       ctx.fillText("AFTER", padding, height + padding + fontSize);
 
       // Footer/Branding
-      ctx.font = `${Math.max(16, width / 50)}px sans-serif`;
-      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.font = `bold ${Math.max(28, width / 25)}px sans-serif`;
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
       ctx.textAlign = "center";
       ctx.shadowBlur = 0;
       ctx.fillText("Created with re-do.ai", canvas.width / 2, canvas.height - (padding / 2));
