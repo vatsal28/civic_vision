@@ -353,7 +353,7 @@ const App: React.FC = () => {
 
   // --- RENDER: MAIN APP ---
   return (
-    <div className="flex h-[100dvh] w-full flex-col md:flex-row bg-[#0a0f1a] text-white overflow-hidden font-sans">
+    <div className="flex h-[100dvh] w-full flex-col md:flex-row bg-[#FFF9F5] text-[#2D2A32] overflow-hidden" style={{ fontFamily: "'Nunito', sans-serif" }}>
       {/* Hidden file input for mobile FAB */}
       <input
         ref={fileInputRef}
@@ -363,9 +363,50 @@ const App: React.FC = () => {
         className="hidden"
       />
 
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1a] via-[#111827] to-[#0f172a] z-0 pointer-events-none" />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 pointer-events-none mix-blend-overlay" />
+      {/* Background - Floating blobs */}
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
+
+      <style>{`
+        .blob {
+          position: fixed;
+          border-radius: 50%;
+          filter: blur(60px);
+          opacity: 0.15;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .blob-1 {
+          width: 400px;
+          height: 400px;
+          background: linear-gradient(135deg, #89D4BB, #C9B8DB);
+          top: -100px;
+          left: -100px;
+          animation: float 20s ease-in-out infinite;
+        }
+        .blob-2 {
+          width: 350px;
+          height: 350px;
+          background: linear-gradient(135deg, #FF8A80, #FCB69F);
+          bottom: -100px;
+          right: -100px;
+          animation: float 25s ease-in-out infinite reverse;
+        }
+        .blob-3 {
+          width: 300px;
+          height: 300px;
+          background: linear-gradient(135deg, #C9B8DB, #89D4BB);
+          top: 50%;
+          left: 50%;
+          animation: float 30s ease-in-out infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0); }
+          33% { transform: translate(30px, -30px); }
+          66% { transform: translate(-20px, 20px); }
+        }
+      `}</style>
 
       {/* Onboarding Tour */}
       <AnimatePresence>
@@ -412,10 +453,10 @@ const App: React.FC = () => {
           }}
         >
           <div
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-[#151c2c] shadow-lg transition-transform ${progress >= 1 ? 'border-green-400 bg-green-500' : ''}`}
-            style={{ 
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-white shadow-lg transition-transform ${progress >= 1 ? 'border-green-400 bg-green-500' : ''}`}
+            style={{
               borderColor: progress >= 1 ? '#4ade80' : accentColor,
-              transform: `rotate(${progress * 360}deg)` 
+              transform: `rotate(${progress * 360}deg)`
             }}
           >
             {progress >= 1 ? (
@@ -504,14 +545,14 @@ const App: React.FC = () => {
               setAppState(AppState.IDLE);
               sessionStorage.removeItem('redo_ai_key');
             }}
-            className="text-[11px] text-gray-500 hover:text-white transition-colors bg-[#151c2c] px-3 py-1.5 rounded-full border border-[#252f3f]"
+            className="text-[11px] text-[#6B6574] hover:text-[#2D2A32] transition-colors bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-black/10 shadow-sm"
           >
             {authMode === AuthMode.BYOK ? 'Remove Key' : 'Sign Out'}
           </button>
 
           <button
             onClick={() => setShowOnboarding(true)}
-            className="p-1.5 text-gray-500 hover:text-white transition-colors bg-[#151c2c] rounded-full border border-[#252f3f]"
+            className="p-1.5 text-[#6B6574] hover:text-[#2D2A32] transition-colors bg-white/80 backdrop-blur-sm rounded-full border border-black/10 shadow-sm"
             title="Replay tour"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -527,7 +568,7 @@ const App: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute left-1/2 transform -translate-x-1/2 z-50 bg-red-900/90 backdrop-blur-md border border-red-500/50 text-red-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-[90vw] md:max-w-lg"
+              className="absolute left-1/2 transform -translate-x-1/2 z-50 bg-red-50 backdrop-blur-md border border-red-200 text-red-800 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-[90vw] md:max-w-lg"
               style={{ top: `max(calc(env(safe-area-inset-top, 0px) + 3.5rem), 3.5rem)` }}
             >
               <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -555,10 +596,10 @@ const App: React.FC = () => {
               </div>
 
               <div className="text-center mb-6 md:mb-10 space-y-2 md:space-y-3">
-                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#2D2A32] tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
                   {isHomeMode ? 'Redo Your Space' : 'Redo Your Neighborhood'}
                 </h1>
-                <p className="text-sm md:text-lg text-gray-400 font-light max-w-lg mx-auto">
+                <p className="text-sm md:text-lg text-[#6B6574] font-light max-w-lg mx-auto">
                   {isHomeMode
                     ? 'Upload a room photo to see stunning design possibilities.'
                     : 'Upload a photo to see a cleaner, greener future.'}
@@ -577,7 +618,7 @@ const App: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[#252f3f] bg-[#151c2c] flex-1 min-h-0">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-black/10 bg-[#f5f5f5] flex-1 min-h-0">
                 <ComparisonSlider
                   originalImage={originalImage}
                   generatedImage={generatedImage}
@@ -586,11 +627,11 @@ const App: React.FC = () => {
               </div>
 
               {/* Action Bar */}
-              <div className="mt-4 flex flex-wrap justify-center items-center gap-2 md:gap-3 bg-[#151c2c] p-3 md:p-4 rounded-xl border border-[#252f3f] flex-shrink-0">
+              <div className="mt-4 flex flex-wrap justify-center items-center gap-2 md:gap-3 bg-white/80 backdrop-blur-sm p-3 md:p-4 rounded-xl border border-black/10 shadow-lg flex-shrink-0">
                 {/* Mobile only: Adjust Filters button */}
                 <button
                   onClick={() => setAppState(AppState.READY)}
-                  className="md:hidden px-3 py-2 bg-[#1e2638] text-gray-300 hover:text-white rounded-lg text-xs md:text-sm font-medium border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-1.5"
+                  className="md:hidden px-3 py-2 bg-[#2D2A32] text-white hover:bg-[#3D3A42] rounded-full text-xs md:text-sm font-medium transition-all shadow-sm flex items-center gap-1.5"
                 >
                   <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -601,12 +642,12 @@ const App: React.FC = () => {
 
                 <button
                   onClick={handleReset}
-                  className="px-3 md:px-4 py-2 text-gray-400 hover:text-white text-xs md:text-sm font-medium transition-colors"
+                  className="px-3 md:px-4 py-2 text-[#6B6574] hover:text-[#2D2A32] text-xs md:text-sm font-medium transition-colors"
                 >
                   Upload New
                 </button>
 
-                <div className="w-px h-6 bg-[#252f3f] mx-1 hidden sm:block" />
+                <div className="w-px h-6 bg-black/10 mx-1 hidden sm:block" />
 
                 <button
                   onClick={() => {
@@ -627,7 +668,7 @@ const App: React.FC = () => {
 
                 <button
                   onClick={handleDownloadComposite}
-                  className="px-4 md:px-5 py-2 bg-[#1e2638] text-gray-300 hover:text-white text-xs md:text-sm font-medium rounded-lg border border-[#252f3f] hover:border-gray-500 transition-colors flex items-center gap-1.5 md:gap-2 flex-shrink-0"
+                  className="px-4 md:px-5 py-2 bg-[#2D2A32] text-white hover:bg-[#3D3A42] text-xs md:text-sm font-medium rounded-full transition-all shadow-sm flex items-center gap-1.5 md:gap-2 flex-shrink-0"
                 >
                   <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

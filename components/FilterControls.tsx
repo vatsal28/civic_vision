@@ -129,20 +129,20 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         onClick={() => onToggleFilter(filter.id)}
         className={`filter-item w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${
           isSelected
-            ? isHomeMode ? 'selected home-mode' : 'selected'
-            : 'border-transparent hover:border-[#252f3f]'
+            ? isHomeMode ? 'bg-[#ec4899]/10 border-[#ec4899]' : 'bg-[#4f7eff]/10 border-[#4f7eff]'
+            : 'border-transparent hover:border-black/10 bg-white/50'
         } ${compact ? 'py-2.5' : ''}`}
       >
         {/* Icon */}
-        <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-[#1e2638]">
+        <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-black/10">
           {filter.icon}
         </span>
 
         {/* Text */}
         <div className="flex-1 text-left min-w-0">
-          <div className="text-sm font-medium text-white truncate">{filter.label}</div>
+          <div className="text-sm font-medium text-[#2D2A32] truncate">{filter.label}</div>
           {!compact && (
-            <div className="text-xs text-gray-500 truncate">{filter.description}</div>
+            <div className="text-xs text-[#6B6574] truncate">{filter.description}</div>
           )}
         </div>
 
@@ -152,7 +152,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           <div className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
             isSelected
               ? 'bg-transparent border-[#ec4899]'
-              : 'border-gray-600 bg-transparent'
+              : 'border-[#6B6574] bg-transparent'
           }`}>
             {isSelected && (
               <div className="w-2.5 h-2.5 rounded-full bg-[#ec4899]" />
@@ -165,7 +165,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
               ? isHomeMode
                 ? 'bg-[#ec4899] border-[#ec4899]'
                 : 'bg-[#4f7eff] border-[#4f7eff]'
-              : 'border-gray-600 bg-transparent'
+              : 'border-[#6B6574] bg-transparent'
           }`}>
             {isSelected && (
               <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -191,21 +191,21 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     const isRoomTypeCategory = category === 'roomType';
 
     return (
-      <div key={category} className="border border-[#252f3f] rounded-xl overflow-hidden bg-[#151c2c]">
+      <div key={category} className="border border-black/10 rounded-xl overflow-hidden bg-white shadow-sm">
         <button
           onClick={() => toggleCategory(category)}
-          className="w-full flex items-center justify-between p-3.5 hover:bg-[#1e2638]/50 transition-colors"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-black/5 transition-colors"
         >
           <div className="flex items-center gap-2.5">
             <span className="text-lg">{FILTER_CATEGORY_ICONS[category]}</span>
-            <span className="font-medium text-sm text-white">
+            <span className="font-medium text-sm text-[#2D2A32]">
               {FILTER_CATEGORY_LABELS[category]}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             {isRoomTypeCategory || isStyleCategory ? (
-              <span className="text-xs text-gray-400 bg-[#1e2638] px-2.5 py-1 rounded-lg">
+              <span className="text-xs text-[#6B6574] bg-[#FFF9F5] px-2.5 py-1 rounded-lg border border-black/10">
                 {isRoomTypeCategory
                   ? getSelectedRoomTypeName(selectedFilters, categoryFilters)
                   : getSelectedStyleName(selectedFilters, categoryFilters)
@@ -222,7 +222,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             ) : null}
 
             <svg
-              className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-[#6B6574] transition-transform ${isExpanded ? 'rotate-180' : ''}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -241,7 +241,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="p-2 pt-0 space-y-1 bg-[#0f1520]">
+              <div className="p-2 pt-0 space-y-1 bg-[#FFF9F5]/50">
                 {categoryFilters.map(filter => renderFilterItem(filter, true))}
               </div>
             </motion.div>
@@ -252,7 +252,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full w-full md:w-80 bg-[#0f1520] md:bg-[#151c2c]/95 md:backdrop-blur-xl md:border-r md:border-[#252f3f]">
+    <div className="flex flex-col h-full w-full md:w-80 bg-[#FFF9F5] md:bg-white/95 md:backdrop-blur-xl md:border-r md:border-black/10">
       {/* Hidden file input for reupload */}
       <input
         ref={fileInputRef}
@@ -262,25 +262,25 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         className="hidden"
       />
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#252f3f]">
+      <div className="flex items-center justify-between p-4 border-b border-black/10">
         <div className="flex items-center gap-3">
           {onBack && (
-            <button 
+            <button
               onClick={onBack}
-              className="p-1 -ml-1 hover:bg-white/5 rounded-lg transition-colors"
+              className="p-1 -ml-1 hover:bg-black/5 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-5 h-5 text-[#2D2A32]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
           )}
-          <h1 className="text-base font-semibold text-white">
+          <h1 className="text-base font-semibold text-[#2D2A32]" style={{ fontFamily: "'Fraunces', serif" }}>
             {isHomeMode ? 'Edit Space' : 'Customize'}
           </h1>
         </div>
-        
-        <button className="p-1.5 hover:bg-white/5 rounded-lg transition-colors">
-          <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <button className="p-1.5 hover:bg-black/5 rounded-lg transition-colors">
+          <svg className="w-5 h-5 text-[#6B6574]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
         </button>
@@ -289,7 +289,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       {/* Image Preview */}
       {originalImage && (
         <div className="p-4 pb-2">
-          <div className="relative aspect-video rounded-xl overflow-hidden bg-[#1e2638] border border-[#252f3f]">
+          <div className="relative aspect-video rounded-xl overflow-hidden bg-white border border-black/10 shadow-sm">
             {/* Show generated image when available and not showing original */}
             {showResult && generatedImage && !showOriginalPreview ? (
               <>
@@ -311,9 +311,9 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
                 </div>
                 
                 {/* Toggle to Original button */}
-                <button 
+                <button
                   onClick={() => setShowOriginalPreview(true)}
-                  className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-[#1e2638]/90 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-lg border border-[#252f3f] hover:bg-[#252f3f] transition-colors"
+                  className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#2D2A32] text-xs font-medium px-3 py-1.5 rounded-lg border border-black/10 hover:bg-white transition-colors shadow-sm"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -340,20 +340,20 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
                 <div className="absolute top-2 left-2 z-20">
                   <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
                     showResult
-                      ? 'bg-[#1e2638] text-gray-300 border border-[#252f3f]'
-                      : isHomeMode 
+                      ? 'bg-white text-[#6B6574] border border-black/10'
+                      : isHomeMode
                         ? 'bg-[#ec4899] text-white'
-                        : 'bg-[#84cc16] text-[#0a0f1a]'
+                        : 'bg-[#84cc16] text-white'
                   }`}>
                     {showResult ? 'Before' : 'Original'}
                   </span>
                 </div>
-                
+
                 {/* View After / Edit Photo button */}
                 {showResult && generatedImage ? (
-                  <button 
+                  <button
                     onClick={() => setShowOriginalPreview(false)}
-                    className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-[#1e2638]/90 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-lg border border-[#252f3f] hover:bg-[#252f3f] transition-colors"
+                    className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#2D2A32] text-xs font-medium px-3 py-1.5 rounded-lg border border-black/10 hover:bg-white transition-colors shadow-sm"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -362,9 +362,9 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
                     View After
                   </button>
                 ) : (
-                  <button 
+                  <button
                     onClick={handleReuploadClick}
-                    className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-[#1e2638]/90 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-lg border border-[#252f3f] hover:bg-[#252f3f] transition-colors"
+                    className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#2D2A32] text-xs font-medium px-3 py-1.5 rounded-lg border border-black/10 hover:bg-white transition-colors shadow-sm"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -381,16 +381,16 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       {/* Section Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <div>
-          <h2 className="text-[11px] uppercase tracking-wider text-gray-500 font-bold">
+          <h2 className="text-[11px] uppercase tracking-wider text-[#6B6574] font-bold">
             {isHomeMode ? 'Design Your Space' : 'Enhancements'}
           </h2>
           {!isHomeMode && (
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-[#6B6574] mt-0.5">
               Select the improvements for your city.
             </p>
           )}
         </div>
-        <button 
+        <button
           onClick={onReset}
           className={`text-xs font-medium hover:underline ${
             isHomeMode ? 'text-[#ec4899]' : 'text-[#4f7eff]'
@@ -423,16 +423,16 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       </div>
 
       {/* CTA Button */}
-      <div className="p-4 pt-2 border-t border-[#252f3f] bg-[#0f1520] md:bg-transparent">
+      <div className="p-4 pt-2 border-t border-black/10 bg-[#FFF9F5] md:bg-transparent">
         <button
           onClick={() => {
             setShowOriginalPreview(false);
             onGenerate();
           }}
           disabled={isGenerating || selectedFilters.length === 0}
-          className={`cta-button w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
+          className={`cta-button w-full py-3.5 px-4 rounded-full font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
             isGenerating || selectedFilters.length === 0
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed !shadow-none'
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed !shadow-none'
               : isHomeMode
                 ? 'bg-gradient-to-r from-[#ec4899] to-[#f472b6] hover:from-[#db2777] hover:to-[#ec4899]'
                 : 'bg-gradient-to-r from-[#4f7eff] to-[#6366f1] hover:from-[#3b6df0] hover:to-[#4f7eff]'

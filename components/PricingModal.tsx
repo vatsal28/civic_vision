@@ -280,23 +280,23 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="absolute inset-0 bg-[#0a0f1a]/90 backdrop-blur-sm" 
+        className="absolute inset-0 bg-white/90 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="relative w-full md:max-w-4xl bg-[#151c2c] rounded-t-2xl md:rounded-2xl shadow-2xl border border-[#252f3f] overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh] md:m-4"
+        className="relative w-full md:max-w-4xl bg-white rounded-t-2xl md:rounded-2xl shadow-2xl border border-black/10 overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh] md:m-4"
       >
         {/* Header - Fixed */}
         <div className="bg-gradient-to-r from-[#4f7eff] to-[#6366f1] p-4 md:p-6 text-center flex-shrink-0">
           <div className="flex items-center justify-between md:justify-center">
-            <button 
+            <button
               onClick={onClose}
               className="md:hidden p-1 -ml-1 text-white/80 hover:text-white"
             >
@@ -305,7 +305,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
               </svg>
             </button>
             <div>
-              <h2 className="text-lg md:text-2xl font-bold text-white">Get More Credits</h2>
+              <h2 className="text-lg md:text-2xl font-bold text-white" style={{ fontFamily: "'Fraunces', serif" }}>Get More Credits</h2>
               <p className="text-blue-100 text-xs md:text-sm">Select a pack and complete your purchase</p>
             </div>
             <div className="w-6 md:hidden" /> {/* Spacer for centering */}
@@ -333,15 +333,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                   key={pkg.id}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedPackage(pkg.id)}
-                  className={`relative bg-[#0f1520] rounded-xl p-4 md:p-5 border-2 cursor-pointer transition-all ${
+                  className={`relative bg-[#FFF9F5] rounded-xl p-4 md:p-5 border-2 cursor-pointer transition-all shadow-sm ${
                     selectedPackage === pkg.id
                       ? 'border-[#4f7eff] bg-[#4f7eff]/5 shadow-lg shadow-[#4f7eff]/20'
-                      : 'border-[#252f3f]'
+                      : 'border-black/10'
                   }`}
                 >
                   {pkg.popular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                      <span className="bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
                         POPULAR
                       </span>
                     </div>
@@ -349,7 +349,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
 
                   {/* Selection indicator */}
                   <div className={`absolute top-3 right-3 md:top-4 md:right-4 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    selectedPackage === pkg.id ? 'bg-[#4f7eff] border-[#4f7eff]' : 'border-gray-600'
+                    selectedPackage === pkg.id ? 'bg-[#4f7eff] border-[#4f7eff]' : 'border-[#6B6574]'
                   }`}>
                     {selectedPackage === pkg.id && (
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -359,19 +359,19 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
                   </div>
 
                   <div className="text-center mb-3 md:mb-4">
-                    <div className="text-2xl md:text-3xl font-bold text-white mb-1">₹{pkg.price}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#2D2A32] mb-1">₹{pkg.price}</div>
                     <div className="text-[#4f7eff] font-semibold text-sm md:text-base">
                       {pkg.credits} Credits
                     </div>
-                    <div className="text-gray-500 text-xs mt-1">
+                    <div className="text-[#6B6574] text-xs mt-1">
                       ₹{(pkg.price / pkg.credits).toFixed(2)} per credit
                     </div>
                   </div>
 
                   <ul className="space-y-1.5 md:space-y-2">
                     {[`${pkg.credits} AI Transformations`, 'High Quality (2K)', 'No Expiry'].map((feature) => (
-                      <li key={feature} className="flex items-center text-gray-400 text-xs md:text-sm">
-                        <svg className="w-4 h-4 text-green-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <li key={feature} className="flex items-center text-[#6B6574] text-xs md:text-sm">
+                        <svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         {feature}
@@ -615,20 +615,20 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
         </div>
 
         {/* Fixed Footer with Button */}
-        <div className="flex-shrink-0 p-4 md:p-6 pt-3 md:pt-4 border-t border-[#252f3f] bg-[#151c2c]">
+        <div className="flex-shrink-0 p-4 md:p-6 pt-3 md:pt-4 border-t border-black/10 bg-[#FFF9F5]">
           {error && (
             <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm text-center">{error}</p>
+              <p className="text-red-600 text-sm text-center">{error}</p>
             </div>
           )}
-          
+
           <button
             onClick={handlePurchase}
             disabled={!selectedPackage || isSubmitting}
-            className={`w-full py-3.5 px-4 font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+            className={`w-full py-3.5 px-4 font-bold rounded-full transition-all flex items-center justify-center gap-2 ${
               selectedPackage && !isSubmitting
                 ? 'bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white hover:opacity-90 shadow-lg shadow-[#4f7eff]/30'
-                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
             {isSubmitting ? (
@@ -651,7 +651,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
 
           <button
             onClick={onClose}
-            className="hidden md:block w-full mt-3 text-sm text-gray-400 hover:text-white transition-colors font-medium text-center"
+            className="hidden md:block w-full mt-3 text-sm text-[#6B6574] hover:text-[#2D2A32] transition-colors font-medium text-center"
           >
             Close
           </button>

@@ -10,13 +10,13 @@ interface ModeSwitcherProps {
 export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ currentMode, onModeChange }) => {
     return (
         // Hidden on mobile - bottom nav handles mode switching there
-        <div className="hidden md:flex items-center justify-center gap-1 p-1 bg-[#151c2c] backdrop-blur-sm rounded-full border border-[#252f3f] shadow-lg">
+        <div className="hidden md:flex items-center justify-center gap-1 p-1 bg-white backdrop-blur-sm rounded-full border border-black/10 shadow-sm">
             {/* City Vision Tab */}
             <button
                 onClick={() => onModeChange(AppMode.CITY)}
                 className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-200 ${currentMode === AppMode.CITY
                         ? 'text-white'
-                        : 'text-gray-400 hover:text-gray-200'
+                        : 'text-[#6B6574] hover:text-[#2D2A32]'
                     }`}
             >
                 {currentMode === AppMode.CITY && (
@@ -39,7 +39,7 @@ export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ currentMode, onModeC
                 onClick={() => onModeChange(AppMode.HOME)}
                 className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-200 ${currentMode === AppMode.HOME
                         ? 'text-white'
-                        : 'text-gray-400 hover:text-gray-200'
+                        : 'text-[#6B6574] hover:text-[#2D2A32]'
                     }`}
             >
                 {currentMode === AppMode.HOME && (

@@ -107,31 +107,38 @@ const STEPS: Step[] = [
 ];
 
 // Floating particles for welcome/complete screens
-const FloatingParticles: React.FC = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-            <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-cyan-400/30 rounded-full"
-                initial={{
-                    x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400),
-                    y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
-                    scale: Math.random() * 0.5 + 0.5,
-                }}
-                animate={{
-                    y: [null, Math.random() * -200 - 100],
-                    opacity: [0.3, 0.8, 0],
-                }}
-                transition={{
-                    duration: Math.random() * 3 + 2,
-                    repeat: Infinity,
-                    repeatType: 'loop',
-                    delay: Math.random() * 2,
-                }}
-            />
-        ))}
-    </div>
-);
+const FloatingParticles: React.FC = () => {
+    const particleColors = ['#89D4BB', '#C9B8DB', '#FF8A80', '#FCB69F'];
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(20)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 rounded-full"
+                    style={{
+                        background: particleColors[i % particleColors.length],
+                        opacity: 0.3,
+                    }}
+                    initial={{
+                        x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400),
+                        y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+                        scale: Math.random() * 0.5 + 0.5,
+                    }}
+                    animate={{
+                        y: [null, Math.random() * -200 - 100],
+                        opacity: [0.3, 0.6, 0],
+                    }}
+                    transition={{
+                        duration: Math.random() * 3 + 2,
+                        repeat: Infinity,
+                        repeatType: 'loop',
+                        delay: Math.random() * 2,
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
 
 // Step indicator dots
 const StepIndicator: React.FC<{ currentStep: number; totalSteps: number }> = ({
@@ -142,12 +149,14 @@ const StepIndicator: React.FC<{ currentStep: number; totalSteps: number }> = ({
         {[...Array(totalSteps)].map((_, i) => (
             <motion.div
                 key={i}
-                className={`h-2 rounded-full transition-colors ${i === currentStep
-                    ? 'bg-cyan-400 w-6'
-                    : i < currentStep
-                        ? 'bg-cyan-600 w-2'
-                        : 'bg-slate-600 w-2'
-                    }`}
+                style={{
+                    background: i === currentStep
+                        ? 'linear-gradient(135deg, #89D4BB, #C9B8DB)'
+                        : i < currentStep
+                            ? '#89D4BB'
+                            : 'rgba(0, 0, 0, 0.15)'
+                }}
+                className={`h-2 rounded-full transition-colors ${i === currentStep ? 'w-6' : 'w-2'}`}
                 layout
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />
@@ -216,7 +225,52 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) =>
             exit={{ opacity: 0 }}
         >
             {/* Animated background */}
-            <div className="onboarding-bg" />
+            <div className="onboarding-bg">
+                {/* Floating blobs */}
+                <div className="blob blob-1" />
+                <div className="blob blob-2" />
+                <div className="blob blob-3" />
+
+                <style>{`
+                    .blob {
+                        position: fixed;
+                        border-radius: 50%;
+                        filter: blur(60px);
+                        opacity: 0.15;
+                        pointer-events: none;
+                        z-index: 0;
+                    }
+                    .blob-1 {
+                        width: 400px;
+                        height: 400px;
+                        background: linear-gradient(135deg, #89D4BB, #C9B8DB);
+                        top: -100px;
+                        left: -100px;
+                        animation: float 20s ease-in-out infinite;
+                    }
+                    .blob-2 {
+                        width: 350px;
+                        height: 350px;
+                        background: linear-gradient(135deg, #FF8A80, #FCB69F);
+                        bottom: -100px;
+                        right: -100px;
+                        animation: float 25s ease-in-out infinite reverse;
+                    }
+                    .blob-3 {
+                        width: 300px;
+                        height: 300px;
+                        background: linear-gradient(135deg, #C9B8DB, #89D4BB);
+                        top: 50%;
+                        left: 50%;
+                        animation: float 30s ease-in-out infinite;
+                    }
+                    @keyframes float {
+                        0%, 100% { transform: translate(0, 0); }
+                        33% { transform: translate(30px, -30px); }
+                        66% { transform: translate(-20px, 20px); }
+                    }
+                `}</style>
+            </div>
 
             {/* Floating particles for welcome/complete */}
             {(isWelcome || isComplete) && <FloatingParticles />}
@@ -429,7 +483,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) =>
                                             key={i}
                                             className="celebration-particle"
                                             style={{
-                                                background: ['#22d3ee', '#3b82f6', '#8b5cf6', '#ec4899'][i % 4],
+                                                background: ['#89D4BB', '#C9B8DB', '#FF8A80', '#FCB69F'][i % 4],
                                             }}
                                             initial={{ opacity: 0, scale: 0 }}
                                             animate={{

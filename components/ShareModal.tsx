@@ -71,8 +71,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                         canvas.width = width * 2 + spacing;
                         canvas.height = height + brandingHeight;
 
-                        // Fill dark background
-                        ctx.fillStyle = '#0a0f1a';
+                        // Fill light background
+                        ctx.fillStyle = '#FFF9F5';
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                         // Draw images side by side
@@ -80,7 +80,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                         ctx.drawImage(img2, width + spacing, 0, width, height);
 
                         // Add divider line
-                        ctx.strokeStyle = '#252f3f';
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
                         ctx.lineWidth = spacing;
                         ctx.beginPath();
                         ctx.moveTo(width, 0);
@@ -90,16 +90,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                         // Add gradient overlay at bottom for text readability
                         const gradientHeight = 100;
                         const gradient = ctx.createLinearGradient(0, height, 0, height + brandingHeight);
-                        gradient.addColorStop(0, 'rgba(10, 15, 26, 0)');
-                        gradient.addColorStop(1, 'rgba(10, 15, 26, 1)');
+                        gradient.addColorStop(0, 'rgba(255, 249, 245, 0)');
+                        gradient.addColorStop(1, 'rgba(255, 249, 245, 1)');
                         ctx.fillStyle = gradient;
                         ctx.fillRect(0, height, canvas.width, brandingHeight);
 
                         // Add "BEFORE" and "AFTER" labels at top
                         const labelFontSize = Math.max(24, width / 25);
                         ctx.font = `bold ${labelFontSize}px Inter, sans-serif`;
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillStyle = '#2D2A32';
+                        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
                         ctx.shadowBlur = 8;
                         ctx.textAlign = 'left';
                         ctx.fillText('BEFORE', 20, labelFontSize + 10);
@@ -116,7 +116,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
 
                         // Add website URL below
                         ctx.font = `${Math.max(14, width / 40)}px Inter, sans-serif`;
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.fillStyle = '#6B6574';
                         ctx.fillText('re-do.ai', canvas.width / 2, height + brandingHeight - 5);
 
                         resolve(canvas.toDataURL('image/jpeg', 0.92));
@@ -217,23 +217,23 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 bg-[#0a0f1a]/90 backdrop-blur-sm"
+                className="absolute inset-0 bg-white/90 backdrop-blur-sm"
                 onClick={onClose}
             />
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative w-full max-w-md bg-[#151c2c] rounded-2xl shadow-2xl border border-[#252f3f] overflow-hidden"
+                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-black/10 overflow-hidden"
             >
                 {/* Header */}
                 <div
-                    className="p-6 text-center border-b border-[#252f3f]"
+                    className="p-6 text-center border-b border-black/10"
                     style={{
                         background: `linear-gradient(135deg, ${accentColor}, ${mode === 'HOME' ? '#f472b6' : '#6366f1'})`,
                     }}
                 >
-                    <h2 className="text-2xl font-bold text-white mb-1">Share Your Transformation</h2>
+                    <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Fraunces', serif" }}>Share Your Transformation</h2>
                     <p className="text-white/80 text-sm">Show the world what's possible!</p>
                 </div>
 
@@ -246,8 +246,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             </div>
-                            <p className="text-white text-sm font-medium mb-2">Preparing your image...</p>
-                            <p className="text-gray-400 text-xs">Generating composite image with branding</p>
+                            <p className="text-[#2D2A32] text-sm font-medium mb-2">Preparing your image...</p>
+                            <p className="text-[#6B6574] text-xs">Generating composite image with branding</p>
                         </div>
                     ) : error ? (
                         <div className="text-center py-8">
@@ -256,18 +256,18 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
-                            <p className="text-white text-sm font-medium mb-2">Error</p>
-                            <p className="text-gray-400 text-xs mb-6">{error}</p>
+                            <p className="text-[#2D2A32] text-sm font-medium mb-2">Error</p>
+                            <p className="text-[#6B6574] text-xs mb-6">{error}</p>
                             <button
                                 onClick={generateShareImage}
-                                className="px-4 py-2 bg-[#1e2638] text-white text-sm font-medium rounded-lg border border-[#252f3f] hover:border-gray-500 transition-colors"
+                                className="px-4 py-2 bg-white text-[#2D2A32] text-sm font-medium rounded-lg border border-black/10 hover:border-black/20 transition-colors shadow-sm"
                             >
                                 Try Again
                             </button>
                         </div>
                     ) : (
                         <>
-                            <p className="text-gray-400 text-sm mb-6 text-center">
+                            <p className="text-[#6B6574] text-sm mb-6 text-center">
                                 Share your before/after transformation
                             </p>
 
@@ -276,7 +276,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                                 {navigator.share ? (
                                     <button
                                         onClick={handleShare}
-                                        className="w-full flex items-center justify-center gap-3 p-4 rounded-xl transition-all font-bold text-white shadow-lg"
+                                        className="w-full flex items-center justify-center gap-3 p-4 rounded-full transition-all font-bold text-white shadow-lg"
                                         style={{
                                             background: `linear-gradient(135deg, ${accentColor}, ${mode === 'HOME' ? '#f472b6' : '#6366f1'})`,
                                             boxShadow: `0 4px 15px ${accentColor}40`
@@ -289,7 +289,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                                     </button>
                                 ) : (
                                     <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-                                        <p className="text-amber-200 text-sm text-center">
+                                        <p className="text-amber-600 text-sm text-center">
                                             Sharing is not supported on this device. Please download the image instead.
                                         </p>
                                     </div>
@@ -298,7 +298,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                                 {/* Download Button */}
                                 <button
                                     onClick={handleDownload}
-                                    className="w-full flex items-center justify-center gap-3 p-4 bg-[#1e2638] hover:bg-[#252f3f] border border-[#252f3f] rounded-xl transition-all text-gray-300 hover:text-white font-medium"
+                                    className="w-full flex items-center justify-center gap-3 p-4 bg-white hover:bg-[#FFF9F5] border border-black/10 rounded-full transition-all text-[#2D2A32] font-medium shadow-sm"
                                 >
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -312,7 +312,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ originalImage, generated
                     <div className="mt-6 text-center">
                         <button
                             onClick={onClose}
-                            className="text-sm text-gray-400 hover:text-white transition-colors"
+                            className="text-sm text-[#6B6574] hover:text-[#2D2A32] transition-colors"
                         >
                             Cancel
                         </button>

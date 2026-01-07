@@ -12,41 +12,75 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
     const { signInWithGoogle } = useAuth();
 
     return (
-        <div className="flex h-[100dvh] items-center justify-center bg-[#0a0f1a] p-4 relative overflow-y-auto font-sans">
-            {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1a] via-[#111827] to-[#0f172a] z-0" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 pointer-events-none mix-blend-overlay" />
-            
-            {/* Decorative blurs */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#4f7eff]/10 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ec4899]/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="flex h-[100dvh] items-center justify-center bg-[#FFF9F5] p-4 relative overflow-y-auto" style={{ fontFamily: "'Nunito', sans-serif" }}>
+            {/* Floating blobs */}
+            <div className="blob blob-1" />
+            <div className="blob blob-2" />
+            <div className="blob blob-3" />
 
-            <motion.div 
+            <style>{`
+                .blob {
+                    position: fixed;
+                    border-radius: 50%;
+                    filter: blur(60px);
+                    opacity: 0.15;
+                    pointer-events: none;
+                    z-index: 0;
+                }
+                .blob-1 {
+                    width: 400px;
+                    height: 400px;
+                    background: linear-gradient(135deg, #89D4BB, #C9B8DB);
+                    top: -100px;
+                    left: -100px;
+                    animation: float 20s ease-in-out infinite;
+                }
+                .blob-2 {
+                    width: 350px;
+                    height: 350px;
+                    background: linear-gradient(135deg, #FF8A80, #FCB69F);
+                    bottom: -100px;
+                    right: -100px;
+                    animation: float 25s ease-in-out infinite reverse;
+                }
+                .blob-3 {
+                    width: 300px;
+                    height: 300px;
+                    background: linear-gradient(135deg, #C9B8DB, #89D4BB);
+                    top: 50%;
+                    left: 50%;
+                    animation: float 30s ease-in-out infinite;
+                }
+                @keyframes float {
+                    0%, 100% { transform: translate(0, 0); }
+                    33% { transform: translate(30px, -30px); }
+                    66% { transform: translate(-20px, 20px); }
+                }
+            `}</style>
+
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md bg-[#151c2c] backdrop-blur-xl rounded-2xl shadow-2xl p-6 md:p-8 text-center border border-[#252f3f] relative z-10"
+                className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-6 md:p-8 text-center border border-black/10 relative z-10"
             >
                 {/* Logo/Icon */}
-                <motion.div 
+                <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                    className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center"
-                    style={{
-                        background: 'linear-gradient(135deg, #4f7eff20, #6366f120)',
-                        border: '1px solid #4f7eff30',
-                        boxShadow: '0 0 30px #4f7eff20'
-                    }}
+                    className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-[#89D4BB] to-[#C9B8DB] rounded-2xl flex items-center justify-center shadow-lg"
                 >
-                    <svg className="w-8 h-8 text-[#4f7eff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                 </motion.div>
 
-                <h1 className="text-2xl font-bold text-white mb-2">Welcome to Redo AI</h1>
-                <p className="text-gray-400 mb-8 text-sm">
-                    Redo your city & home with Redo AI. Sign in to get started.
+                <h1 className="text-2xl font-bold text-[#2D2A32] mb-2" style={{ fontFamily: "'Fraunces', serif" }}>
+                    Welcome to Re-do.ai
+                </h1>
+                <p className="text-[#6B6574] mb-8 text-sm">
+                    Transform any space with AI. Sign in to get started.
                 </p>
 
                 <div className="space-y-4">
@@ -63,7 +97,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
                                 alert('Sign in failed. Please try again.');
                             }
                         }}
-                        className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-800 font-bold rounded-xl transition-colors flex items-center justify-center gap-3 shadow-lg"
+                        className="w-full py-3 px-4 bg-[#2D2A32] hover:bg-[#3D3A42] text-white font-bold rounded-full transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
                     >
                         <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -75,39 +109,41 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
                     </motion.button>
 
                     {/* Free generations text */}
-                    <p className="text-center text-sm text-[#4f7eff] font-medium">
-                        Login and get 2 generations for free!
-                    </p>
+                    <div className="bg-gradient-to-r from-[#FF8A80]/10 to-[#FCB69F]/10 border border-[#FF8A80]/20 rounded-full px-4 py-2">
+                        <p className="text-center text-sm font-semibold bg-gradient-to-r from-[#FF8A80] to-[#FCB69F] bg-clip-text text-transparent">
+                            Sign in and get 2 free credits!
+                        </p>
+                    </div>
 
                     {/* Divider */}
                     <div className="relative flex py-3 items-center">
-                        <div className="flex-grow border-t border-[#252f3f]"></div>
-                        <span className="flex-shrink mx-4 text-gray-500 text-xs uppercase tracking-wider">Or use your own key</span>
-                        <div className="flex-grow border-t border-[#252f3f]"></div>
+                        <div className="flex-grow border-t border-black/10"></div>
+                        <span className="flex-shrink mx-4 text-[#6B6574] text-xs uppercase tracking-wider">Or use your own key</span>
+                        <div className="flex-grow border-t border-black/10"></div>
                     </div>
 
                     {/* BYOK Option */}
-                    <div className="bg-[#0f1520] p-4 rounded-xl border border-[#252f3f]">
+                    <div className="bg-[#FFF9F5]/80 p-4 rounded-xl border border-black/10">
                         <form onSubmit={onManualKeySubmit} className="space-y-3">
                             <input
                                 id="apiKeyInput"
                                 type="password"
                                 placeholder="Enter Gemini API Key (AIzaSy...)"
-                                className="w-full bg-[#151c2c] border border-[#252f3f] text-white text-sm rounded-xl focus:ring-[#4f7eff] focus:border-[#4f7eff] block p-3 placeholder-gray-500 outline-none transition-colors"
+                                className="w-full bg-white border border-black/10 text-[#2D2A32] text-sm rounded-xl focus:ring-2 focus:ring-[#89D4BB] focus:border-transparent block p-3 placeholder-[#6B6574]/50 outline-none transition-all"
                                 required
                             />
                             <button
                                 type="submit"
-                                className="w-full py-3 px-4 bg-[#1e2638] hover:bg-[#252f3f] text-white font-medium rounded-xl transition-colors border border-[#252f3f]"
+                                className="w-full py-3 px-4 bg-white hover:bg-[#f5f5f5] text-[#2D2A32] font-medium rounded-full transition-all border border-black/10 shadow-sm hover:shadow-md"
                             >
                                 Use My API Key
                             </button>
                         </form>
-                        <a 
-                            href="https://aistudio.google.com/app/apikey" 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-xs text-[#4f7eff] hover:underline mt-3 inline-block"
+                        <a
+                            href="https://aistudio.google.com/app/apikey"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-[#6B6574] hover:text-[#2D2A32] hover:underline mt-3 inline-block transition-colors"
                         >
                             Get a free key from Google AI Studio →
                         </a>
@@ -115,18 +151,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSelectAuthMode, onManu
                 </div>
 
                 {/* Footer */}
-                <p className="mt-6 text-[10px] text-gray-600">
+                <p className="mt-6 text-[10px] text-[#6B6574]">
                     By signing in, you agree to our{' '}
-                    <a 
-                        href="/terms-of-service" 
-                        className="text-[#4f7eff] hover:underline"
+                    <a
+                        href="/terms-of-service"
+                        className="text-[#2D2A32] hover:underline font-medium"
                     >
                         Terms of Service
                     </a>
                     {' '}and{' '}
-                    <a 
-                        href="/privacy-policy" 
-                        className="text-[#4f7eff] hover:underline"
+                    <a
+                        href="/privacy-policy"
+                        className="text-[#2D2A32] hover:underline font-medium"
                     >
                         Privacy Policy
                     </a>

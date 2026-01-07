@@ -88,7 +88,7 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
                     className="fixed inset-0 z-[60] flex items-center justify-center p-4"
                 >
                     {/* Backdrop */}
-                    <div className="absolute inset-0 bg-[#0a0f1a]/90 backdrop-blur-md" />
+                    <div className="absolute inset-0 bg-white/90 backdrop-blur-md" />
 
                     {/* Content */}
                     <motion.div
@@ -158,7 +158,7 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
                             >
                                 {/* Inner circle with emoji */}
                                 <motion.div
-                                    className="w-16 h-16 rounded-full bg-[#0a0f1a] flex items-center justify-center"
+                                    className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg"
                                     animate={{ rotate: -360 }}
                                     transition={{
                                         duration: 8,
@@ -216,13 +216,14 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="text-xl md:text-2xl font-semibold text-white"
+                                    className="text-xl md:text-2xl font-semibold text-[#2D2A32]"
+                                    style={{ fontFamily: "'Fraunces', serif" }}
                                 >
                                     {currentMessage.text}
                                 </motion.p>
                             </AnimatePresence>
 
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-[#6B6574]">
                                 This usually takes 15-30 seconds
                             </p>
 

@@ -67,20 +67,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, m
         transition={{ duration: 0.5 }}
         className={`relative w-full aspect-[16/9] md:aspect-[21/9] min-h-[280px] md:min-h-[400px] rounded-2xl md:rounded-[2rem] flex flex-col items-center justify-center transition-all duration-300 border overflow-hidden
           ${isDragging
-            ? 'bg-[#1e2638] border-2'
-            : 'bg-[#151c2c] border-[#252f3f] hover:border-opacity-80'
+            ? 'bg-white/90 backdrop-blur-sm border-2'
+            : 'bg-white/60 backdrop-blur-sm border-black/10 hover:border-black/20'
           }
         `}
         style={{
           borderColor: isDragging ? accentColor : undefined,
-          boxShadow: isDragging ? `0 0 40px ${accentColor}30` : undefined,
+          boxShadow: isDragging ? `0 0 40px ${accentColor}30` : '0 4px 20px rgba(0,0,0,0.08)',
         }}
       >
         {/* Decorative Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(45,42,50,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(45,42,50,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
         {/* Decorative Preview Cards - Desktop only */}
-        <div className="absolute left-6 lg:left-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-[#252f3f] hidden md:block pointer-events-none rotate-[-8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-[#1e2638]">
+        <div className="absolute left-6 lg:left-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-black/10 hidden md:block pointer-events-none rotate-[-8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-white/90">
           <img 
             src={isHomeMode 
               ? "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&q=80"
@@ -89,15 +89,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, m
             alt="Preview 1" 
             className="w-full h-full object-cover opacity-70" 
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 bg-[#151c2c]/60 backdrop-blur-sm rounded-full border border-white/40 flex items-center justify-center">
-            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full border border-black/20 flex items-center justify-center">
+            <svg className="w-3 h-3 text-[#2D2A32]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
             </svg>
           </div>
         </div>
 
-        <div className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-[#252f3f] hidden md:block pointer-events-none rotate-[8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-[#1e2638]">
+        <div className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-black/10 hidden md:block pointer-events-none rotate-[8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-white/90">
           <img 
             src={isHomeMode 
               ? "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=80"
@@ -136,18 +136,18 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, m
             </svg>
           </motion.div>
 
-          <h3 className="text-lg md:text-2xl font-bold text-white mb-2 tracking-wide">
+          <h3 className="text-lg md:text-2xl font-bold text-[#2D2A32] mb-2 tracking-wide">
             {isHomeMode ? 'Upload Your Room Photo' : 'Upload Your City Photo'}
           </h3>
-          <p className="text-sm md:text-base text-gray-400 mb-6 md:mb-8 font-light max-w-xs">
+          <p className="text-sm md:text-base text-[#6B6574] mb-6 md:mb-8 font-light max-w-xs">
             Drag and drop or click to browse
           </p>
 
           {/* File type indicators */}
           <div className="flex gap-2 opacity-50">
-            <span className="text-[10px] bg-[#1e2638] px-2 py-1 rounded text-gray-400 border border-[#252f3f]">JPG</span>
-            <span className="text-[10px] bg-[#1e2638] px-2 py-1 rounded text-gray-400 border border-[#252f3f]">PNG</span>
-            <span className="text-[10px] bg-[#1e2638] px-2 py-1 rounded text-gray-400 border border-[#252f3f]">WEBP</span>
+            <span className="text-[10px] bg-white px-2 py-1 rounded text-[#6B6574] border border-black/10">JPG</span>
+            <span className="text-[10px] bg-white px-2 py-1 rounded text-[#6B6574] border border-black/10">PNG</span>
+            <span className="text-[10px] bg-white px-2 py-1 rounded text-[#6B6574] border border-black/10">WEBP</span>
           </div>
         </div>
 

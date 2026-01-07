@@ -16,15 +16,15 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
     return (
         <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
             {/* Gradient blur background */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-[#0a0f1a]/98 to-transparent pointer-events-none" style={{ height: '120%', top: '-20%' }} />
-            
-            <div className="relative bg-[#151c2c]/95 backdrop-blur-xl border-t border-[#252f3f] bottom-nav">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#FFF9F5] via-[#FFF9F5]/98 to-transparent pointer-events-none" style={{ height: '120%', top: '-20%' }} />
+
+            <div className="relative bg-white/95 backdrop-blur-xl border-t border-black/10 bottom-nav shadow-lg">
                 <div className="flex items-center justify-around h-16 px-4">
                     {/* City Tab */}
                     <button
                         onClick={() => onModeChange(AppMode.CITY)}
                         className={`relative flex flex-col items-center justify-center w-16 h-full transition-colors ${
-                            currentMode === AppMode.CITY ? 'text-[#4f7eff]' : 'text-gray-500'
+                            currentMode === AppMode.CITY ? 'text-[#4f7eff]' : 'text-[#6B6574]'
                         }`}
                     >
                         {currentMode === AppMode.CITY && (
@@ -44,7 +44,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                     <div className="relative -mt-8">
                         <motion.button
                             onClick={onUploadClick}
-                            className="fab-button w-14 h-14 rounded-full flex items-center justify-center text-white"
+                            className="fab-button w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg"
                             whileTap={{ scale: 0.9 }}
                         >
                             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -57,7 +57,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                     <button
                         onClick={() => onModeChange(AppMode.HOME)}
                         className={`relative flex flex-col items-center justify-center w-16 h-full transition-colors ${
-                            currentMode === AppMode.HOME ? 'text-[#ec4899]' : 'text-gray-500'
+                            currentMode === AppMode.HOME ? 'text-[#ec4899]' : 'text-[#6B6574]'
                         }`}
                     >
                         {currentMode === AppMode.HOME && (
