@@ -9,8 +9,11 @@ import { ShareModal } from './components/ShareModal';
 import { AuthScreen } from './components/AuthScreen';
 import { Onboarding } from './components/Onboarding';
 import { BottomNavBar } from './components/BottomNavBar';
+import { ValidationWarningBanner } from './components/ValidationWarningBanner';
+import { FeedbackButtons } from './components/FeedbackButtons';
 import { generateIdealImage } from './services/geminiService';
 import { createCompositeImage } from './utils/imageUtils';
+import { validateRoomStructure } from './services/roomValidationService';
 import { AppState, AuthMode, AppMode } from './types';
 import { CITY_FILTERS, HOME_FILTERS } from './constants';
 import { useAuth } from './contexts/AuthContext';
@@ -40,6 +43,18 @@ const App: React.FC = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Validation state
+  const [validationWarning, setValidationWarning] = useState<{
+    show: boolean;
+    issues: string[];
+    confidence: number;
+    explanation: string;
+  } | null>(null);
+  const [offerFreeRetry, setOfferFreeRetry] = useState(false);
+
+  // Feedback state
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
 
   // Demo mode for Razorpay KYC review
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -160,6 +175,9 @@ const App: React.FC = () => {
       setGeneratedImage(null);
       setAppState(AppState.IDLE);
       setError(null);
+      setValidationWarning(null);
+      setOfferFreeRetry(false);
+      setFeedbackGiven(false);
     }
   };
 
@@ -212,6 +230,8 @@ const App: React.FC = () => {
 
     setAppState(AppState.GENERATING);
     setError(null);
+    setFeedbackGiven(false);
+    setValidationWarning(null);
 
     const authModeStr = authMode === AuthMode.GUEST ? 'guest' : 'byok';
     analytics.trackGenerateStarted(selectedFilters.length, authModeStr);
@@ -256,6 +276,55 @@ const App: React.FC = () => {
       }
 
       setGeneratedImage(`data:image/jpeg;base64,${resultBase64}`);
+
+      // Validate room structure (Home mode only)
+      if (appMode === AppMode.HOME) {
+        try {
+          analytics.trackValidationStarted('HOME');
+
+          // Get the same API key used for generation
+          let validationApiKey: string;
+          if (isDemoMode) {
+            validationApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+          } else if (authMode === AuthMode.GUEST && user) {
+            // For guest mode, use environment key for validation
+            validationApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+          } else {
+            validationApiKey = userApiKey || import.meta.env.VITE_GEMINI_API_KEY;
+          }
+
+          const validation = await validateRoomStructure(
+            originalImage,
+            `data:image/jpeg;base64,${resultBase64}`,
+            validationApiKey
+          );
+
+          analytics.trackValidationResult(
+            validation.isValid,
+            validation.confidence,
+            validation.issues
+          );
+
+          // Show warning if validation fails or confidence is low
+          if (!validation.isValid || validation.confidence < 70) {
+            setValidationWarning({
+              show: true,
+              issues: validation.issues,
+              confidence: validation.confidence,
+              explanation: validation.explanation
+            });
+            setOfferFreeRetry(true);
+          } else {
+            // Clear any previous warnings
+            setValidationWarning(null);
+            setOfferFreeRetry(false);
+          }
+        } catch (err) {
+          console.error('Validation error:', err);
+          // Don't block user experience if validation fails
+        }
+      }
+
       setAppState(AppState.COMPARING);
       analytics.trackGenerateSuccess(selectedFilters.length, authModeStr);
     } catch (err: any) {
@@ -302,6 +371,9 @@ const App: React.FC = () => {
     setOriginalImage(null);
     setGeneratedImage(null);
     setError(null);
+    setValidationWarning(null);
+    setOfferFreeRetry(false);
+    setFeedbackGiven(false);
   };
 
   const handleBack = () => {
@@ -331,6 +403,41 @@ const App: React.FC = () => {
       a.click();
       URL.revokeObjectURL(url);
       analytics.trackImageDownloaded();
+    }
+  };
+
+  // Validation handlers
+  const handleValidationRetry = () => {
+    if (validationWarning) {
+      analytics.trackValidationRetry(validationWarning.issues);
+    }
+    setValidationWarning(null);
+    setOfferFreeRetry(false);
+    // Trigger regeneration
+    handleGenerate();
+  };
+
+  const handleValidationDismiss = () => {
+    if (validationWarning) {
+      analytics.trackValidationDismissed(validationWarning.confidence);
+    }
+    setValidationWarning(null);
+    setOfferFreeRetry(false);
+  };
+
+  // Feedback handler
+  const handleFeedback = (rating: 'good' | 'bad') => {
+    setFeedbackGiven(true);
+    analytics.trackUserFeedback({
+      rating,
+      mode: appMode === AppMode.CITY ? 'CITY' : 'HOME',
+      filterCount: selectedFilters.length,
+      timestamp: new Date().toISOString(),
+    });
+
+    // If feedback is bad, offer retry (future enhancement)
+    if (rating === 'bad') {
+      analytics.trackFeedbackRetryOffered();
     }
   };
 
@@ -612,12 +719,23 @@ const App: React.FC = () => {
 
           {/* COMPARING STATE: Results */}
           {appState === AppState.COMPARING && originalImage && generatedImage && (
-            <motion.div 
+            <motion.div
               className="w-full max-w-6xl flex flex-col h-full"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
             >
+              {/* Validation Warning Banner */}
+              {validationWarning && validationWarning.show && (
+                <ValidationWarningBanner
+                  issues={validationWarning.issues}
+                  confidence={validationWarning.confidence}
+                  explanation={validationWarning.explanation}
+                  onRetry={handleValidationRetry}
+                  onDismiss={handleValidationDismiss}
+                />
+              )}
+
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-black/10 bg-[#f5f5f5] flex-1 min-h-0">
                 <ComparisonSlider
                   originalImage={originalImage}
@@ -646,6 +764,18 @@ const App: React.FC = () => {
                 >
                   Upload New
                 </button>
+
+                {/* Feedback Buttons */}
+                {!feedbackGiven && (
+                  <>
+                    <div className="w-px h-6 bg-black/10 mx-1 hidden sm:block" />
+                    <FeedbackButtons
+                      mode={appMode === AppMode.CITY ? 'CITY' : 'HOME'}
+                      filterCount={selectedFilters.length}
+                      onFeedback={handleFeedback}
+                    />
+                  </>
+                )}
 
                 <div className="w-px h-6 bg-black/10 mx-1 hidden sm:block" />
 
