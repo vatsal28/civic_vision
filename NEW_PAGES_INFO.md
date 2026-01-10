@@ -67,7 +67,22 @@ These pages help with:
 - Compliance with payment gateway requirements
 - Professional business presence
 
+## Routing Configuration
+
+Updated `vercel.json` to handle static HTML page routing:
+```json
+{
+  "rewrites": [
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/refunds", "destination": "/refunds.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+This ensures `/contact` and `/refunds` serve the static HTML files before falling back to the React SPA.
+
 ---
 
 Last Updated: January 10, 2026
-Status: Live
+Status: Live ✅
