@@ -1,0 +1,50 @@
+{
+  "name": "Redo AI - Transform Any Space with AI",
+  "short_name": "Redo AI",
+  "description": "AI-powered visualization for urban and interior design transformations",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#4f7eff",
+  "background_color": "#FFF9F5",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "categories": ["design", "productivity", "photo"],
+  "shortcuts": [
+    {
+      "name": "Transform City",
+      "short_name": "City",
+      "description": "Transform urban spaces",
+      "url": "/?mode=city",
+      "icons": [
+        {
+          "src": "/icon-city.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Transform Home",
+      "short_name": "Home",
+      "description": "Redesign interior spaces",
+      "url": "/?mode=home",
+      "icons": [
+        {
+          "src": "/icon-home.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
