@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAuth } from '../contexts/AuthContext';
 import * as analytics from '../services/analyticsService';
 import { loadRazorpay, RazorpayResponse } from '../utils/razorpay';
-import {
-  getStripe,
-  detectUserCountry,
-  formatPrice,
-  convertINRtoUSD
-} from '../services/stripeService';
 
 interface PricingModalProps {
   onClose: () => void;
   onPurchase: (amount: number, cost: number) => void;
-  isDemoMode?: boolean;
 }
 
 const PACKAGES = [
@@ -38,17 +31,13 @@ const PACKAGES = [
   },
 ];
 
-export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase, isDemoMode = false }) => {
+export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase }) => {
   const { user } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPurchaseComplete, setIsPurchaseComplete] = useState(false);
   const [purchasedCredits, setPurchasedCredits] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  // Country detection for payment routing
-  // Demo mode always uses India/Razorpay for testing
-  const [userCountry, setUserCountry] = useState<string>(isDemoMode ? 'IN' : 'IN'); // Default to India
 
   // Waitlist state
   const [showWaitlistForm, setShowWaitlistForm] = useState(false);
@@ -59,38 +48,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
   const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false);
   const [waitlistError, setWaitlistError] = useState<string | null>(null);
 
-  // Detect user country on mount (skip if demo mode - always use India)
-  useEffect(() => {
-    if (isDemoMode) {
-      setUserCountry('IN'); // Force India for demo/Razorpay testing
-    } else {
-      const country = detectUserCountry();
-      setUserCountry(country);
-    }
-  }, [isDemoMode]);
-
   const handlePurchase = async () => {
     if (!selectedPackage || !user) return;
 
     setIsSubmitting(true);
     setError(null);
-
-    try {
-      // Route payment based on country
-      if (userCountry === 'IN') {
-        await handleRazorpayPayment();
-      } else {
-        await handleStripePayment();
-      }
-    } catch (err: any) {
-      console.error('Payment error:', err);
-      setError(err.message || 'Payment failed. Please try again.');
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleRazorpayPayment = async () => {
-    if (!selectedPackage || !user) return;
 
     try {
       const functions = getFunctions();
@@ -168,63 +130,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
       rzp.open();
 
     } catch (err: any) {
-      console.error('Failed to initiate Razorpay payment:', err);
+      console.error('Failed to initiate purchase:', err);
       setError(err.message || 'Failed to start payment. Please try again.');
       setIsSubmitting(false);
-      throw err;
-    }
-  };
-
-  const handleStripePayment = async () => {
-    if (!selectedPackage || !user) return;
-
-    try {
-      const selectedPkg = PACKAGES.find(p => p.id === selectedPackage);
-      if (!selectedPkg) {
-        throw new Error('Invalid package selected');
-      }
-
-      // Convert INR to USD
-      const usdAmount = convertINRtoUSD(selectedPkg.price);
-
-      analytics.trackPurchaseInitiated(selectedPackage, selectedPkg.price);
-
-      // Create Stripe Checkout session via Cloud Function
-      const functions = getFunctions();
-      const createCheckoutSession = httpsCallable(functions, 'createStripeCheckout');
-
-      const result = await createCheckoutSession({
-        packageId: selectedPackage,
-        credits: selectedPkg.credits,
-        amount: usdAmount,
-        currency: 'usd',
-        successUrl: `${window.location.origin}?payment=success&credits=${selectedPkg.credits}`,
-        cancelUrl: `${window.location.origin}?payment=cancelled`,
-      });
-
-      const data = result.data as { sessionId: string; url?: string };
-
-      // Redirect to Stripe Checkout
-      const stripe = await getStripe();
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (error) {
-        console.error('Stripe redirect error:', error);
-        throw new Error(error.message || 'Failed to redirect to payment');
-      }
-
-      // User will be redirected to Stripe, then back to our success/cancel URLs
-    } catch (err: any) {
-      console.error('Failed to initiate Stripe payment:', err);
-      setError(err.message || 'Failed to start payment. Please try again.');
-      setIsSubmitting(false);
-      throw err;
     }
   };
 
@@ -451,17 +359,12 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
                   </div>
 
                   <div className="text-center mb-3 md:mb-4">
-                    <div className="text-2xl md:text-3xl font-bold text-[#2D2A32] mb-1">
-                      {formatPrice(pkg.price, userCountry)}
-                    </div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#2D2A32] mb-1">₹{pkg.price}</div>
                     <div className="text-[#4f7eff] font-semibold text-sm md:text-base">
                       {pkg.credits} Credits
                     </div>
                     <div className="text-[#6B6574] text-xs mt-1">
-                      {userCountry === 'IN'
-                        ? `₹${(pkg.price / pkg.credits).toFixed(2)}`
-                        : `$${(convertINRtoUSD(pkg.price) / pkg.credits).toFixed(2)}`
-                      } per credit
+                      ₹{(pkg.price / pkg.credits).toFixed(2)} per credit
                     </div>
                   </div>
 
@@ -479,35 +382,27 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
               ))}
             </div>
 
-            {/* Payment Method Info */}
-            {userCountry !== 'IN' && (
-              <div className="mt-4 p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl">
-                <div className="flex items-center gap-2 justify-center">
-                  <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <p className="text-xs md:text-sm text-green-700 font-medium">
-                    International payments powered by Stripe
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* International Payments Waitlist - Only show for India users as example */}
-            {userCountry === 'IN' && !showWaitlistForm ? (
+            {/* International Payments Waitlist */}
+            {!showWaitlistForm ? (
               <div className="mt-4 p-4 bg-gradient-to-br from-[#4f7eff]/10 to-[#6366f1]/10 border border-[#4f7eff]/30 rounded-xl">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-3">
                   <div className="flex items-center gap-2 flex-1 text-center md:text-left">
                     <svg className="w-5 h-5 text-[#4f7eff] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p className="text-xs md:text-sm text-[#4f7eff] font-medium">
-                      Payments powered by Razorpay for India
+                      International payments coming soon
                     </p>
                   </div>
+                  <button
+                    onClick={() => setShowWaitlistForm(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-[#4f7eff] to-[#6366f1] text-white text-xs md:text-sm font-semibold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-[#4f7eff]/20 whitespace-nowrap"
+                  >
+                    Join Waitlist
+                  </button>
                 </div>
               </div>
-            ) : userCountry === 'IN' && showWaitlistForm ? (
+            ) : (
               <form onSubmit={handleWaitlistSubmit} className="mt-4 p-4 bg-[#1e2638] border border-[#252f3f] rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-white font-semibold text-sm">Join International Waitlist</h3>
@@ -685,7 +580,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
                   </button>
                 </div>
               </form>
-            ) : null}
+            )}
 
             {/* Custom Pricing Section */}
             <div className="mt-6 p-4 bg-[#1e2638] rounded-xl border border-[#252f3f]">
@@ -749,12 +644,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase,
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                <span>
-                  {selectedPackage
-                    ? `Buy Pack - ${formatPrice(PACKAGES.find(p => p.id === selectedPackage)?.price || 0, userCountry)}`
-                    : 'Select a Pack'
-                  }
-                </span>
+                <span>{selectedPackage ? `Buy Pack - ₹${PACKAGES.find(p => p.id === selectedPackage)?.price}` : 'Select a Pack'}</span>
               </>
             )}
           </button>
