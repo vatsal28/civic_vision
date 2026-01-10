@@ -729,3 +729,237 @@ exports.verifyPayment = functions
             message: 'Payment received, credits will be added shortly'
         };
     });
+
+/**
+ * Cloud Function: createStripeCheckout
+ * Creates a Stripe Checkout session for international credit purchases
+ * SECURITY: Validates package server-side, never trusts client amounts
+ */
+exports.createStripeCheckout = functions
+    .runWith({
+        secrets: ['STRIPE_SECRET_KEY']
+    })
+    .https.onCall(async (data, context) => {
+        // 1. Verify authentication
+        if (!context.auth) {
+            throw new functions.https.HttpsError(
+                'unauthenticated',
+                'You must be signed in to purchase credits'
+            );
+        }
+
+        const userId = context.auth.uid;
+        const { packageId, credits, amount, currency, successUrl, cancelUrl } = data;
+
+        // 2. Validate package ID exists (SERVER-SIDE LOOKUP - SECURITY CRITICAL)
+        if (!packageId) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Missing package selection'
+            );
+        }
+
+        const pkg = PACKAGES[packageId];
+        if (!pkg) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Invalid package selected'
+            );
+        }
+
+        // 3. Verify Stripe keys are configured
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.error('Stripe secret key not configured');
+            throw new functions.https.HttpsError(
+                'internal',
+                'Payment system not configured. Please try again later.'
+            );
+        }
+
+        try {
+            // 4. Initialize Stripe
+            const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+            // 5. Create Checkout Session with SERVER-SIDE values (never trust client)
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [
+                    {
+                        price_data: {
+                            currency: currency || 'usd',
+                            product_data: {
+                                name: `${pkg.credits} Redo AI Credits`,
+                                description: `${pkg.name} - Generate ${pkg.credits} AI transformations`,
+                                images: ['https://re-do.ai/images/og-image.jpg'],
+                            },
+                            unit_amount: Math.round(amount * 100), // Convert to cents
+                        },
+                        quantity: 1,
+                    },
+                ],
+                mode: 'payment',
+                success_url: successUrl || 'https://re-do.ai?payment=success&credits=' + pkg.credits,
+                cancel_url: cancelUrl || 'https://re-do.ai?payment=cancelled',
+                client_reference_id: userId, // Track which user made payment
+                metadata: {
+                    userId,
+                    packageId: pkg.id,
+                    credits: pkg.credits.toString(),
+                    timestamp: new Date().toISOString(),
+                },
+            });
+
+            console.log(`Created Stripe checkout session: ${session.id} for user ${userId}, package: ${packageId}`);
+
+            return {
+                success: true,
+                sessionId: session.id,
+                url: session.url,
+            };
+
+        } catch (error) {
+            console.error('Error creating Stripe checkout session:', error);
+            throw new functions.https.HttpsError(
+                'internal',
+                'Failed to create checkout session. Please try again.'
+            );
+        }
+    });
+
+/**
+ * Cloud Function: stripeWebhook
+ * Receives webhook notifications from Stripe
+ * Handles: checkout.session.completed, payment_intent.succeeded, etc.
+ */
+exports.stripeWebhook = functions
+    .runWith({
+        secrets: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET']
+    })
+    .https.onRequest(async (req, res) => {
+        // 1. Get Stripe signature from headers
+        const sig = req.headers['stripe-signature'];
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+        if (!webhookSecret) {
+            console.error('Stripe webhook secret not configured');
+            return res.status(500).send('Webhook secret not configured');
+        }
+
+        let event;
+
+        try {
+            // 2. Verify webhook signature (CRITICAL for security)
+            const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+            event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+        } catch (err) {
+            console.error('Webhook signature verification failed:', err.message);
+            return res.status(400).send(`Webhook Error: ${err.message}`);
+        }
+
+        console.log(`Received Stripe webhook event: ${event.type}`);
+
+        // 3. Handle different event types
+        try {
+            switch (event.type) {
+                case 'checkout.session.completed':
+                    await handleCheckoutCompleted(event.data.object);
+                    break;
+                case 'payment_intent.succeeded':
+                    console.log('Payment intent succeeded:', event.data.object.id);
+                    break;
+                case 'payment_intent.payment_failed':
+                    await handleStripePaymentFailed(event.data.object);
+                    break;
+                default:
+                    console.log(`Unhandled event type: ${event.type}`);
+            }
+
+            res.json({ received: true });
+        } catch (error) {
+            console.error('Error processing webhook:', error);
+            res.status(500).send('Webhook processing failed');
+        }
+    });
+
+/**
+ * Handle successful Stripe checkout completion
+ */
+async function handleCheckoutCompleted(session) {
+    const userId = session.client_reference_id;
+    const credits = parseInt(session.metadata?.credits || '0');
+    const packageId = session.metadata?.packageId;
+
+    if (!userId || !credits || !packageId) {
+        console.error('Missing metadata in checkout session:', session.id);
+        return;
+    }
+
+    const sessionId = session.id;
+
+    // Check if already processed
+    const paymentsRef = admin.firestore().collection('payments');
+    const existingPayment = await paymentsRef.doc(sessionId).get();
+
+    if (existingPayment.exists) {
+        console.log(`Session ${sessionId} already processed, skipping`);
+        return;
+    }
+
+    // Add credits to user using transaction
+    const userRef = admin.firestore().collection('users').doc(userId);
+
+    await admin.firestore().runTransaction(async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+
+        if (!userDoc.exists) {
+            throw new Error(`User ${userId} not found`);
+        }
+
+        const pkg = PACKAGES[packageId];
+        if (!pkg) {
+            throw new Error(`Invalid package: ${packageId}`);
+        }
+
+        // Update user credits
+        transaction.update(userRef, {
+            credits: admin.firestore.FieldValue.increment(credits),
+            totalPurchased: admin.firestore.FieldValue.increment(credits),
+            lastPurchase: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Record payment
+        transaction.set(paymentsRef.doc(sessionId), {
+            userId,
+            packageId,
+            credits,
+            amount: session.amount_total / 100,
+            currency: session.currency,
+            paymentMethod: 'stripe',
+            sessionId: sessionId,
+            status: 'completed',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    });
+
+    console.log(`✅ Stripe: Added ${credits} credits to user ${userId}`);
+}
+
+/**
+ * Handle failed Stripe payment for analytics
+ */
+async function handleStripePaymentFailed(paymentIntent) {
+    const sessionId = paymentIntent.id;
+    const errorCode = paymentIntent.last_payment_error?.code;
+    const errorMessage = paymentIntent.last_payment_error?.message;
+
+    console.log(`Stripe payment failed: ${sessionId}, error: ${errorCode} - ${errorMessage}`);
+
+    // Record failed payment for analytics
+    await admin.firestore().collection('failed_payments').add({
+        paymentMethod: 'stripe',
+        sessionId,
+        errorCode,
+        errorMessage,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+}
