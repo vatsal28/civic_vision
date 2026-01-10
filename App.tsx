@@ -530,6 +530,7 @@ const App: React.FC = () => {
         <PricingModal
           onClose={() => setShowPricing(false)}
           onPurchase={handlePurchase}
+          isDemoMode={isDemoMode}
         />
       )}
 

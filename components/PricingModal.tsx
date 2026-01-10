@@ -14,6 +14,7 @@ import {
 interface PricingModalProps {
   onClose: () => void;
   onPurchase: (amount: number, cost: number) => void;
+  isDemoMode?: boolean;
 }
 
 const PACKAGES = [
@@ -37,7 +38,7 @@ const PACKAGES = [
   },
 ];
 
-export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase }) => {
+export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase, isDemoMode = false }) => {
   const { user } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +47,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
   const [error, setError] = useState<string | null>(null);
 
   // Country detection for payment routing
-  const [userCountry, setUserCountry] = useState<string>('IN'); // Default to India
+  // Demo mode always uses India/Razorpay for testing
+  const [userCountry, setUserCountry] = useState<string>(isDemoMode ? 'IN' : 'IN'); // Default to India
 
   // Waitlist state
   const [showWaitlistForm, setShowWaitlistForm] = useState(false);
@@ -57,11 +59,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({ onClose, onPurchase 
   const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false);
   const [waitlistError, setWaitlistError] = useState<string | null>(null);
 
-  // Detect user country on mount
+  // Detect user country on mount (skip if demo mode - always use India)
   useEffect(() => {
-    const country = detectUserCountry();
-    setUserCountry(country);
-  }, []);
+    if (isDemoMode) {
+      setUserCountry('IN'); // Force India for demo/Razorpay testing
+    } else {
+      const country = detectUserCountry();
+      setUserCountry(country);
+    }
+  }, [isDemoMode]);
 
   const handlePurchase = async () => {
     if (!selectedPackage || !user) return;
