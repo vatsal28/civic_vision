@@ -163,6 +163,8 @@ export const LandingPage: React.FC = () => {
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{ backgroundImage: 'url(/images/demos/city-after.png)' }}
+                  role="img"
+                  aria-label="After: AI-transformed city street with added greenery, bike lanes, and clean urban design"
                 >
                   <span className="absolute top-4 right-4 text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white">
                     After
@@ -176,6 +178,8 @@ export const LandingPage: React.FC = () => {
                     backgroundImage: 'url(/images/demos/city-before.jpg)',
                     clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`
                   }}
+                  role="img"
+                  aria-label="Before: Original city street photo showing urban environment before AI transformation"
                 >
                   <span className="absolute top-4 left-4 text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white">
                     Before
@@ -188,6 +192,8 @@ export const LandingPage: React.FC = () => {
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{ backgroundImage: 'url(/images/demos/home-after.png)' }}
+                  role="img"
+                  aria-label="After: AI-redesigned living room with modern furniture, warm lighting, and stylish interior design"
                 >
                   <span className="absolute top-4 right-4 text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white">
                     After
@@ -201,6 +207,8 @@ export const LandingPage: React.FC = () => {
                     backgroundImage: 'url(/images/demos/home-before.png)',
                     clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`
                   }}
+                  role="img"
+                  aria-label="Before: Original room photo showing interior space before AI transformation"
                 >
                   <span className="absolute top-4 left-4 text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white">
                     Before

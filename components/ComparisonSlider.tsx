@@ -102,7 +102,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
         {/* The Generated Image (Underneath, "Right" side) */}
         <img
           src={generatedImage}
-          alt="Transformed Version"
+          alt={`AI-transformed ${mode === AppMode.HOME ? 'interior room design' : 'urban space'} showing redesigned space with enhanced aesthetics`}
           className="absolute top-0 left-0 w-full h-full object-contain select-none pointer-events-none"
           draggable={false}
         />
@@ -117,7 +117,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
         >
           <img
             src={originalImage}
-            alt="Original Version"
+            alt={`Original ${mode === AppMode.HOME ? 'room' : 'urban space'} photo before AI transformation`}
             className="absolute top-0 left-0 w-full h-full object-contain"
             draggable={false}
           />

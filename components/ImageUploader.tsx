@@ -81,13 +81,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, m
 
         {/* Decorative Preview Cards - Desktop only */}
         <div className="absolute left-6 lg:left-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-black/10 hidden md:block pointer-events-none rotate-[-8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-white/90">
-          <img 
-            src={isHomeMode 
+          <img
+            src={isHomeMode
               ? "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&q=80"
               : "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500&q=80"
-            } 
-            alt="Preview 1" 
-            className="w-full h-full object-cover opacity-70" 
+            }
+            alt={isHomeMode
+              ? "Example interior room photo for AI transformation - modern minimalist living room"
+              : "Example urban street photo for AI transformation - city landscape"
+            }
+            className="w-full h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full border border-black/20 flex items-center justify-center">
@@ -98,13 +101,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, m
         </div>
 
         <div className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-40 lg:w-56 aspect-video rounded-xl overflow-hidden shadow-2xl border border-black/10 hidden md:block pointer-events-none rotate-[8deg] opacity-30 group-hover:opacity-60 transition-all duration-500 bg-white/90">
-          <img 
-            src={isHomeMode 
+          <img
+            src={isHomeMode
               ? "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=80"
               : "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=500&q=80"
-            } 
-            alt="Preview 2" 
-            className="w-full h-full object-cover opacity-70" 
+            }
+            alt={isHomeMode
+              ? "Example bedroom interior for AI redesign - cozy modern bedroom design"
+              : "Example city street for AI urban planning - downtown cityscape"
+            }
+            className="w-full h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-l from-black/50 to-transparent" />
           <div 
