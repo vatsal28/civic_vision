@@ -106,7 +106,10 @@ To complete the SEO implementation, you need to create these image assets:
   - "Urban Planning Visualization with AI"
   - "AI Room Design: Complete Guide for 2026"
   - "Best Free AI Interior Design Tools"
-- [ ] Add alt text to all images in LandingPage.tsx
+- [x] Add alt text to all images in LandingPage.tsx ✅ COMPLETED
+  - Added ARIA labels to demo slider background images
+  - Context-aware alt text in ComparisonSlider
+  - Descriptive alt text for ImageUploader preview images
 - [ ] Create dedicated pricing page (/pricing)
 - [ ] Create use case pages:
   - /for-interior-designers
