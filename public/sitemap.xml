@@ -10,7 +10,7 @@
 
   <!-- Privacy Policy -->
   <url>
-    <loc>https://re-do.ai/privacy-policy</loc>
+    <loc>https://re-do.ai/privacy</loc>
     <lastmod>2026-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -18,9 +18,25 @@
 
   <!-- Terms of Service -->
   <url>
-    <loc>https://re-do.ai/terms-of-service</loc>
+    <loc>https://re-do.ai/terms</loc>
     <lastmod>2026-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+
+  <!-- Contact Us -->
+  <url>
+    <loc>https://re-do.ai/contact</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Cancellation & Refunds -->
+  <url>
+    <loc>https://re-do.ai/refunds</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>
