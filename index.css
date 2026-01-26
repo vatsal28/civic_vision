@@ -89,14 +89,10 @@
         @apply bg-[#0a0f1a] text-white font-sans antialiased;
     }
 
-    /* Prevent overscroll on iOS */
+    /* Prevent horizontal overflow but allow vertical scrolling */
     html, body {
-        overscroll-behavior: none;
+        overscroll-behavior-x: none;
         overflow-x: hidden;
-    }
-    
-    /* Allow scrolling on legal pages */
-    html.legal-page, body.legal-page {
         overflow-y: auto;
     }
 }

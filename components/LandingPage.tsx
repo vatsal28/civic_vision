@@ -170,7 +170,7 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div
-      className="relative min-h-screen overflow-x-hidden"
+      className="relative min-h-screen"
       style={{
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
         background: 'linear-gradient(180deg, #FFF5F0 0%, #FFF0F5 50%, #F0F5FF 100%)',
