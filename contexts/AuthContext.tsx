@@ -6,12 +6,13 @@ import {
     onAuthStateChanged
 } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { auth, db, googleProvider } from '../firebase';
+import { auth, db, googleProvider, isFirebaseConfigured } from '../firebase';
 
 interface AuthContextType {
     user: User | null;
     credits: number;
     loading: boolean;
+    isConfigured: boolean;
     signInWithGoogle: () => Promise<void>;
     signOut: () => Promise<void>;
 }
@@ -21,14 +22,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [credits, setCredits] = useState<number>(0);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(isFirebaseConfigured);
 
     useEffect(() => {
+        if (!isFirebaseConfigured || !auth) {
+            setLoading(false);
+            return;
+        }
+
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             console.log('Auth state changed:', firebaseUser?.email || 'No user');
             setUser(firebaseUser);
 
-            if (firebaseUser) {
+            if (firebaseUser && db) {
                 // Listen to user's credit balance in real-time
                 const userDocRef = doc(db, 'users', firebaseUser.uid);
                 const unsubscribeCredits = onSnapshot(userDocRef, (docSnap) => {
@@ -54,6 +60,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const signInWithGoogle = async () => {
+        if (!isFirebaseConfigured || !auth) {
+            console.warn('Firebase not configured');
+            return;
+        }
         try {
             console.log('Attempting popup sign-in...');
             const result = await signInWithPopup(auth, googleProvider);
@@ -68,6 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const signOut = async () => {
+        if (!isFirebaseConfigured || !auth) {
+            return;
+        }
         try {
             await firebaseSignOut(auth);
         } catch (error) {
@@ -77,7 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, credits, loading, signInWithGoogle, signOut }}>
+        <AuthContext.Provider value={{ user, credits, loading, isConfigured: isFirebaseConfigured, signInWithGoogle, signOut }}>
             {children}
         </AuthContext.Provider>
     );
