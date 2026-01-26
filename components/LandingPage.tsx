@@ -411,62 +411,50 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6">
             {/* City Mode */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #22D3EE 100%)' }}
-                  >
-                    <Icons.Building />
-                  </div>
-                  <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-                    City Mode
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Reimagine urban spaces. Clean up streets, add bike lanes, plant trees, and see what your neighborhood could become.
-                  </p>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100">
-                    <img
-                      src="/images/demos/city-after.png"
-                      alt="City transformation example"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg overflow-hidden">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #22D3EE 100%)' }}
+              >
+                <Icons.Building />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+                City Mode
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                Reimagine urban spaces. Clean up streets, add bike lanes, plant trees, and see what your neighborhood could become.
+              </p>
+              <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100">
+                <img
+                  src="/images/demos/city-after.png"
+                  alt="City transformation example"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
             {/* Home Mode */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #F472B6 0%, #A855F7 100%)' }}
-                  >
-                    <Icons.Home />
-                  </div>
-                  <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-                    Home Mode
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Transform any room. Try new furniture styles, change colors, and plants — all before anything.
-                  </p>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100">
-                    <img
-                      src="/images/demos/home-after.png"
-                      alt="Home transformation example"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg overflow-hidden">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: 'linear-gradient(135deg, #F472B6 0%, #A855F7 100%)' }}
+              >
+                <Icons.Home />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+                Home Mode
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                Transform any room. Try new furniture styles, change colors, and plants — all before buying anything.
+              </p>
+              <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100">
+                <img
+                  src="/images/demos/home-after.png"
+                  alt="Home transformation example"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
