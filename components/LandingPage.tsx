@@ -1,33 +1,39 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-// SVG Icon Components
+// ─── Icon Library ───────────────────────────────────────────────────────────
+
 const Icons = {
-  ArrowRight: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  ArrowRight: ({ size = 16 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 12h14M12 5l7 7-7 7" />
     </svg>
   ),
-  Building: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-      <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01" />
-    </svg>
-  ),
-  Home: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  Home: ({ size = 18 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
   ),
-  Camera: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  Building: ({ size = 18 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01" />
+    </svg>
+  ),
+  Camera: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
       <circle cx="12" cy="13" r="4" />
     </svg>
   ),
-  Sliders: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  Sparkles: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z" />
+    </svg>
+  ),
+  Sliders: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <line x1="4" y1="21" x2="4" y2="14" />
       <line x1="4" y1="10" x2="4" y2="3" />
       <line x1="12" y1="21" x2="12" y2="12" />
@@ -39,487 +45,744 @@ const Icons = {
       <line x1="17" y1="16" x2="23" y2="16" />
     </svg>
   ),
-  Sparkles: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z" />
-    </svg>
-  ),
-  Check: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  ),
-  ChevronLeftRight: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  ChevronLeftRight: ({ size = 18 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 7l-5 5 5 5" />
       <path d="M15 7l5 5-5 5" />
     </svg>
   ),
-  MapPin: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
+  Check: ({ size = 14 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   ),
-  Brush: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08" />
-      <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z" />
+  Sofa: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3" />
+      <path d="M2 11a2 2 0 0 1 2-2 2 2 0 0 1 2 2v2H2v-2z" />
+      <path d="M22 11a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2h4v-2z" />
+      <path d="M4 13h16v3H4z" />
+      <path d="M6 19v-3M18 19v-3" />
     </svg>
   ),
-  Building2: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
-      <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+  Palette: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
     </svg>
   ),
-  HomeIcon: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  ),
-  Leaf: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  Leaf: ({ size = 22 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
       <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
     </svg>
   ),
-  Brain: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
-      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+  MapPin: ({ size = 14 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
     </svg>
   ),
-  Wand: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M15 4V2" />
-      <path d="M15 16v-2" />
-      <path d="M8 9h2" />
-      <path d="M20 9h2" />
-      <path d="M17.8 11.8L19 13" />
-      <path d="M15 9h0" />
-      <path d="M17.8 6.2L19 5" />
-      <path d="m3 21 9-9" />
-      <path d="M12.2 6.2L11 5" />
-    </svg>
-  ),
-  Rainbow: () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 17a10 10 0 0 0-20 0" />
-      <path d="M6 17a6 6 0 0 1 12 0" />
-      <path d="M10 17a2 2 0 0 1 4 0" />
+  Star: ({ size = 14 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>
   ),
 };
 
+// ─── Room SVG Illustration ──────────────────────────────────────────────────
+
+const RoomIllustration: React.FC<{ variant: 'before' | 'after'; className?: string }> = ({ variant, className = '' }) => {
+  if (variant === 'before') {
+    return (
+      <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" className={`w-full h-full ${className}`} aria-label="Room before redesign">
+        {/* Wall & floor */}
+        <rect width="400" height="280" fill="#E8E0D5" />
+        <polygon points="0,200 400,200 400,280 0,280" fill="#C8B89A" />
+        <polygon points="0,200 400,200 380,220 20,220" fill="#D4C5B0" />
+        {/* Baseboard */}
+        <rect x="0" y="197" width="400" height="4" fill="#BFA88C" />
+        {/* Back wall shadow */}
+        <rect x="0" y="0" width="400" height="200" fill="url(#wallGradBefore)" />
+        <defs>
+          <linearGradient id="wallGradBefore" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#DDD3C6" />
+            <stop offset="100%" stopColor="#E8E0D5" />
+          </linearGradient>
+          <linearGradient id="wallGradAfter" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F0EAE0" />
+            <stop offset="100%" stopColor="#F8F4EE" />
+          </linearGradient>
+        </defs>
+        {/* Window */}
+        <rect x="140" y="30" width="120" height="90" fill="#B8CDD8" rx="2" />
+        <rect x="140" y="30" width="120" height="90" fill="none" stroke="#9EA8A0" strokeWidth="3" rx="2" />
+        <line x1="200" y1="30" x2="200" y2="120" stroke="#9EA8A0" strokeWidth="2" />
+        <line x1="140" y1="75" x2="260" y2="75" stroke="#9EA8A0" strokeWidth="2" />
+        {/* Curtains */}
+        <path d="M 135,25 Q 145,60 140,120" fill="#C4B49A" stroke="none" />
+        <path d="M 265,25 Q 255,60 260,120" fill="#C4B49A" stroke="none" />
+        {/* Sofa (old, boxy) */}
+        <rect x="60" y="145" width="200" height="55" fill="#9E8E78" rx="4" />
+        <rect x="60" y="135" width="200" height="18" fill="#8A7A64" rx="3" />
+        <rect x="60" y="142" width="20" height="60" fill="#8A7A64" rx="2" />
+        <rect x="240" y="142" width="20" height="60" fill="#8A7A64" rx="2" />
+        <rect x="85" y="153" width="55" height="35" fill="#B4A48E" rx="2" />
+        <rect x="145" y="153" width="55" height="35" fill="#B4A48E" rx="2" />
+        <rect x="205" y="153" width="40" height="35" fill="#B4A48E" rx="2" />
+        {/* Coffee table (cluttered) */}
+        <rect x="100" y="195" width="120" height="8" fill="#7A6A56" rx="1" />
+        <rect x="108" y="200" width="8" height="16" fill="#6A5C48" />
+        <rect x="204" y="200" width="8" height="16" fill="#6A5C48" />
+        {/* Clutter items on table */}
+        <rect x="120" y="188" width="18" height="8" fill="#D4A882" rx="1" />
+        <rect x="142" y="186" width="12" height="10" fill="#C49870" rx="1" />
+        <circle cx="170" cy="190" r="5" fill="#BA8060" />
+        {/* Side table */}
+        <rect x="290" y="162" width="60" height="38" fill="#8A7860" rx="2" />
+        <rect x="295" y="155" width="50" height="10" fill="#7A6850" rx="1" />
+        {/* Lamp */}
+        <rect x="310" y="110" width="8" height="50" fill="#A09080" />
+        <path d="M 290,115 Q 314,95 338,115" fill="#D4C4A8" />
+        {/* Rug (plain) */}
+        <ellipse cx="180" cy="210" rx="110" ry="12" fill="#C4B49A" opacity="0.5" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" className={`w-full h-full ${className}`} aria-label="Room after redesign">
+      {/* Lighter, warmer wall & floor */}
+      <rect width="400" height="280" fill="#F8F4EE" />
+      <polygon points="0,200 400,200 400,280 0,280" fill="#C4B898" />
+      <polygon points="0,200 400,200 380,218 20,218" fill="#D8CCBC" />
+      <rect x="0" y="197" width="400" height="4" fill="#C0AA8A" />
+      <rect x="0" y="0" width="400" height="200" fill="url(#wallGradAfter)" />
+      <defs>
+        <linearGradient id="wallGradAfter2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#F0EAE0" />
+          <stop offset="100%" stopColor="#F8F4EE" />
+        </linearGradient>
+      </defs>
+      {/* Window (brighter light) */}
+      <rect x="130" y="25" width="140" height="95" fill="#C8DCE8" rx="4" />
+      <rect x="130" y="25" width="140" height="95" fill="none" stroke="#A8C0CC" strokeWidth="3" rx="4" />
+      <line x1="200" y1="25" x2="200" y2="120" stroke="#A8C0CC" strokeWidth="2" />
+      <line x1="130" y1="72" x2="270" y2="72" stroke="#A8C0CC" strokeWidth="2" />
+      {/* Sun/light beam through window */}
+      <polygon points="130,25 200,25 200,120 130,120" fill="rgba(255,230,150,0.12)" />
+      {/* Linen curtains */}
+      <path d="M 122,20 Q 135,70 130,125" fill="#E8DECC" stroke="none" />
+      <path d="M 278,20 Q 265,70 270,125" fill="#E8DECC" stroke="none" />
+      {/* Modern sofa (rounded, sage green) */}
+      <rect x="50" y="150" width="220" height="50" fill="#7A9E8C" rx="12" />
+      <rect x="50" y="140" width="220" height="18" fill="#6A8E7C" rx="8" />
+      <rect x="50" y="143" width="22" height="58" fill="#5C8070" rx="8" />
+      <rect x="248" y="143" width="22" height="58" fill="#5C8070" rx="8" />
+      {/* Cushions */}
+      <rect x="75" y="155" width="52" height="36" fill="#8AB8A0" rx="8" />
+      <rect x="134" y="155" width="52" height="36" fill="#9EC8B4" rx="8" />
+      <rect x="193" y="155" width="52" height="36" fill="#8AB8A0" rx="8" />
+      {/* Modern coffee table */}
+      <rect x="95" y="193" width="130" height="7" fill="#6A8070" rx="3" />
+      <rect x="104" y="199" width="6" height="14" fill="#587060" />
+      <rect x="210" y="199" width="6" height="14" fill="#587060" />
+      {/* Decor on table (neat) */}
+      <circle cx="130" cy="190" r="6" fill="#E8C090" />
+      <rect x="148" y="184" width="14" height="9" fill="#A0C0A0" rx="2" />
+      <circle cx="175" cy="188" r="4" fill="#D4A878" />
+      {/* Plant (potted) */}
+      <rect x="306" y="178" width="28" height="22" fill="#8A6848" rx="3" />
+      <rect x="300" y="170" width="40" height="10" fill="#7A5C3C" rx="2" />
+      <ellipse cx="320" cy="165" rx="22" ry="18" fill="#3A8050" />
+      <ellipse cx="307" cy="158" rx="12" ry="16" fill="#4A9060" />
+      <ellipse cx="333" cy="155" rx="10" ry="14" fill="#3A8050" />
+      {/* Tall arc lamp */}
+      <path d="M 340,200 Q 340,130 300,110" fill="none" stroke="#C4B8A8" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="295" cy="108" r="18" fill="#F0E8D8" stroke="#C4B8A8" strokeWidth="2" />
+      <circle cx="295" cy="108" r="10" fill="#FFF8E8" opacity="0.8" />
+      {/* Rug (patterned) */}
+      <ellipse cx="180" cy="210" rx="115" ry="13" fill="#D4C0A0" opacity="0.6" />
+      <ellipse cx="180" cy="210" rx="90" ry="9" fill="none" stroke="#C4B090" strokeWidth="1.5" opacity="0.6" />
+      <ellipse cx="180" cy="210" rx="65" ry="6" fill="none" stroke="#C4B090" strokeWidth="1" opacity="0.5" />
+      {/* Wall art */}
+      <rect x="30" y="50" width="70" height="85" fill="#EAE2D4" rx="4" stroke="#D4C8B8" strokeWidth="2" />
+      <rect x="38" y="58" width="54" height="69" fill="#C8E4D8" rx="2" />
+      <ellipse cx="65" cy="92" rx="18" ry="22" fill="#4A8C6A" opacity="0.6" />
+      <circle cx="65" cy="78" r="8" fill="#FF8C50" opacity="0.7" />
+    </svg>
+  );
+};
+
+// ─── City SVG Illustration ──────────────────────────────────────────────────
+
+const CityIllustration: React.FC<{ variant: 'before' | 'after'; className?: string }> = ({ variant, className = '' }) => {
+  if (variant === 'before') {
+    return (
+      <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" className={`w-full h-full ${className}`} aria-label="City street before">
+        {/* Sky */}
+        <rect width="400" height="280" fill="#C8D4DC" />
+        {/* Ground */}
+        <rect x="0" y="210" width="400" height="70" fill="#9A9890" />
+        {/* Road */}
+        <rect x="0" y="195" width="400" height="85" fill="#808878" />
+        <rect x="0" y="218" width="400" height="4" fill="#70786A" />
+        {/* Lane markings */}
+        {[20, 60, 100, 140, 180, 220, 260, 300, 340].map(x => (
+          <rect key={x} x={x} y="226" width="24" height="4" fill="#B8B8A0" />
+        ))}
+        {/* Buildings */}
+        <rect x="20" y="60" width="80" height="150" fill="#A8A0A0" />
+        <rect x="100" y="90" width="60" height="120" fill="#B8B2B0" />
+        <rect x="160" y="40" width="90" height="170" fill="#A0A4A8" />
+        <rect x="250" y="70" width="70" height="140" fill="#ACA8A4" />
+        <rect x="320" y="100" width="60" height="110" fill="#B4B0AC" />
+        {/* Windows (grey, uniform) */}
+        {[25, 45, 65].map(x => [70, 90, 110, 130].map(y => (
+          <rect key={`${x}-${y}`} x={x} y={y} width="14" height="12" fill="#8890A0" />
+        )))}
+        {/* Parked cars */}
+        <rect x="60" y="198" width="55" height="22" fill="#686060" rx="3" />
+        <rect x="190" y="198" width="55" height="22" fill="#5A6060" rx="3" />
+        <rect x="300" y="198" width="55" height="22" fill="#646460" rx="3" />
+        {/* No trees */}
+        {/* Cracked sidewalk */}
+        <rect x="0" y="186" width="400" height="12" fill="#908888" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" className={`w-full h-full ${className}`} aria-label="City street after redesign">
+      {/* Brighter sky */}
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#A8CCE0" />
+          <stop offset="100%" stopColor="#D0E8F0" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="280" fill="url(#skyGrad)" />
+      {/* Ground */}
+      <rect x="0" y="210" width="400" height="70" fill="#8CB890" />
+      {/* Road (narrower) */}
+      <rect x="0" y="195" width="400" height="85" fill="#7A8878" />
+      {/* Bike lane */}
+      <rect x="0" y="195" width="45" height="85" fill="#6A9870" opacity="0.4" />
+      <rect x="355" y="195" width="45" height="85" fill="#6A9870" opacity="0.4" />
+      {/* Lane markings */}
+      {[70, 110, 150, 190, 230, 270, 310].map(x => (
+        <rect key={x} x={x} y="228" width="20" height="3" fill="#A0A890" />
+      ))}
+      {/* Buildings (same base, new details) */}
+      <rect x="20" y="60" width="80" height="150" fill="#D4CCC0" />
+      <rect x="100" y="90" width="60" height="120" fill="#DDD6C8" />
+      <rect x="160" y="40" width="90" height="170" fill="#D0C8BE" />
+      <rect x="250" y="70" width="70" height="140" fill="#CCC4B8" />
+      <rect x="320" y="100" width="60" height="110" fill="#D8D0C4" />
+      {/* Windows (warm, some lit) */}
+      {[25, 45, 65].map(x => [70, 90, 110, 130].map(y => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="14" height="12" fill="#F0E8D0" rx="1" />
+      )))}
+      {/* Street trees */}
+      <rect x="75" y="175" width="8" height="30" fill="#6A5040" />
+      <circle cx="79" cy="158" r="24" fill="#4A9058" />
+      <circle cx="68" cy="152" r="16" fill="#5AA068" />
+      <rect x="195" y="175" width="8" height="30" fill="#6A5040" />
+      <circle cx="199" cy="158" r="24" fill="#3E8850" />
+      <circle cx="210" cy="150" r="18" fill="#4A9058" />
+      <rect x="315" y="175" width="8" height="30" fill="#6A5040" />
+      <circle cx="319" cy="158" r="22" fill="#4A9058" />
+      {/* Cycle lane markers */}
+      <text x="14" y="238" fontSize="14" fill="#A8D098">🚲</text>
+      <text x="362" y="238" fontSize="14" fill="#A8D098">🚲</text>
+      {/* Planter boxes */}
+      <rect x="50" y="186" width="35" height="12" fill="#8A6848" rx="2" />
+      <ellipse cx="67" cy="183" rx="18" ry="8" fill="#5A9068" />
+      <rect x="280" y="186" width="35" height="12" fill="#8A6848" rx="2" />
+      <ellipse cx="297" cy="183" rx="18" ry="8" fill="#5A9068" />
+      {/* Clean sidewalk */}
+      <rect x="0" y="183" width="400" height="14" fill="#C8C0B0" />
+    </svg>
+  );
+};
+
+// ─── Main Landing Page ──────────────────────────────────────────────────────
+
 export const LandingPage: React.FC = () => {
-  const [sliderPosition, setSliderPosition] = useState(50);
+  const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const [activeMode, setActiveMode] = useState<'city' | 'home'>('city');
+  const [activeMode, setActiveMode] = useState<'home' | 'city'>('home');
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const handleMove = (clientX: number) => {
+  const updateSlider = useCallback((clientX: number) => {
     if (!sliderRef.current) return;
     const rect = sliderRef.current.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percent = (x / rect.width) * 100;
-    setSliderPosition(percent);
-  };
+    setSliderPos((x / rect.width) * 100);
+  }, []);
 
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) handleMove(e.clientX);
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (isDragging && e.touches[0]) handleMove(e.touches[0].clientX);
-  };
+  const onMouseDown = useCallback(() => setIsDragging(true), []);
+  const onMouseUp = useCallback(() => setIsDragging(false), []);
+  const onMouseMove = useCallback((e: MouseEvent) => { if (isDragging) updateSlider(e.clientX); }, [isDragging, updateSlider]);
+  const onTouchMove = useCallback((e: TouchEvent) => { if (isDragging && e.touches[0]) updateSlider(e.touches[0].clientX); }, [isDragging, updateSlider]);
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleMouseUp);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('touchmove', onTouchMove, { passive: true });
+      window.addEventListener('touchend', onMouseUp);
     }
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleMouseUp);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, onMouseMove, onMouseUp, onTouchMove]);
 
-  const useCases = [
-    { icon: <Icons.MapPin />, label: 'Urban planners' },
-    { icon: <Icons.Brush />, label: 'Interior designers' },
-    { icon: <Icons.Building2 />, label: 'Real estate agents' },
-    { icon: <Icons.HomeIcon />, label: 'Homeowners' },
-    { icon: <Icons.Leaf />, label: 'Sustainability advocates' },
-    { icon: <Icons.Brain />, label: 'Curious minds' },
-  ];
+  const handleModeSwitch = (mode: 'home' | 'city') => {
+    setActiveMode(mode);
+    setSliderPos(50);
+  };
 
   return (
     <div
-      className="relative min-h-screen"
       style={{
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-        background: 'linear-gradient(180deg, #FFF5F0 0%, #FFF0F5 50%, #F0F5FF 100%)',
+        minHeight: '100vh',
+        background: '#FAFAF8',
+        fontFamily: '"Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        color: '#1A1A1A',
       }}
     >
-      {/* Gradient Blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Top right pink/purple blob */}
-        <div
-          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full opacity-70"
-          style={{ background: 'linear-gradient(135deg, #FF6B9D 0%, #C44FFF 50%, #7B61FF 100%)', filter: 'blur(80px)' }}
-        />
-        {/* Left green blob */}
-        <div
-          className="absolute top-[30%] -left-32 w-[400px] h-[600px] rounded-full opacity-60"
-          style={{ background: 'linear-gradient(180deg, #4ADE80 0%, #22D3EE 100%)', filter: 'blur(80px)' }}
-        />
-        {/* Bottom right orange/pink blob */}
-        <div
-          className="absolute bottom-[20%] -right-20 w-[350px] h-[350px] rounded-full opacity-70"
-          style={{ background: 'linear-gradient(135deg, #FB923C 0%, #F472B6 100%)', filter: 'blur(60px)' }}
-        />
-        {/* Bottom left yellow/green blob */}
-        <div
-          className="absolute -bottom-20 left-[20%] w-[400px] h-[300px] rounded-full opacity-60"
-          style={{ background: 'linear-gradient(135deg, #FDE047 0%, #4ADE80 100%)', filter: 'blur(70px)' }}
-        />
-        {/* Center pink accent */}
-        <div
-          className="absolute top-[60%] left-[40%] w-[200px] h-[200px] rounded-full opacity-50"
-          style={{ background: 'linear-gradient(135deg, #F472B6 0%, #A855F7 100%)', filter: 'blur(50px)' }}
-        />
-      </div>
-
-      {/* Navigation */}
-      <nav className="relative z-50 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-              <Icons.Home />
+      {/* ── Navigation ───────────────────────────────────────── */}
+      <nav
+        className="nav-blur sticky top-0 z-50"
+        style={{ position: 'sticky', top: 0, zIndex: 50 }}
+      >
+        <div style={{ maxWidth: '1080px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '60px' }}>
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <div style={{
+              width: '34px', height: '34px',
+              background: 'linear-gradient(135deg, #E8621A 0%, #F0A020 100%)',
+              borderRadius: '10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'white',
+              flexShrink: 0,
+            }}>
+              <Icons.Home size={16} />
             </div>
-            <span className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+            <span style={{ fontSize: '17px', fontWeight: 600, color: '#1A1A1A', letterSpacing: '-0.02em' }}>
               Re-do.ai
             </span>
           </Link>
 
-          <div className="flex items-center gap-6">
-            <a href="#features" className="hidden sm:block text-gray-600 no-underline text-sm font-medium hover:text-gray-900 transition-colors">
-              Features
-            </a>
-            <a href="#how" className="hidden sm:block text-gray-600 no-underline text-sm font-medium hover:text-gray-900 transition-colors">
+          {/* Nav links */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+            <a href="#how-it-works" style={{ display: 'none', fontSize: '14px', color: '#4A4A4A', textDecoration: 'none', fontWeight: 500 }}
+               className="sm:block">
               How it works
+            </a>
+            <a href="#features" style={{ fontSize: '14px', color: '#4A4A4A', textDecoration: 'none', fontWeight: 500 }}
+               className="hidden sm:block">
+              Features
             </a>
             <Link
               to="/app"
-              className="flex items-center gap-1.5 bg-gray-900 text-white pl-4 pr-3 py-2 rounded-full text-sm font-medium no-underline hover:bg-gray-800 transition-colors"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: '#1A1A1A',
+                color: 'white',
+                padding: '8px 18px',
+                borderRadius: '999px',
+                fontSize: '14px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'background 0.15s ease',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#333')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#1A1A1A')}
             >
-              <Icons.Wand />
-              Get Started
+              Try free
+              <Icons.ArrowRight size={13} />
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative z-10 px-6 pt-12 sm:pt-20 pb-8 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.1] mb-6 text-gray-900"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-          >
-            Transform any space<br />
-            into{' '}
-            <span
-              className="relative inline-block"
-              style={{
-                background: 'linear-gradient(90deg, #FF6B9D 0%, #C44FFF 50%, #7B61FF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              something beautiful
-              <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
-                <path d="M1 5.5C47 2 153 2 199 5.5" stroke="url(#underline-gradient)" strokeWidth="3" strokeLinecap="round"/>
-                <defs>
-                  <linearGradient id="underline-gradient" x1="0" y1="0" x2="200" y2="0">
-                    <stop stopColor="#FF6B9D"/>
-                    <stop offset="0.5" stopColor="#C44FFF"/>
-                    <stop offset="1" stopColor="#7B61FF"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section style={{ padding: '72px 24px 48px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle warm background circles */}
+        <div style={{
+          position: 'absolute', top: '-120px', left: '50%', transform: 'translateX(-50%)',
+          width: '700px', height: '400px',
+          background: 'radial-gradient(ellipse at center, rgba(232,98,26,0.07) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        <div style={{ maxWidth: '720px', margin: '0 auto', position: 'relative' }}>
+          {/* Badge */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: '#FEF0E6',
+            border: '1px solid #F0C8A0',
+            borderRadius: '999px',
+            padding: '5px 14px',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: '#C04010',
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            marginBottom: '28px',
+          }}>
+            <span style={{ color: '#E8621A' }}>✦</span>
+            AI furniture & room redesign
+          </div>
+
+          {/* Headline */}
+          <h1 style={{
+            fontSize: 'clamp(36px, 6vw, 60px)',
+            fontWeight: 700,
+            lineHeight: 1.08,
+            letterSpacing: '-0.03em',
+            marginBottom: '20px',
+            color: '#1A1A1A',
+          }}>
+            Rearrange your room
+            <br />
+            <span style={{
+              background: 'linear-gradient(90deg, #E8621A 0%, #C84010 60%, #A83000 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              before moving a single thing
             </span>
           </h1>
 
-          <p className="text-lg text-gray-600 max-w-xl mx-auto mb-8">
-            Upload a photo of any city street or room. Watch AI reimagine it with greenery, better design, and endless possibilities.
+          {/* Sub-headline */}
+          <p style={{
+            fontSize: '18px',
+            lineHeight: 1.6,
+            color: '#4A4A4A',
+            maxWidth: '520px',
+            margin: '0 auto 36px',
+            fontWeight: 400,
+          }}>
+            Take a photo of any room. Tell Redo AI what you want. See a realistic preview — instantly.
+            No guessing. No moving furniture twice.
           </p>
 
-          <div className="flex flex-wrap gap-3 justify-center mb-4">
+          {/* CTA group */}
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '20px' }}>
             <Link
               to="/app"
-              className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium text-sm no-underline hover:bg-gray-800 transition-all hover:scale-105"
+              className="cta-button"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'linear-gradient(135deg, #E8621A 0%, #C84010 100%)',
+                color: 'white',
+                padding: '14px 28px',
+                borderRadius: '999px',
+                fontSize: '15px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                boxShadow: '0 4px 20px rgba(232,98,26,0.28)',
+                letterSpacing: '-0.01em',
+              }}
             >
               Try it free
-              <Icons.ArrowRight />
+              <Icons.ArrowRight size={15} />
             </Link>
             <a
               href="#demo"
-              className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm text-gray-900 px-6 py-3 rounded-full font-medium text-sm no-underline border border-gray-200 hover:bg-white transition-all hover:scale-105"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: '#FFFFFF',
+                color: '#1A1A1A',
+                padding: '14px 24px',
+                borderRadius: '999px',
+                fontSize: '15px',
+                fontWeight: 500,
+                textDecoration: 'none',
+                border: '1px solid #E8E2D8',
+                transition: 'border-color 0.15s ease',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = '#C4B8A8')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = '#E8E2D8')}
             >
-              See examples
+              See examples ↓
             </a>
           </div>
 
-          <p className="text-sm text-gray-500">
-            <span className="text-pink-500 font-medium">2 free generations</span>
-            <span className="mx-2">·</span>
-            No credit card needed
-          </p>
+          {/* Social proof line */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F0A020' }}>
+              {[1,2,3,4,5].map(i => <span key={i}><Icons.Star size={13} /></span>)}
+            </div>
+            <span style={{ fontSize: '13px', color: '#8A8580' }}>
+              2 free generations · No credit card needed
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* Demo Section */}
-      <section id="demo" className="relative z-10 px-6 py-12">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 shadow-xl shadow-purple-500/5 border border-white/50">
-            {/* Mode Tabs */}
-            <div className="flex mb-4 border-b border-gray-100">
+      {/* ── Interactive Demo ──────────────────────────────────── */}
+      <section id="demo" style={{ padding: '24px 24px 64px' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          {/* Mode tabs */}
+          <div style={{
+            display: 'flex',
+            gap: '4px',
+            background: '#F0EDE6',
+            borderRadius: '14px',
+            padding: '4px',
+            width: 'fit-content',
+            margin: '0 auto 20px',
+          }}>
+            {(['home', 'city'] as const).map(mode => (
               <button
-                onClick={() => { setActiveMode('city'); setSliderPosition(50); }}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px ${
-                  activeMode === 'city'
-                    ? 'border-gray-900 text-gray-900'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
-                }`}
+                key={mode}
+                onClick={() => handleModeSwitch(mode)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '7px',
+                  padding: '8px 18px',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: activeMode === mode ? '#FFFFFF' : 'transparent',
+                  color: activeMode === mode ? '#1A1A1A' : '#8A8580',
+                  boxShadow: activeMode === mode ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                }}
               >
-                <Icons.Building />
-                City Mode
+                {mode === 'home' ? <Icons.Home size={15} /> : <Icons.Building size={15} />}
+                {mode === 'home' ? 'Home Mode' : 'City Mode'}
               </button>
-              <button
-                onClick={() => { setActiveMode('home'); setSliderPosition(50); }}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px ${
-                  activeMode === 'home'
-                    ? 'border-gray-900 text-gray-900'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                <Icons.Home />
-                Home Mode
-              </button>
-            </div>
+            ))}
+          </div>
 
+          {/* Demo card */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '24px',
+            padding: '12px',
+            border: '1px solid #E8E2D8',
+            boxShadow: '0 4px 40px rgba(0,0,0,0.06)',
+          }}>
             {/* Comparison Slider */}
             <div
               ref={sliderRef}
-              className="rounded-2xl overflow-hidden relative aspect-[16/10] bg-gray-100 select-none cursor-ew-resize"
-              onMouseDown={handleMouseDown}
-              onTouchStart={handleMouseDown}
+              onMouseDown={onMouseDown}
+              onTouchStart={onMouseDown}
+              style={{
+                position: 'relative',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                aspectRatio: '16/10',
+                background: '#F5F3EE',
+                cursor: 'ew-resize',
+                userSelect: 'none',
+              }}
             >
-              {activeMode === 'city' ? (
-                <>
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url(/images/demos/city-after.png)' }}
-                  />
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundImage: 'url(/images/demos/city-before.jpg)',
-                      clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url(/images/demos/home-after.png)' }}
-                  />
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundImage: 'url(/images/demos/home-before.png)',
-                      clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`
-                    }}
-                  />
-                </>
-              )}
+              {/* After (full width, underneath) */}
+              <div style={{ position: 'absolute', inset: 0 }}>
+                {activeMode === 'home'
+                  ? <RoomIllustration variant="after" />
+                  : <CityIllustration variant="after" />
+                }
+              </div>
+
+              {/* Before (clipped to left) */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                clipPath: `inset(0 ${100 - sliderPos}% 0 0)`,
+              }}>
+                {activeMode === 'home'
+                  ? <RoomIllustration variant="before" />
+                  : <CityIllustration variant="before" />
+                }
+              </div>
 
               {/* Labels */}
-              <span className="absolute top-3 left-3 text-xs font-semibold uppercase px-2.5 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white">
+              <span style={{
+                position: 'absolute', top: 12, left: 12,
+                background: 'rgba(0,0,0,0.55)',
+                color: 'white',
+                fontSize: '11px', fontWeight: 700,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                backdropFilter: 'blur(4px)',
+              }}>
                 Before
               </span>
-              <span className="absolute top-3 right-3 text-xs font-semibold uppercase px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-gray-900">
+              <span style={{
+                position: 'absolute', top: 12, right: 12,
+                background: 'rgba(255,255,255,0.9)',
+                color: '#1A1A1A',
+                fontSize: '11px', fontWeight: 700,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                backdropFilter: 'blur(4px)',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+              }}>
                 After
               </span>
 
-              {/* Slider Line */}
-              <div
-                className="absolute top-0 bottom-0 w-0.5 bg-white z-10 pointer-events-none"
-                style={{ left: `${sliderPosition}%`, boxShadow: '0 0 10px rgba(0,0,0,0.3)' }}
-              />
+              {/* Divider line */}
+              <div style={{
+                position: 'absolute', top: 0, bottom: 0,
+                left: `${sliderPos}%`,
+                width: '2px',
+                background: 'white',
+                boxShadow: '0 0 12px rgba(0,0,0,0.25)',
+                pointerEvents: 'none',
+              }} />
 
-              {/* Slider Handle */}
-              <div
-                className="absolute top-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg z-20 cursor-grab active:cursor-grabbing transition-transform hover:scale-110"
-                style={{ left: `${sliderPosition}%`, transform: `translate(-50%, -50%)` }}
-              >
-                <Icons.ChevronLeftRight />
+              {/* Handle */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: `${sliderPos}%`,
+                transform: 'translate(-50%, -50%)',
+                width: '44px', height: '44px',
+                background: 'white',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.16)',
+                cursor: 'grab',
+                zIndex: 10,
+                transition: isDragging ? 'none' : 'transform 0.1s ease',
+              }}>
+                <Icons.ChevronLeftRight size={17} />
               </div>
 
               {/* Instruction */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full pointer-events-none flex items-center gap-1">
-                <span>←</span> Drag to compare <span>→</span>
+              <div style={{
+                position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)',
+                background: 'rgba(255,255,255,0.92)',
+                color: '#4A4A4A',
+                fontSize: '12px', fontWeight: 500,
+                padding: '5px 14px',
+                borderRadius: '999px',
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                backdropFilter: 'blur(4px)',
+                boxShadow: '0 1px 6px rgba(0,0,0,0.08)',
+              }}>
+                ← drag to compare →
               </div>
+            </div>
+
+            {/* Caption */}
+            <div style={{ padding: '12px 4px 2px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontSize: '13px', color: '#8A8580', margin: 0 }}>
+                {activeMode === 'home'
+                  ? 'Living room · Neutral → Sage green refresh'
+                  : 'Street · Grey concrete → Green + bike lanes'}
+              </p>
+              <Link to="/app" style={{
+                fontSize: '13px', fontWeight: 600, color: '#E8621A',
+                textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px',
+              }}>
+                Try yours <Icons.ArrowRight size={12} />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="relative z-10 px-6 py-16 sm:py-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="inline-flex items-center gap-2 text-sm font-semibold text-pink-500 mb-3 uppercase tracking-wide">
-              <span className="text-yellow-500">✦</span> Two powerful modes
-            </p>
-            <h2
-              className="text-3xl sm:text-4xl font-semibold mb-4 text-gray-900"
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-            >
-              Outdoors or indoors. You choose.
-            </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
-              Whether it's a city block or your living room, we've got you covered with specialized models for every space.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6">
-            {/* City Mode */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg overflow-hidden">
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
-                style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #22D3EE 100%)' }}
-              >
-                <Icons.Building />
-              </div>
-              <h3 className="text-lg font-semibold mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-                City Mode
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                Reimagine urban spaces. Clean up streets, add bike lanes, plant trees, and see what your neighborhood could become.
-              </p>
-              <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100">
-                <img
-                  src="/images/demos/city-after.png"
-                  alt="City transformation example"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+      {/* ── How It Works ─────────────────────────────────────── */}
+      <section id="how-it-works" style={{ padding: '32px 24px 80px', background: '#F5F3EE' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          {/* Section header */}
+          <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+            <div className="pill-badge" style={{ display: 'inline-block', marginBottom: '16px' }}>
+              How it works
             </div>
-
-            {/* Home Mode */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-lg overflow-hidden">
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
-                style={{ background: 'linear-gradient(135deg, #F472B6 0%, #A855F7 100%)' }}
-              >
-                <Icons.Home />
-              </div>
-              <h3 className="text-lg font-semibold mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-                Home Mode
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                Transform any room. Try new furniture styles, change colors, and plants — all before buying anything.
-              </p>
-              <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100">
-                <img
-                  src="/images/demos/home-after.png"
-                  alt="Home transformation example"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how" className="relative z-10 px-6 py-16 sm:py-24">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="inline-flex items-center gap-2 text-sm font-semibold text-pink-500 mb-3 uppercase tracking-wide">
-              <span className="text-yellow-500">✦</span> Super simple
-            </p>
-            <h2
-              className="text-3xl sm:text-4xl font-semibold text-gray-900"
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-            >
-              Three steps. That's it.
+            <h2 style={{
+              fontSize: 'clamp(26px, 4vw, 38px)',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              color: '#1A1A1A',
+              margin: 0,
+            }}>
+              Three steps to a new room
             </h2>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-8 relative">
-            {/* Connecting line */}
-            <div className="hidden sm:block absolute top-12 left-[20%] right-[20%] border-t-2 border-dashed border-gray-300" />
-
+          {/* Steps */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '24px',
+          }}>
             {[
               {
-                icon: <Icons.Camera />,
-                title: 'Upload a photo',
-                description: 'Snap a pic of any street, building, or room you want to transform.',
-                gradient: 'linear-gradient(135deg, #FDE047 0%, #FB923C 100%)',
+                number: '01',
+                icon: <Icons.Camera size={24} />,
+                color: '#E8621A',
+                softColor: '#FEF0E6',
+                title: 'Snap a photo',
+                desc: 'Take or upload a photo of the room you want to transform. Any angle, any lighting.',
               },
               {
-                icon: <Icons.Sliders />,
-                title: 'Pick your filters',
-                description: 'Choose what to change — add greenery, remove clutter, new style.',
-                gradient: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)',
+                number: '02',
+                icon: <Icons.Sliders size={24} />,
+                color: '#1A6EE8',
+                softColor: '#E6F0FE',
+                title: 'Pick a style',
+                desc: 'Choose your vibe — Scandinavian minimal, cosy warm, modern bold. Or just describe it.',
               },
               {
-                icon: <Icons.Sparkles />,
-                title: 'See the magic',
-                description: 'AI transforms your space in seconds. Compare, download, share!',
-                gradient: 'linear-gradient(135deg, #A855F7 0%, #6366F1 100%)',
+                number: '03',
+                icon: <Icons.Sparkles size={24} />,
+                color: '#4A8C6A',
+                softColor: '#EBF5F0',
+                title: 'See the result',
+                desc: 'AI generates a photorealistic redesign in seconds. Compare, download, or try again.',
               },
             ].map((step, i) => (
-              <div key={i} className="text-center relative">
-                <div className="relative inline-block mb-4">
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white"
-                    style={{ background: step.gradient }}
-                  >
-                    {step.icon}
-                  </div>
-                  <span
-                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-white"
-                    style={{ background: 'linear-gradient(135deg, #FF6B9D 0%, #C44FFF 100%)' }}
-                  >
-                    {i + 1}
-                  </span>
+              <div
+                key={i}
+                className="feature-card"
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #E8E2D8',
+                  borderRadius: '20px',
+                  padding: '28px 24px',
+                }}
+              >
+                {/* Icon */}
+                <div style={{
+                  width: '52px', height: '52px',
+                  background: step.softColor,
+                  borderRadius: '14px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: step.color,
+                  marginBottom: '20px',
+                }}>
+                  {step.icon}
                 </div>
-                <h3 className="text-base font-semibold mb-2 text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+                {/* Step label */}
+                <div style={{ fontSize: '11px', fontWeight: 700, color: step.color, letterSpacing: '0.06em', marginBottom: '8px' }}>
+                  STEP {step.number}
+                </div>
+                <h3 style={{ fontSize: '17px', fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 10px', color: '#1A1A1A' }}>
                   {step.title}
                 </h3>
-                <p className="text-sm text-gray-600">
-                  {step.description}
+                <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#6A6A6A', margin: 0 }}>
+                  {step.desc}
                 </p>
               </div>
             ))}
@@ -527,75 +790,226 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section className="relative z-10 px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="inline-flex items-center gap-2 text-sm font-semibold text-pink-500 mb-3 uppercase tracking-wide">
-            <span className="text-yellow-500">✦</span> Perfect for
-          </p>
-          <h2
-            className="text-3xl sm:text-4xl font-semibold mb-10 text-gray-900"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-          >
-            Dreamers, planners, and doers
-          </h2>
+      {/* ── Feature Highlights ───────────────────────────────── */}
+      <section id="features" style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <div className="pill-badge" style={{ display: 'inline-block', marginBottom: '16px' }}>
+              What you can do
+            </div>
+            <h2 style={{
+              fontSize: 'clamp(26px, 4vw, 38px)',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              color: '#1A1A1A',
+              margin: 0,
+            }}>
+              Every room, every style
+            </h2>
+          </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            {useCases.map((useCase, i) => (
+          {/* Feature grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px',
+          }}>
+            {[
+              {
+                icon: <Icons.Sofa size={22} />,
+                color: '#E8621A',
+                softColor: '#FEF0E6',
+                title: 'Furniture rearrangement',
+                desc: 'See exactly how different layouts work before you pull out your back.',
+              },
+              {
+                icon: <Icons.Palette size={22} />,
+                color: '#1A6EE8',
+                softColor: '#E6F0FE',
+                title: 'Color & paint preview',
+                desc: 'Try any wall color without buying a sample pot. Instant, realistic preview.',
+              },
+              {
+                icon: <Icons.Leaf size={22} />,
+                color: '#4A8C6A',
+                softColor: '#EBF5F0',
+                title: 'Add plants & decor',
+                desc: 'See how plants, art, and accessories change the whole feel of a room.',
+              },
+              {
+                icon: <Icons.Building size={22} />,
+                color: '#8A6040',
+                softColor: '#F5EDE0',
+                title: 'City mode (bonus)',
+                desc: 'Reimagine urban spaces too — green streets, better cycling infrastructure.',
+              },
+            ].map((f, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-full text-sm font-medium text-gray-700 border border-gray-200/50 hover:bg-white hover:shadow-md transition-all"
+                className="feature-card"
+                style={{
+                  background: '#FAFAF8',
+                  border: '1px solid #E8E2D8',
+                  borderRadius: '18px',
+                  padding: '24px 20px',
+                }}
               >
-                <span className="text-pink-500">{useCase.icon}</span>
-                {useCase.label}
+                <div style={{
+                  width: '44px', height: '44px',
+                  background: f.softColor,
+                  borderRadius: '12px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: f.color,
+                  marginBottom: '16px',
+                }}>
+                  {f.icon}
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', margin: '0 0 8px', color: '#1A1A1A' }}>
+                  {f.title}
+                </h3>
+                <p style={{ fontSize: '13px', lineHeight: 1.6, color: '#6A6A6A', margin: 0 }}>
+                  {f.desc}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative z-10 px-6 py-16 sm:py-24">
-        <div className="max-w-2xl mx-auto">
-          <div
-            className="rounded-[2rem] px-8 py-12 sm:px-12 sm:py-16 text-center relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #FDE047 0%, #4ADE80 25%, #22D3EE 50%, #A855F7 75%, #F472B6 100%)',
-            }}
-          >
-            {/* Inner white card */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-6 py-10 sm:px-10">
+      {/* ── Use Cases / Who It's For ─────────────────────────── */}
+      <section style={{ padding: '24px 24px 80px', background: '#F5F3EE' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{
+            fontSize: 'clamp(22px, 3vw, 30px)',
+            fontWeight: 600,
+            letterSpacing: '-0.02em',
+            marginBottom: '32px',
+            color: '#1A1A1A',
+          }}>
+            Loved by renters, homeowners, and designers
+          </h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+            {[
+              { icon: '🛋️', label: 'First-time renters' },
+              { icon: '🏡', label: 'New homeowners' },
+              { icon: '✏️', label: 'Interior designers' },
+              { icon: '📸', label: 'Airbnb hosts' },
+              { icon: '🏢', label: 'Real estate agents' },
+              { icon: '🌿', label: 'Urban planners' },
+            ].map((item, i) => (
               <div
-                className="w-14 h-14 mx-auto mb-6 rounded-2xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #FDE047 0%, #4ADE80 50%, #22D3EE 100%)' }}
+                key={i}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  background: '#FFFFFF',
+                  border: '1px solid #E8E2D8',
+                  borderRadius: '999px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#2A2A2A',
+                  transition: 'box-shadow 0.15s ease, transform 0.15s ease',
+                  cursor: 'default',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
+                }}
               >
-                <Icons.Rainbow />
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                {item.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Banner ───────────────────────────────────────── */}
+      <section style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+          <div style={{
+            background: '#1A1A1A',
+            borderRadius: '28px',
+            padding: 'clamp(40px, 6vw, 64px) clamp(32px, 5vw, 56px)',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* Warm glow */}
+            <div style={{
+              position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-50%)',
+              width: '400px', height: '300px',
+              background: 'radial-gradient(ellipse, rgba(232,98,26,0.25) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }} />
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{
+                width: '56px', height: '56px',
+                background: 'linear-gradient(135deg, #E8621A, #F0A020)',
+                borderRadius: '16px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 24px',
+                fontSize: '26px',
+              }}>
+                ✨
               </div>
 
-              <h2
-                className="text-2xl sm:text-3xl font-semibold mb-3 text-gray-900"
-                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-              >
-                Ready to see what's possible?
+              <h2 style={{
+                fontSize: 'clamp(24px, 4vw, 36px)',
+                fontWeight: 700,
+                letterSpacing: '-0.03em',
+                color: '#FFFFFF',
+                margin: '0 0 14px',
+                lineHeight: 1.15,
+              }}>
+                Stop imagining. Start seeing.
               </h2>
-              <p className="text-gray-600 mb-8">
-                Start with 2 free transformations. No strings attached.
+              <p style={{ fontSize: '16px', color: '#A0998E', lineHeight: 1.6, margin: '0 0 32px' }}>
+                Your dream room is two minutes away. No commitment, no download.
               </p>
 
               <Link
                 to="/app"
-                className="inline-flex items-center gap-2 text-white px-8 py-3.5 rounded-full font-semibold text-base no-underline transition-all hover:scale-105 hover:shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #FF6B9D 0%, #C44FFF 50%, #7B61FF 100%)' }}
+                className="cta-button"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  background: 'linear-gradient(135deg, #E8621A 0%, #C84010 100%)',
+                  color: 'white',
+                  padding: '14px 32px',
+                  borderRadius: '999px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 24px rgba(232,98,26,0.4)',
+                  letterSpacing: '-0.01em',
+                }}
               >
-                Start transforming
-                <Icons.ArrowRight />
+                Redesign my room — free
+                <Icons.ArrowRight size={15} />
               </Link>
 
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8 text-sm text-gray-500">
-                {['No signup required', 'Works on mobile', 'BYOK supported'].map((feature, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <span className="text-green-500"><Icons.Check /></span>
-                    {feature}
+              {/* Trust badges */}
+              <div style={{
+                display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap',
+                marginTop: '24px',
+              }}>
+                {[
+                  { icon: <Icons.Check size={13} />, text: 'No account needed' },
+                  { icon: <Icons.Check size={13} />, text: '2 free generations' },
+                  { icon: <Icons.Check size={13} />, text: 'Works on mobile' },
+                ].map((badge, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    fontSize: '13px', color: '#706860',
+                  }}>
+                    <span style={{ color: '#4A8C6A' }}>{badge.icon}</span>
+                    {badge.text}
                   </div>
                 ))}
               </div>
@@ -604,31 +1018,62 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 px-6 py-8 border-t border-gray-200/50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className="w-7 h-7 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-              <Icons.Home />
+      {/* ── Footer ───────────────────────────────────────────── */}
+      <footer style={{
+        borderTop: '1px solid #E8E2D8',
+        padding: '32px 24px',
+      }}>
+        <div style={{
+          maxWidth: '1080px', margin: '0 auto',
+          display: 'flex', flexWrap: 'wrap',
+          justifyContent: 'space-between', alignItems: 'center',
+          gap: '20px',
+        }}>
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '9px', textDecoration: 'none' }}>
+            <div style={{
+              width: '30px', height: '30px',
+              background: 'linear-gradient(135deg, #E8621A 0%, #F0A020 100%)',
+              borderRadius: '9px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'white',
+            }}>
+              <Icons.Home size={14} />
             </div>
-            <span className="text-base font-semibold text-gray-900" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+            <span style={{ fontSize: '15px', fontWeight: 600, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
               Re-do.ai
             </span>
           </Link>
 
-          <div className="flex gap-6">
-            <Link to="/privacy" className="text-gray-500 no-underline text-sm hover:text-gray-900 transition-colors">
-              Privacy
-            </Link>
-            <Link to="/terms" className="text-gray-500 no-underline text-sm hover:text-gray-900 transition-colors">
-              Terms
-            </Link>
-            <a href="mailto:contact@re-do.ai" className="text-gray-500 no-underline text-sm hover:text-gray-900 transition-colors">
+          {/* Links */}
+          <div style={{ display: 'flex', gap: '28px' }}>
+            {[
+              { to: '/privacy', label: 'Privacy' },
+              { to: '/terms', label: 'Terms' },
+            ].map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                style={{ fontSize: '14px', color: '#8A8580', textDecoration: 'none', transition: 'color 0.15s ease' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#1A1A1A')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#8A8580')}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <a
+              href="mailto:contact@re-do.ai"
+              style={{ fontSize: '14px', color: '#8A8580', textDecoration: 'none', transition: 'color 0.15s ease' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#1A1A1A')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#8A8580')}
+            >
               Contact
             </a>
           </div>
 
-          <p className="text-sm text-gray-400">© 2026 Re-do.ai</p>
+          <p style={{ fontSize: '13px', color: '#A8A09A', margin: 0 }}>
+            © 2026 Re-do.ai
+          </p>
         </div>
       </footer>
     </div>
