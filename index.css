@@ -1,33 +1,53 @@
 @import "tailwindcss";
 
+/* ─── Google Fonts ────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
 @theme {
   /* ─── Typography ─────────────────────────────────────────── */
-  --font-sans: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans:    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-heading: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
 
-  /* ─── Warm Light Palette ─────────────────────────────────── */
-  --color-bg:          #FAFAF8;
+  /* ─── Landing Page v2 Design Tokens ─────────────────────── */
+  --color-bg:          #FDFBF7;
+  --color-bg-subtle:   #F5F1EA;
   --color-surface:     #FFFFFF;
-  --color-surface-2:   #F5F3EE;
+  --color-surface-2:   #F5F1EA;
   --color-surface-3:   #EDE9E0;
 
-  --color-text-1:      #1A1A1A;
-  --color-text-2:      #4A4A4A;
-  --color-text-3:      #8A8580;
+  --color-text:        #1A1714;
+  --color-text-1:      #1A1714;
+  --color-text-2:      #6B6560;
+  --color-text-3:      #9E9890;
+  --color-text-muted:  #6B6560;
 
-  --color-border:      #E8E2D8;
+  --color-border:      #E8E2D9;
   --color-border-2:    #D4CEC4;
 
-  /* Accent: warm coral → amber */
-  --color-accent:      #E8621A;
+  /* Primary accent: mustard gold (CTAs) */
+  --color-gold:        #C4A044;
+  --color-gold-hover:  #B08E30;
+
+  /* Secondary accent: terracotta (step numbers, logo) */
+  --color-accent:      #D4542A;
+  --color-accent-hover:#BE4420;
+  --color-accent-soft: #F5E8E3;
+  --color-accent-light:#F5E8E3;
+
+  /* Legacy accent names preserved for app compatibility */
   --color-accent-2:    #F0820A;
-  --color-accent-soft: #FEF0E6;
 
   /* Supporting: sage green, sky blue */
   --color-sage:        #4A8C6A;
   --color-sage-soft:   #EBF5F0;
   --color-sky:         #1A6EE8;
   --color-sky-soft:    #E6F0FE;
+
+  /* Shadows */
+  --shadow-card:   0 1px 3px rgba(26,23,20,0.06), 0 4px 12px rgba(26,23,20,0.04);
+  --shadow-raised: 0 2px 8px rgba(26,23,20,0.08), 0 8px 24px rgba(26,23,20,0.06);
+  --shadow-float:  0 4px 16px rgba(26,23,20,0.10), 0 16px 48px rgba(26,23,20,0.08);
 
   /* ─── Legacy tokens (app still uses these) ──────────────── */
   --color-bg-primary:      #FAFAF8;
@@ -78,6 +98,17 @@
   @keyframes pulse-soft {
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.7; }
+  }
+
+  /* ─── Landing Page v2 Animations ─────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
 }
 
@@ -325,3 +356,85 @@ input[type=range]::-moz-range-thumb {
 }
 
 .cta-button:active { transform: scale(0.98); }
+
+/* ─── Landing Page v2 — Luxury Interior Studio ────────────── */
+
+/* Body override for landing page root — warm cream, not dark */
+.landing-root {
+  background-color: #FDFBF7;
+  color: #1A1714;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hero entrance animations */
+.hero-animate {
+  opacity: 0;
+  animation: fadeUp 0.7s ease-out forwards;
+}
+
+.hero-animate-delay-1 {
+  animation-delay: 120ms;
+}
+
+.hero-animate-delay-2 {
+  animation-delay: 280ms;
+}
+
+/* Marquee ticker */
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marqueeScroll 28s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Step cards — scroll-triggered entrance */
+.step-card {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+}
+
+.step-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step-card:nth-child(2) {
+  transition-delay: 110ms;
+}
+
+.step-card:nth-child(3) {
+  transition-delay: 220ms;
+}
+
+/* Responsive: stack before/after photos on narrow screens */
+@media (max-width: 640px) {
+  .before-after-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .before-after-grid img {
+    height: 320px !important;
+  }
+}
+
+/* Responsive: stack How It Works on narrow screens */
+@media (max-width: 768px) {
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Responsive: stack nav links on very small screens */
+@media (max-width: 480px) {
+  .nav-links {
+    display: none;
+  }
+}
