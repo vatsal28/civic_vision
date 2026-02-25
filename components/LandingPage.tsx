@@ -155,6 +155,7 @@ export const LandingPage: React.FC = () => {
           1. NAV
       ══════════════════════════════════════════════════════════════ */}
       <nav
+        className="landing-nav"
         style={{
           position: 'fixed',
           top: 0,
@@ -290,6 +291,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Headline + CTA — bottom-left anchored */}
         <div
+          className="hero-content"
           style={{
             position: 'relative',
             zIndex: 2,
@@ -315,7 +317,7 @@ export const LandingPage: React.FC = () => {
 
           {/* Massive headline — Montserrat ExtraLight ALL CAPS */}
           <h1
-            className="hero-animate hero-animate-delay-1"
+            className="hero-animate hero-animate-delay-1 hero-headline"
             style={{
               fontFamily: "'Montserrat', 'Plus Jakarta Sans', sans-serif",
               fontSize: 'clamp(64px, 10vw, 130px)',
@@ -325,6 +327,8 @@ export const LandingPage: React.FC = () => {
               color: '#ffffff',
               margin: '0 0 32px',
               textTransform: 'uppercase',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
             }}
           >
             YOUR ROOM,<br />REARRANGED.
@@ -396,7 +400,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Floating stats card — bottom-right (RANTY-style) */}
         <div
-          className="hero-animate hero-animate-delay-2"
+          className="hero-animate hero-animate-delay-2 hero-stats-card"
           style={{
             position: 'absolute',
             bottom: '72px',
@@ -493,6 +497,7 @@ export const LandingPage: React.FC = () => {
       >
         {/* Section intro */}
         <div
+          className="section-mobile-pad"
           style={{
             padding: '0 48px 64px',
             maxWidth: '1040px',
@@ -551,6 +556,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Photo pair — edge-to-edge */}
         <div
+          className="before-after-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -671,6 +677,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Sub-caption below photos */}
         <div
+          className="section-mobile-pad"
           style={{
             padding: '20px 48px',
             maxWidth: '1040px',
@@ -697,6 +704,7 @@ export const LandingPage: React.FC = () => {
       ══════════════════════════════════════════════════════════════ */}
       <section
         id="how-it-works"
+        className="section-mobile-pad section-vpad-large"
         style={{
           padding: '120px 48px',
           maxWidth: '1040px',
@@ -735,6 +743,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Steps — 3-column grid */}
         <div
+          className="steps-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -839,6 +848,7 @@ export const LandingPage: React.FC = () => {
           6. SOCIAL PROOF — single large pull quote
       ══════════════════════════════════════════════════════════════ */}
       <section
+        className="section-mobile-pad section-vpad-large"
         style={{
           background: '#F5F1EA',
           borderTop: '1px solid #E8E2D9',
@@ -924,6 +934,7 @@ export const LandingPage: React.FC = () => {
           7. CTA — massive serif headline, warm background
       ══════════════════════════════════════════════════════════════ */}
       <section
+        className="section-mobile-pad section-vpad-large"
         style={{
           padding: '140px 48px',
           background: '#FDFBF7',
@@ -1023,6 +1034,7 @@ export const LandingPage: React.FC = () => {
           8. FOOTER — minimal
       ══════════════════════════════════════════════════════════════ */}
       <footer
+        className="section-mobile-pad"
         style={{
           borderTop: '1px solid #E8E2D9',
           padding: '32px 48px',

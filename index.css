@@ -414,21 +414,67 @@ input[type=range]::-moz-range-thumb {
   transition-delay: 220ms;
 }
 
-/* Responsive: stack before/after photos on narrow screens */
-@media (max-width: 640px) {
+/* ─── Landing Page — Mobile Responsive (< 768px) ─────────── */
+@media (max-width: 767px) {
+
+  /* Nav — tighten horizontal padding */
+  .landing-nav {
+    padding: 0 20px !important;
+  }
+
+  /* Hero content container — reduce padding */
+  .hero-content {
+    padding: 0 24px 64px !important;
+  }
+
+  /* Hero headline — cap size, force wrap */
+  .hero-headline {
+    font-size: clamp(36px, 12vw, 52px) !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    line-height: 0.95 !important;
+  }
+
+  /* Floating stats card — hide on mobile (overlaps CTA) */
+  .hero-stats-card {
+    display: none !important;
+  }
+
+  /* Before/After — stack vertically on mobile */
   .before-after-grid {
     grid-template-columns: 1fr !important;
   }
 
   .before-after-grid img {
-    height: 320px !important;
+    height: 280px !important;
   }
-}
 
-/* Responsive: stack How It Works on narrow screens */
-@media (max-width: 768px) {
+  /* Steps — single column on mobile */
   .steps-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Ensure step card dividers become horizontal rules */
+  .steps-grid .step-card {
+    /* gap: 1px on parent + background on parent creates the hr effect */
+  }
+
+  /* General section horizontal padding reduction */
+  .section-mobile-pad {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  /* Reduce large vertical padding on mobile */
+  .section-vpad-large {
+    padding-top: 64px !important;
+    padding-bottom: 64px !important;
+  }
+
+  /* Marquee — ensure text isn't oversized */
+  .marquee-track span {
+    font-size: 10px !important;
+    letter-spacing: 0.15em !important;
   }
 }
 
