@@ -208,8 +208,10 @@ const App: React.FC = () => {
     try {
       const apiKey = getApiKey();
       if (!apiKey) throw new Error("API Key is missing");
-      const base64Data = originalImage.split(',')[1];
-      const items = await detectFurniture(base64Data, apiKey);
+      // Extract both the base64 data and the mimeType from the data URL
+      const [header, base64Data] = originalImage.split(',');
+      const mimeType = header.match(/data:([^;]+);/)?.[1] || 'image/jpeg';
+      const items = await detectFurniture(base64Data, apiKey, mimeType);
       setDetectedFurniture(items);
     } catch (err: any) {
       setError(err.message || 'Failed to detect furniture. Please try again.');
@@ -225,8 +227,9 @@ const App: React.FC = () => {
     try {
       const apiKey = getApiKey();
       if (!apiKey) throw new Error("API Key is missing");
-      const base64Data = originalImage.split(',')[1];
-      const resultBase64 = await generateRearrangedRoom(base64Data, detectedFurniture, rearrangedItems, apiKey);
+      const [header, base64Data] = originalImage.split(',');
+      const mimeType = header.match(/data:([^;]+);/)?.[1] || 'image/jpeg';
+      const resultBase64 = await generateRearrangedRoom(base64Data, detectedFurniture, rearrangedItems, apiKey, mimeType);
       setGeneratedImage(`data:image/jpeg;base64,${resultBase64}`);
       setShowRearrangePanel(false);
       setAppState(AppState.COMPARING);
@@ -498,17 +501,17 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Rearrange Panel Sidebar */}
-      <AnimatePresence mode="wait">
+      {/* Rearrange Mode — full-screen overlay on all devices */}
+      <AnimatePresence>
         {showRearrangePanel && originalImage && (
           <motion.div
             key="rearrange-panel"
-            initial={{ x: -300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -300, opacity: 0 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="flex flex-col flex-shrink-0 z-20 relative h-full overflow-hidden fixed inset-0 md:relative md:inset-auto md:w-80"
-            style={{ background: '#FFFFFF', borderRight: '1px solid rgba(0,0,0,0.06)' }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 260 }}
+            className="fixed inset-0 z-30 flex flex-col"
+            style={{ background: '#F5F5F7' }}
           >
             <RearrangeMode
               originalImage={originalImage}

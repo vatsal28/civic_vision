@@ -147,32 +147,39 @@ export const generateIdealImage = async (
 /**
  * Detects furniture items in a room photo using Gemini.
  * Returns array of FurnitureItem with estimated bounding boxes as percentages.
+ * @param base64Image - raw base64 image data (no data: URI prefix)
+ * @param apiKey - Gemini API key
+ * @param mimeType - image mime type (defaults to image/jpeg)
  */
 export const detectFurniture = async (
   base64Image: string,
-  apiKey: string
+  apiKey: string,
+  mimeType: string = 'image/jpeg'
 ): Promise<FurnitureItem[]> => {
   if (!apiKey) throw new Error("API Key is missing");
 
   const ai = new GoogleGenAI({ apiKey });
 
-  const prompt = `Analyze this room photo and identify all distinct furniture and large decor items visible.
+  const prompt = `You are a computer vision assistant analyzing a room photo.
 
-For each item, provide:
-1. A short label (e.g., "Sofa", "Coffee Table", "Armchair")
-2. An appropriate emoji
-3. Estimated bounding box as percentages of the image (x, y = top-left corner, width, height)
+Identify ALL moveable objects in this room photo. This includes:
+- Furniture: sofa, couch, armchair, coffee table, dining table, chairs, bed, dresser, desk, bookshelf, cabinet, nightstand, bench, ottoman
+- Appliances & electronics: TV, lamp, floor lamp, table lamp, fan, speaker
+- Decor: rug/carpet (large floor coverings), mirror, painting, framed photo, plant, vase
 
-Respond ONLY with valid JSON in this exact format, no markdown or extra text:
-{
-  "items": [
-    { "id": "1", "label": "Sofa", "emoji": "🛋️", "x": 10, "y": 50, "width": 40, "height": 25 },
-    { "id": "2", "label": "Coffee Table", "emoji": "🪑", "x": 20, "y": 65, "width": 20, "height": 12 }
-  ]
-}
+For EACH identified item, return:
+- id: unique string number ("1", "2", etc.)
+- label: short human-readable name (e.g., "Sofa", "Coffee Table", "Floor Lamp")
+- emoji: appropriate single emoji
+- x: left edge of bounding box as % of image width (0-100)
+- y: top edge of bounding box as % of image height (0-100)
+- width: bounding box width as % of image width (0-100)
+- height: bounding box height as % of image height (0-100)
 
-Focus on moveable furniture. Include: sofas, chairs, tables, beds, dressers, shelves, lamps, rugs. 
-Provide accurate bounding boxes. x and y are the top-left corner percentages. Width and height are size percentages.`;
+Be accurate with bounding boxes — they should tightly wrap each item.
+Respond ONLY with valid JSON, no markdown fences or extra text:
+
+{"items":[{"id":"1","label":"Sofa","emoji":"🛋️","x":10,"y":45,"width":38,"height":28},{"id":"2","label":"Coffee Table","emoji":"🪵","x":22,"y":65,"width":18,"height":10}]}`;
 
   try {
     const response = await ai.models.generateContent({
@@ -180,7 +187,7 @@ Provide accurate bounding boxes. x and y are the top-left corner percentages. Wi
       contents: [
         {
           inlineData: {
-            mimeType: 'image/jpeg',
+            mimeType: mimeType as any,
             data: base64Image,
           },
         },
@@ -209,7 +216,8 @@ export const generateRearrangedRoom = async (
   base64Image: string,
   originalItems: FurnitureItem[],
   rearrangedItems: FurnitureItem[],
-  apiKey: string
+  apiKey: string,
+  mimeType: string = 'image/jpeg'
 ): Promise<string> => {
   if (!apiKey) throw new Error("API Key is missing");
 
@@ -249,7 +257,7 @@ Generate a photorealistic image of the room with the furniture rearranged as des
       contents: [
         {
           inlineData: {
-            mimeType: 'image/jpeg',
+            mimeType: mimeType as any,
             data: base64Image,
           },
         },
