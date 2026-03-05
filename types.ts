@@ -28,8 +28,19 @@ export enum AuthMode {
 }
 
 export enum AppMode {
-  CITY = 'CITY',   // Urban renewal / cityscape transformation
-  HOME = 'HOME'    // Interior design / room decor transformation
+  CITY = 'CITY',       // Urban renewal / cityscape transformation
+  HOME = 'HOME',       // Interior design / room decor transformation
+  REARRANGE = 'REARRANGE'  // Drag-and-rearrange existing furniture
+}
+
+export interface FurnitureItem {
+  id: string;
+  label: string;
+  emoji: string;
+  x: number;       // percentage from left (0-100)
+  y: number;       // percentage from top (0-100)
+  width: number;   // percentage of image width
+  height: number;  // percentage of image height
 }
 
 export type FilterCategory = 'roomType' | 'style' | 'colors' | 'furniture' | 'architectural';

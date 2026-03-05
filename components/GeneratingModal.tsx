@@ -74,9 +74,9 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
     }, [isOpen, messages.length]);
 
     const currentMessage = messages[currentMessageIndex];
-    const accentColor = mode === AppMode.HOME ? '#ec4899' : '#4f7eff';
-    const gradientFrom = mode === AppMode.HOME ? '#ec4899' : '#4f7eff';
-    const gradientTo = mode === AppMode.HOME ? '#f472b6' : '#6366f1';
+    const accentColor = mode === AppMode.HOME ? '#BF5AF2' : mode === AppMode.REARRANGE ? '#34C759' : '#0071E3';
+    const gradientFrom = mode === AppMode.HOME ? '#BF5AF2' : mode === AppMode.REARRANGE ? '#34C759' : '#0071E3';
+    const gradientTo = mode === AppMode.HOME ? '#AF52DE' : mode === AppMode.REARRANGE ? '#30D158' : '#0077ED';
 
     return (
         <AnimatePresence>
@@ -88,7 +88,7 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
                     className="fixed inset-0 z-[60] flex items-center justify-center p-4"
                 >
                     {/* Backdrop */}
-                    <div className="absolute inset-0 bg-white/90 backdrop-blur-md" />
+                    <div className="absolute inset-0 bg-[#F5F5F7]/92 backdrop-blur-xl" />
 
                     {/* Content */}
                     <motion.div
@@ -216,15 +216,15 @@ export const GeneratingModal: React.FC<GeneratingModalProps> = ({ isOpen, mode }
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="text-xl md:text-2xl font-semibold text-[#2D2A32]"
-                                    style={{ fontFamily: "'Fraunces', serif" }}
+                                    className="text-xl md:text-2xl font-semibold text-[#1D1D1F]"
+                                    style={{ letterSpacing: '-0.01em' }}
                                 >
                                     {currentMessage.text}
                                 </motion.p>
                             </AnimatePresence>
 
-                            <p className="text-sm text-[#6B6574]">
-                                This usually takes 15-30 seconds
+                            <p className="text-sm text-[#6E6E73]">
+                                This usually takes 15–30 seconds
                             </p>
 
                             {/* Progress dots */}

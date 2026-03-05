@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { FilterOption, AppMode } from "../types";
+import { FilterOption, AppMode, FurnitureItem } from "../types";
 
 export const generateIdealImage = async (
   base64Image: string,
@@ -140,6 +140,146 @@ export const generateIdealImage = async (
       throw new Error('CONTENT_BLOCKED: The image was blocked by safety filters. Try a different image.');
     }
 
+    throw error;
+  }
+};
+
+/**
+ * Detects furniture items in a room photo using Gemini.
+ * Returns array of FurnitureItem with estimated bounding boxes as percentages.
+ */
+export const detectFurniture = async (
+  base64Image: string,
+  apiKey: string
+): Promise<FurnitureItem[]> => {
+  if (!apiKey) throw new Error("API Key is missing");
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  const prompt = `Analyze this room photo and identify all distinct furniture and large decor items visible.
+
+For each item, provide:
+1. A short label (e.g., "Sofa", "Coffee Table", "Armchair")
+2. An appropriate emoji
+3. Estimated bounding box as percentages of the image (x, y = top-left corner, width, height)
+
+Respond ONLY with valid JSON in this exact format, no markdown or extra text:
+{
+  "items": [
+    { "id": "1", "label": "Sofa", "emoji": "🛋️", "x": 10, "y": 50, "width": 40, "height": 25 },
+    { "id": "2", "label": "Coffee Table", "emoji": "🪑", "x": 20, "y": 65, "width": 20, "height": 12 }
+  ]
+}
+
+Focus on moveable furniture. Include: sofas, chairs, tables, beds, dressers, shelves, lamps, rugs. 
+Provide accurate bounding boxes. x and y are the top-left corner percentages. Width and height are size percentages.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [
+        {
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image,
+          },
+        },
+        { text: prompt },
+      ],
+    });
+
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    
+    // Extract JSON from response (handle possible markdown wrapping)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found in furniture detection response");
+    
+    const parsed = JSON.parse(jsonMatch[0]);
+    return parsed.items || [];
+  } catch (error: any) {
+    console.error("Furniture detection error:", error);
+    throw error;
+  }
+};
+
+/**
+ * Generates a rearranged room image based on new furniture positions.
+ */
+export const generateRearrangedRoom = async (
+  base64Image: string,
+  originalItems: FurnitureItem[],
+  rearrangedItems: FurnitureItem[],
+  apiKey: string
+): Promise<string> => {
+  if (!apiKey) throw new Error("API Key is missing");
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  // Describe the rearrangement
+  const moves = rearrangedItems.map((item, i) => {
+    const orig = originalItems.find(o => o.id === item.id);
+    if (!orig) return `- ${item.label}: moved to new position`;
+    const moved = Math.abs(item.x - orig.x) > 3 || Math.abs(item.y - orig.y) > 3;
+    if (!moved) return null;
+    const xDir = item.x > orig.x ? 'right' : 'left';
+    const yDir = item.y > orig.y ? 'down' : 'up';
+    return `- ${item.label}: moved ${xDir} and ${yDir}`;
+  }).filter(Boolean).join('\n');
+
+  const prompt = `You are an expert interior designer and 3D room visualization specialist.
+
+You are given a photo of a room. Rearrange the furniture in the room as described below.
+
+FURNITURE REARRANGEMENTS:
+${moves || 'Keep furniture in their natural rearranged positions for a fresh look.'}
+
+CRITICAL REQUIREMENTS:
+- Keep ALL walls, windows, doors, and architectural features EXACTLY as they are
+- Keep the same camera angle and perspective
+- Keep the same lighting and time of day
+- Maintain photorealistic quality
+- Show furniture in their new positions naturally and realistically
+- The room should look lived-in and well-composed
+
+Generate a photorealistic image of the room with the furniture rearranged as described.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-image-preview',
+      contents: [
+        {
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image,
+          },
+        },
+        { text: prompt },
+      ],
+      config: {
+        responseModalities: ['Text', 'Image'],
+      },
+    });
+
+    const parts = response.candidates?.[0]?.content?.parts;
+    if (!parts) throw new Error("No content generated");
+
+    for (const part of parts) {
+      if (part.inlineData?.data) {
+        return part.inlineData.data;
+      }
+    }
+
+    throw new Error("No image data found in rearrangement response");
+  } catch (error: any) {
+    console.error("Rearrangement generation error:", error);
+    
+    const errorMessage = error?.message || error?.toString() || '';
+    if (errorMessage.includes('PERMISSION_DENIED') || errorMessage.includes('403')) {
+      throw new Error('PERMISSION_DENIED: Model access denied for rearrangement generation.');
+    }
+    if (errorMessage.includes('RESOURCE_EXHAUSTED') || errorMessage.includes('quota')) {
+      throw new Error('QUOTA_EXCEEDED: Daily quota exceeded.');
+    }
     throw error;
   }
 };
